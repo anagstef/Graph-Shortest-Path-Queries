@@ -35,6 +35,7 @@ void operations(istream &input) {
         string c;
         int source, dest;
         if (line != "F") {
+            //create prob a list to execute blocks of commands
             istringstream command(line);
             command >> c;
             command >> source;
