@@ -1,6 +1,6 @@
-OBJS = main.o list_node.o
-SOURCE = main.cpp list_node.cpp
-HEADER = list_node.h
+OBJS = main.o list_node.o list.o
+SOURCE = main.cpp list_node.cpp list.cpp
+HEADER = list_node.h list.h
 OUT = project
 CC = g++ -std=c++11
 FLAGS  = -c -g -Wextra -Wall
@@ -13,6 +13,9 @@ main.o: main.cpp
 
 list_node.o: list_node.cpp
 	$(CC) $(FLAGS) list_node.cpp
+
+list.o: list.cpp
+    $(CC) $(FLAGS) list.cpp
 
 clean:
 	rm -f $(OBJS) $(OUT)

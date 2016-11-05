@@ -9,7 +9,7 @@ private:
     uint32_t id;
     node* next;
 public:
-    node(int id);
+    node(uint32_t i);
     ~node();
     uint32_t get_id() { return id; }
     void set_id(int i) { id = i; }
@@ -19,19 +19,16 @@ public:
 
 class list {
 private:
-    uint32_t size;
+    int size;
     node* head;
 public:
     list();
     ~list();
-    uint32_t get_size() { return size; }
-    void set_size(uint32_t s) { size = s; }
-    node* get_head() { return head; }
-    void set_head(node* h) { head = h; }
     void print_list();
-    void push(node* n);
-    node* pop(int id);
-    bool search(int id);
+    void push(node& n);
+    uint32_t pop();
+    bool search(uint32_t id);
+    bool is_empty();
 };
 
 #endif
