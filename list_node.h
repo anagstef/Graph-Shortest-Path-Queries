@@ -16,6 +16,7 @@ private:
 
 public:
     list_node();
+    ~list_node();
 
     uint32_t get_nextNode() { return nextNode; }
     void set_nextNode(uint32_t next) {nextNode = next;}

@@ -9,7 +9,7 @@ list_node::list_node() {
 
 void list_node::print_node() {
     int i;
-    cout << "Neigbors: " << endl;
+    cout << "Neighbors: " << endl;
     for (i = 0; i < length; ++i) {
         cout << i << " " << neighbor[i] << endl;
     }

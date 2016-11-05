@@ -1,12 +1,9 @@
-//
-// Created by helena on 4/11/2016.
-//
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstdio>
 #include <cstdlib>
+#include <cstdint>
 #include <string>
 #include "list_node.h"
 
@@ -17,12 +14,12 @@ void create_graph(istream &input) {
     do {
         getline(input, line);
         if (line != "S") {
-            int node, neighbour;
+            uint32_t node, neighbour;
             istringstream command(line);
             command >> node;
             command >> neighbour;
             cout << node << " " << neighbour << endl;
-            list_node* lnode = new list_node(node);
+            list_node* lnode = new list_node();
             lnode->print_node();
         }
     } while (line != "S");
@@ -33,7 +30,7 @@ void operations(istream &input) {
     while (!input.eof()) {
         getline(input, line);
         string c;
-        int source, dest;
+        uint32_t source, dest;
         if (line != "F") {
             //create prob a list to execute blocks of commands
             istringstream command(line);
