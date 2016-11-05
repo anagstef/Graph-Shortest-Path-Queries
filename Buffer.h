@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <cstdint>
+#include <cstdlib>
+#include <new>
 #include "list_node.h"
 #define BUFFER_INIT_SIZE 100
 
