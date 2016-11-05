@@ -19,6 +19,7 @@ public:
 
     uint32_t allocNewNode();
     list_node* getListNode(uint32_t ptr);
+    bool addNewEdge(uint32_t edge_id, uint32_t listHead);
 };
 
 
