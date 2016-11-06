@@ -14,7 +14,7 @@ Buffer::~Buffer() {
 
 list_node* Buffer::getListNode(uint32_t ptr) {
     if (ptr < length)
-        return nodes[ptr];
+        return &(nodes[ptr]);
     else
         return NULL;
 }
@@ -22,7 +22,7 @@ list_node* Buffer::getListNode(uint32_t ptr) {
 uint32_t Buffer::allocNewNode() {
     if(length == real_size) {
         real_size *= 2;
-        nodes = (list_node *) realloc(sizeof(list_node) * real_size);
+        nodes = (list_node*) realloc(nodes, sizeof(list_node) * real_size);
     }
 
     new (nodes[length]) list_node();
