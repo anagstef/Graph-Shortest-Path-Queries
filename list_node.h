@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
-#define N 100
+#define N 10
 
 class list_node {
 

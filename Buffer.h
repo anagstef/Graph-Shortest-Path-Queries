@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <new>
 #include "list_node.h"
-#define BUFFER_INIT_SIZE 100
+#define BUFFER_INIT_SIZE 10000
 
 class Buffer {
 private:

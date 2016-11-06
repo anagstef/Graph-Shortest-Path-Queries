@@ -25,7 +25,7 @@ uint32_t Buffer::allocNewNode() {
         nodes = (list_node*) realloc(nodes, sizeof(list_node) * real_size);
     }
 
-    new (nodes[length]) list_node();
+    new (&nodes[length]) list_node();
     length++;
     return length - 1;
 }

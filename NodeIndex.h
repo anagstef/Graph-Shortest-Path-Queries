@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <new>
-#define INDEX_INIT_SIZE 100
+#define INDEX_INIT_SIZE 500
 
 class NodeIndex{
 private:
@@ -20,6 +20,5 @@ public:
     bool insertNode(uint32_t nodeId, uint32_t buffer_offset);
     bool isIndexed(uint32_t nodeId);
 };
-
 
 #endif
