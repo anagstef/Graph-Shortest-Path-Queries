@@ -21,7 +21,10 @@ uint32_t NodeIndex::getListHead(uint32_t nodeId) {
 }
 
 bool NodeIndex::isIndexed(uint32_t nodeId) {
-    return IndexedNodes[nodeId];
+    if(nodeId<size)
+        return IndexedNodes[nodeId];
+    else
+        return false;
 }
 
 bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
