@@ -6,7 +6,10 @@ CC = g++ -std=c++11
 FLAGS  = -c -g -Wextra -Wall
 
 $(OUT): $(OBJS)
-	$(CC) -g $(OBJS) -o $@
+	$(CC) -g $(OBJS) -o project
+
+prof: $(OBJS)
+	$(CC) -pg $(OBJS) -o prof
 
 main.o: main.cpp
 	$(CC) $(FLAGS) main.cpp
@@ -26,7 +29,7 @@ NodeIndex.o: NodeIndex.cpp
 Graph.o: Graph.cpp
 	$(CC) $(FLAGS) Graph.cpp
 
-Queue.o:Queue.cpp
+Queue.o: Queue.cpp
 	$(CC) $(FLAGS) Queue.cpp
 
 clean:

@@ -7,16 +7,25 @@
 #include <new>
 #define INDEX_INIT_SIZE 500
 
+typedef struct {
+  uint32_t listHead;
+  uint32_t listTail;
+  bool indexed;
+}iNode;
+
 class NodeIndex{
 private:
-    uint32_t* Index;
-    bool* IndexedNodes;
+    // uint32_t* Index;
+    // bool* IndexedNodes;
+    iNode* Index;
     uint32_t size;
 public:
     NodeIndex();
     ~NodeIndex();
 
     uint32_t getListHead(uint32_t nodeId);
+    uint32_t getListTail(uint32_t nodeId);
+    void setListTail(uint32_t nodeId, uint32_t tail);
     bool insertNode(uint32_t nodeId, uint32_t buffer_offset);
     bool isIndexed(uint32_t nodeId);
 };

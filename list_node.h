@@ -26,6 +26,7 @@ public:
     int get_length(){ return length; }
     void set_length(int l) {length = l;}
     uint32_t get_neighbor(int i) { return  neighbor[i]; }
+    uint32_t* get_neighborArray() { return  neighbor; }
     void set_neighbor(int i, uint32_t value) {neighbor[i] = value;}
     uint32_t* get_edgeProperty() { return edgeProperty; }
     void print_node();

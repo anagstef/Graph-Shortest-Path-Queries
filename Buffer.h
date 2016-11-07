@@ -5,8 +5,9 @@
 #include <cstdint>
 #include <cstdlib>
 #include <new>
+#include "NodeIndex.h"
 #include "list_node.h"
-#define BUFFER_INIT_SIZE 10000
+#define BUFFER_INIT_SIZE 1000
 
 class Buffer {
 private:
@@ -19,7 +20,8 @@ public:
 
     uint32_t allocNewNode();
     list_node* getListNode(uint32_t ptr);
-    bool addNewEdge(uint32_t edge_id, uint32_t listHead);
+    bool addNewEdge(uint32_t edge_id, uint32_t listHead, NodeIndex &index);
+    void addNewEdgeDirectly(uint32_t edge_id, uint32_t nodeId, NodeIndex &index);
 };
 
 
