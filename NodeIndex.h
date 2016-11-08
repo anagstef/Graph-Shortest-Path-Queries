@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <new>
-#define INDEX_INIT_SIZE 500
+#define INDEX_INIT_SIZE 15
 
 typedef struct {
   uint32_t listHead;

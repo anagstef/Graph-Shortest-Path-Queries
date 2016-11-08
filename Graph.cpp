@@ -7,14 +7,14 @@ void Graph::add(uint32_t from, uint32_t to) {
     bool NewEdgeAdded = true;
 
     if (Out.isIndexed(from)){
-        NewEdgeAdded = Out_Buf.addNewEdge(to, from, Out);
-//        Out_Buf.addNewEdgeDirectly(to, from, Out);
+        // NewEdgeAdded = Out_Buf.addNewEdge(to, from, Out);
+       Out_Buf.addNewEdgeDirectly(to, from, Out);
     }
     else {
         temp = Out_Buf.allocNewNode();
         Out.insertNode(from, temp);
-        NewEdgeAdded = Out_Buf.addNewEdge(to, from, Out);
-//        Out_Buf.addNewEdgeDirectly(to, from, Out);
+        // NewEdgeAdded = Out_Buf.addNewEdge(to, from, Out);
+       Out_Buf.addNewEdgeDirectly(to, from, Out);
     }
 
     if(NewEdgeAdded){

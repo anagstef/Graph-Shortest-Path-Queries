@@ -7,7 +7,7 @@
 #include <new>
 #include "NodeIndex.h"
 #include "list_node.h"
-#define BUFFER_INIT_SIZE 1000
+#define BUFFER_INIT_SIZE 10000
 
 class Buffer {
 private:

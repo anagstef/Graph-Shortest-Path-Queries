@@ -77,7 +77,6 @@ bool Buffer::addNewEdge(uint32_t edge_id, uint32_t nodeId, NodeIndex &index) {
         }
     }
 
-    len = nodes[listHead].get_length();
 
     if(len < N){ //if the capacity is not full add it
         nodes[listHead].set_neighbor(len, edge_id);
