@@ -1,10 +1,12 @@
 #include "Queue.h"
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
 Queue::Queue() {
     capacity = QUEUE_INIT_SIZE;
-    queue = (uint32_t*) malloc(sizeof(uint32_t) * capacity-1);
+    queue = (uint32_t*) malloc(sizeof(uint32_t) * capacity);
     front = 0;
     end = 0;
     size = 0;
@@ -15,12 +17,11 @@ Queue::~Queue() {
 }
 
 bool Queue::isEmpty() {
-    if (front == 0 && end == 0) {
+    if (size == 0) {
         return true;
     }
     return false;
 }
-
 
 bool Queue::isFull() {
     if ((end+1)%capacity == front) {
@@ -66,7 +67,8 @@ void Queue::increaseCapacity() {
     }
 
     front = 0;
-    end = capacity-1;
+    end = capacity;
+    free(queue);
     capacity = new_capacity;
     queue = new_queue;
 }
@@ -75,7 +77,16 @@ uint32_t Queue::pop() {
     uint32_t ret_val;
     ret_val = queue[front];
     front = (front+1)%capacity;
+    size--;
     return ret_val;
+}
+
+void Queue::clear() {
+    capacity = QUEUE_INIT_SIZE;
+    front = 0;
+    end = 0;
+    size = 0;
+    queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * capacity);
 }
 
 void Queue::printQueue() {
@@ -101,25 +112,36 @@ void Queue::printQueue() {
 
 /*int main(void) {
 	Queue q;
-	q.push(4);
-	q.push(5);
-	q.push(6);
-	q.push(7);
-	q.push(8);
-	q.push(9);
-	q.printQueue();
-	q.pop();
-	q.push(10);
-	q.push(11);
-	q.push(12);
-	q.push(13);
-	q.push(14);
-	q.push(15);
-	q.push(16);
-	q.push(17);
-	q.push(18);
-	q.push(19);
-	q.push(20);
-	q.printQueue();
+    ifstream input;
+    input.open("smallGraph.txt");
+    string line;
+    if (input.is_open()) {
+        do {
+            getline(input, line);
+            if (line != "S") {
+                uint32_t node, neighbour;
+                istringstream command(line);
+                command >> node;
+                command >> neighbour;
+                q.push(node);
+            }
+        } while (line != "S");
+        input.close();
+    }
+    q.clear();
+    input.open("smallGraph.txt");
+    if (input.is_open()) {
+        do {
+            getline(input, line);
+            if (line != "S") {
+                uint32_t node, neighbour;
+                istringstream command(line);
+                command >> node;
+                command >> neighbour;
+                q.push(neighbour);
+            }
+        } while (line != "S");
+        input.close();
+    }
 	return 0;
 }*/

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
-#define QUEUE_INIT_SIZE 15
+#define QUEUE_INIT_SIZE 1000
 
 class Queue {
 private:
@@ -15,16 +15,18 @@ private:
 public:
     Queue();
     ~Queue();
-    void push(uint32_t value);
     uint32_t pop();
+    void push(uint32_t value);
     bool isFull();
     bool isEmpty();
     void increaseCapacity();
+    void clear();
+    void printQueue();
     uint32_t* getQueue() { return queue; }
     uint32_t  getCap() { return capacity; }
     uint32_t  getFront() { return front; }
     uint32_t  getEnd() { return end; }
-    void printQueue();
+    uint32_t  getSize() { return size; }
 };
 
 #endif
