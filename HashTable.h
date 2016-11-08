@@ -5,8 +5,8 @@
 #include <cstdint>
 
 //10067
-#define HASH_ENTRIES 500
-#define BUCKET_ENTRIES 15
+#define HASH_ENTRIES 10067
+#define BUCKET_ENTRIES 20
 
 struct Bucket {
     uint32_t bucket_entries;
