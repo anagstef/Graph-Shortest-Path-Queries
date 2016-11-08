@@ -1,6 +1,6 @@
-OBJS = main.o list_node.o list.o Buffer.o NodeIndex.o Graph.o Queue.o
-SOURCE = main.cpp list_node.cpp list.cpp Buffer.cpp NodeIndex.cpp Graph.cpp Queue.cpp
-HEADER = list_node.h list.h Buffer.h NodeIndex.h Graph.h Queue.h
+OBJS = main.o list_node.o list.o Buffer.o NodeIndex.o Graph.o Queue.o HashTable.o
+SOURCE = main.cpp list_node.cpp list.cpp Buffer.cpp NodeIndex.cpp Graph.cpp Queue.cpp HashTable.cpp
+HEADER = list_node.h list.h Buffer.h NodeIndex.h Graph.h Queue.h HashTable.h
 OUT = project
 CC = g++ -std=c++11
 FLAGS  = -c -g -Wextra -Wall
@@ -31,6 +31,9 @@ Graph.o: Graph.cpp
 
 Queue.o: Queue.cpp
 	$(CC) $(FLAGS) Queue.cpp
+
+HashTable.o: HashTable.cpp
+	$(CC) $(FLAGS) HashTable.cpp
 
 clean:
 	rm -f $(OBJS) $(OUT)
