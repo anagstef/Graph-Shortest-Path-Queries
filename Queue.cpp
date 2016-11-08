@@ -91,16 +91,19 @@ void Queue::clear() {
 
 void Queue::printQueue() {
     if (front == 0) {
+        cout << "1 " << front << " " << end << endl;
         for (uint32_t i = front; i < end; ++i) {
             cout << queue[i] << endl;
         }
     }
     else if (front < end) {
+        cout << "2" << endl;
         for (uint32_t i = front ; i < end; ++i) {
             cout << queue[i] << endl;
         }
     }
     else {
+        cout << "3" << endl;
         for (uint32_t i = front; i < capacity; ++i) {
             cout << queue[i] << endl;
         }
@@ -108,12 +111,12 @@ void Queue::printQueue() {
             cout << queue[i] << endl;
         }
     }
+    cout << "------------------------------------" << endl;
 }
-
 /*int main(void) {
 	Queue q;
     ifstream input;
-    input.open("smallGraph.txt");
+    input.open("tinyGraph.txt");
     string line;
     if (input.is_open()) {
         do {
@@ -128,8 +131,9 @@ void Queue::printQueue() {
         } while (line != "S");
         input.close();
     }
+    q.printQueue();
     q.clear();
-    input.open("smallGraph.txt");
+    input.open("tinyGraph.txt");
     if (input.is_open()) {
         do {
             getline(input, line);
@@ -143,5 +147,6 @@ void Queue::printQueue() {
         } while (line != "S");
         input.close();
     }
+    q.printQueue();
 	return 0;
 }*/

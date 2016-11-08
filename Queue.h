@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
-#define QUEUE_INIT_SIZE 1000
+#define QUEUE_INIT_SIZE 2
 
 class Queue {
 private:
