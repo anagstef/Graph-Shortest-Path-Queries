@@ -12,10 +12,6 @@ struct Bucket {
     uint32_t offset;
     uint32_t* nodes;
     void insert(uint32_t value);
-    /*uint32_t getOffset() { return offset; }
-    uint32_t getEntries() { return bucket_entries; }
-    void setOffset(uint32_t off) { offset = off; }
-    void setEntries(uint32_t e) { bucket_entries = e; }*/
 };
 
 class HashTable {

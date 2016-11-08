@@ -65,9 +65,8 @@ void HashTable::printHT() {
     }
 }
 
-int main(void) {
+/*int main(void) {
     HashTable ht;
-    //ht.init();
     ifstream input;
     input.open("mediumGraph.txt");
     string line;
@@ -85,5 +84,6 @@ int main(void) {
         } while (line != "S");
         input.close();
     }
-    //ht.printHT();
+    ht.printHT();
 }
+ */

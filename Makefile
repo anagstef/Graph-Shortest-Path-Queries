@@ -1,4 +1,4 @@
-OBJS = main.o list_node.o list.o Buffer.o NodeIndex.o Graph.o Queue.o
+OBJS = main.o list_node.o list.o Buffer.o NodeIndex.o Graph.o Queue.o HashTable.o
 SOURCE = main.cpp list_node.cpp list.cpp Buffer.cpp NodeIndex.cpp Graph.cpp Queue.cpp HashTable.cpp
 HEADER = list_node.h list.h Buffer.h NodeIndex.h Graph.h Queue.h HashTable.h
 OUT = project
@@ -31,6 +31,9 @@ Graph.o: Graph.cpp
 
 Queue.o: Queue.cpp
 	$(CC) $(FLAGS) Queue.cpp
+
+HashTable.o: HashTable.cpp
+	$(CC) $(FLAGS) HashTable.cpp
 
 clean:
 	rm -f $(OBJS) $(OUT)
