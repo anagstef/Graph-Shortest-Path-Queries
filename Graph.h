@@ -16,6 +16,7 @@ private:
     Buffer Out_Buf;
 public:
     void add(uint32_t from, uint32_t to);
+    int query(uint32_t from, uint32_t to);
 };
 
 #endif
