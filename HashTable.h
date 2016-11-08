@@ -5,8 +5,8 @@
 #include <cstdint>
 
 //10067
-#define HASH_ENTRIES 500  //need a prime number
-#define BUCKET_ENTRIES 15 //chosen after tests
+#define HASH_ENTRIES 10067  //need a prime number
+#define BUCKET_ENTRIES 20   //chosen after tests
 
 struct Bucket {
     uint32_t bucket_entries; //entries of each bucket
