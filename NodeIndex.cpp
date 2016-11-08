@@ -4,10 +4,9 @@ using namespace std;
 
 NodeIndex::NodeIndex() {
     size = INDEX_INIT_SIZE;
-    // Index = (uint32_t*) malloc(sizeof(uint32_t) * size);
-    // IndexedNodes = (bool*) malloc(sizeof(bool) * size);
     Index = (iNode*) malloc(sizeof(iNode) * size);
 
+    //initialize the values
     for (uint32_t i = 0; i < size; i++){
         Index[i].indexed = false;
         Index[i].numOfNeighbors = 0;
@@ -15,12 +14,10 @@ NodeIndex::NodeIndex() {
 }
 
 NodeIndex::~NodeIndex() {
-    // free(IndexedNodes);
     free(Index);
 }
 
 uint32_t NodeIndex::getListHead(uint32_t nodeId) {
-    // return Index[nodeId];
     return Index[nodeId].listHead;
 }
 
@@ -41,10 +38,9 @@ void NodeIndex::setListTail(uint32_t nodeId, uint32_t tail){
 
 bool NodeIndex::isIndexed(uint32_t nodeId) {
     if (nodeId < size)
-        // return IndexedNodes[nodeId];
         return Index[nodeId].indexed;
     else
-        return false;
+        return false; //return false if the nodeId exceeds the size of the array
 }
 
 bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
@@ -58,8 +54,6 @@ bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
         }
 
         //realloc the index
-        // Index = (uint32_t*) realloc(Index, sizeof(uint32_t) * new_size);
-        // IndexedNodes = (bool*) realloc(IndexedNodes, sizeof(bool) * new_size);
         Index = (iNode*) realloc(Index, sizeof(iNode) * new_size);
         //initialize the boolean values
         for (uint32_t i = size; i < new_size; i++) {
@@ -75,8 +69,6 @@ bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
     }
 
     //insert the new node
-    // Index[nodeId] = buffer_offset;
-    // IndexedNodes[nodeId] = true;
     Index[nodeId].listHead = buffer_offset;
     Index[nodeId].listTail = buffer_offset;
     Index[nodeId].indexed = true;

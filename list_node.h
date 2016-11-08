@@ -3,16 +3,16 @@
 
 #include <iostream>
 #include <cstdint>
-#define N 2
+#define N 2 //the size of the static array on each list node
 
 class list_node {
 
 private:
-    int length;
+    int length; //size of the array
     uint32_t neighbor[N];
     uint32_t edgeProperty[N];
-    bool hasNext;
-    uint32_t nextNode;
+    bool hasNext; //true if the listnode has a next node
+    uint32_t nextNode; //pointer to the next node
 
 public:
     list_node();
@@ -29,7 +29,7 @@ public:
     uint32_t* get_neighborArray() { return  neighbor; }
     void set_neighbor(int i, uint32_t value) {neighbor[i] = value;}
     uint32_t* get_edgeProperty() { return edgeProperty; }
-    void print_node();
+    void print_node(); //unit testing
 };
 
 #endif

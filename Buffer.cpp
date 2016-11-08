@@ -20,12 +20,12 @@ list_node* Buffer::getListNode(uint32_t ptr) {
 }
 
 uint32_t Buffer::allocNewNode() {
-    if(length == real_size) {
+    if(length == real_size) { //if the maximum length is reached
         real_size *= 2;
         nodes = (list_node*) realloc(nodes, sizeof(list_node) * real_size);
     }
 
-    new (&nodes[length]) list_node();
+    new (&nodes[length]) list_node(); //use placement new to call only the constructor
     length++;
     return length - 1;
 }
@@ -93,6 +93,6 @@ bool Buffer::addNewEdge(uint32_t edge_id, uint32_t nodeId, NodeIndex &index) {
         index.setListTail(nodeId, new_listnode_id);
     }
 
-    index.addNeighbor(nodeId);
+    index.addNeighbor(nodeId); //++
     return true; //edge added
 }

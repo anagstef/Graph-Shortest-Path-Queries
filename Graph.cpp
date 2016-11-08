@@ -93,21 +93,25 @@ int Graph::query(uint32_t from, uint32_t to) {
     list_node* current;
     uint32_t* neighArray;
 
-
+    //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
     uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
 
+    //if one of the nodes dows not have any neighbors, then one of them is not indexed
     if(forward_neighbors == 0 || backwards_neighbors == 0) {
         return -1;
     }
 
+    //if it is the same node, then the cost is 0
     if(from == to){
         return 0;
     }
 
+    //add the nodes to each Fringe
     ForwardFringe.push(from);
     BackwardsFringe.push(to);
 
+    //loop until solution is found or not found
     while(1){
 
         //If one of the two fringes is empty, then there is no path
@@ -117,9 +121,9 @@ int Graph::query(uint32_t from, uint32_t to) {
         if(ForwardFringe.empty() || BackwardsFringe.empty())//////////////////////////
             return -1;
 
-
+        //select to expand the Fringe that has the least next neighbors
         if(forward_neighbors <= backwards_neighbors){
-            forward_neighbors = 0;
+            forward_neighbors = 0; //init the sum
             // temp = ForwardFringe.getSize();
             temp = ForwardFringe.size();//////////////////
 
@@ -215,7 +219,7 @@ int Graph::query(uint32_t from, uint32_t to) {
     } //while(1)
 }
 
-
+//PRINTING GRAPH FOR UNIT TESTING
 void Graph::printGraph(){
       uint32_t i,j, indexsize, listHead, len;
       list_node* current;

@@ -8,18 +8,16 @@
 #define INDEX_INIT_SIZE 2
 
 typedef struct {
-  uint32_t listHead;
-  uint32_t listTail;
-  bool indexed;
-  uint32_t numOfNeighbors;
+  uint32_t listHead; //pointer to the starting listnode of its neighbors
+  uint32_t listTail; //pointer to the last listnode, for efficiency
+  bool indexed; //true if the node exists, false otherwise
+  uint32_t numOfNeighbors; //number of neighbors the node has
 }iNode;
 
 class NodeIndex{
 private:
-    // uint32_t* Index;
-    // bool* IndexedNodes;
     iNode* Index;
-    uint32_t size;
+    uint32_t size; //the actual size of the NodeIndex
 public:
     NodeIndex();
     ~NodeIndex();
