@@ -24,7 +24,7 @@ void create_graph(istream &input, Graph &graph) {
     } while (line != "S");
 }
 
-void operations(istream &input) {
+void operations(istream &input, Graph &graph) {
     string line;
     while (!input.eof()) {
         getline(input, line);
@@ -37,10 +37,10 @@ void operations(istream &input) {
             command >> source;
             command >> dest;
             if (c == "A") {
-                cout << "Add" << endl;
+                cout << "Add" << source << "--" << dest << endl;
             }
             else if (c == "Q") {
-                cout << "Query" << endl;
+                cout << "Query" << source << "--" << dest << endl;
             }
             else if (c != "") {
                 cout << "Unknown command" << endl;
@@ -56,14 +56,22 @@ int main(int argc, char const *argv[]) {
 
     Graph graph;
 
-    if (argc == 2) {
+    if (argc == 3) {
         input.open(&argv[1][0]);
         if (!input.is_open()) {
             cout << "Couldn't open file. End of execution." << endl;
             exit(-1);
         }
         create_graph(input, graph);
+        input.open(&argv[2][0]);
+        if (!input.is_open()) {
+            cout << "Couldn't open file. End of execution." << endl;
+            exit(-1);
+        }
+        operations(input, graph);
     }
+
+
 
     /*cout << "Please give the operations file name" << endl;
     const char* file;

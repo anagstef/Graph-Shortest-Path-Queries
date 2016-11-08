@@ -86,6 +86,8 @@ int Graph::query(uint32_t from, uint32_t to) {
     int cost = 0, len;
     list_node* current;
     uint32_t* neighArray;
+
+
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
     uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
 
