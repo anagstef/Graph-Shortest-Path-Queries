@@ -28,7 +28,7 @@ void Graph::add(uint32_t from, uint32_t to) {
             In.insertNode(to, temp);
             In_Buf.addNewEdgeDirectly(from, to, In);
         }
-
+        return;
     }
 
     if(from_neighbors <= to_neighbors){
@@ -50,6 +50,7 @@ void Graph::add(uint32_t from, uint32_t to) {
                 In_Buf.addNewEdgeDirectly(from, to, In);
             }
         }
+        return;
 
     }
 
@@ -72,6 +73,7 @@ void Graph::add(uint32_t from, uint32_t to) {
                 Out_Buf.addNewEdgeDirectly(to, from, Out);
             }
         }
+        return;
 
     }
 }

@@ -8,10 +8,10 @@ NodeIndex::NodeIndex() {
     // IndexedNodes = (bool*) malloc(sizeof(bool) * size);
     Index = (iNode*) malloc(sizeof(iNode) * size);
 
-    for (uint32_t i = 0; i < size; i++)
-        // IndexedNodes[i] = false;
+    for (uint32_t i = 0; i < size; i++){
         Index[i].indexed = false;
         Index[i].numOfNeighbors = 0;
+    }
 }
 
 NodeIndex::~NodeIndex() {
@@ -26,6 +26,13 @@ uint32_t NodeIndex::getListHead(uint32_t nodeId) {
 
 uint32_t NodeIndex::getListTail(uint32_t nodeId) {
     return Index[nodeId].listTail;
+}
+
+uint32_t NodeIndex::getNumOfNeighbors(uint32_t nodeId) {
+  if (nodeId < size)
+    return Index[nodeId].numOfNeighbors;
+  else
+    return 0;
 }
 
 void NodeIndex::setListTail(uint32_t nodeId, uint32_t tail){
