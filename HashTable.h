@@ -11,7 +11,6 @@ struct Bucket {
     uint32_t bucket_entries;
     uint32_t offset;
     uint32_t* nodes;
-    void insert(uint32_t value);
 };
 
 class HashTable {
@@ -21,7 +20,6 @@ private:
 public:
     HashTable();
     ~HashTable();
-    void init();
     uint32_t hashFunction(uint32_t value);
     void add(uint32_t value);
     bool find(uint32_t value);

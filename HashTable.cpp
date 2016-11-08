@@ -4,16 +4,6 @@
 
 using namespace std;
 
-/*void Bucket::insert(uint32_t value) {
-    if (offset == bucket_entries) {
-        bucket_entries = bucket_entries*2;
-        nodes = (uint32_t*) realloc(nodes, bucket_entries * sizeof(uint32_t));
-    }
-    nodes[offset] = value;
-    offset++;
-}
-*/
-
 HashTable::HashTable() {
     entries = HASH_ENTRIES;
     bucketData = (Bucket*) malloc(HASH_ENTRIES * sizeof(Bucket));
