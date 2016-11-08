@@ -51,6 +51,7 @@ void Buffer::addNewEdgeDirectly(uint32_t edge_id, uint32_t nodeId, NodeIndex &in
         index.setListTail(nodeId, new_listnode_id);
     }
 
+    index.addNeighbor(nodeId);
 }
 
 bool Buffer::addNewEdge(uint32_t edge_id, uint32_t nodeId, NodeIndex &index) {
@@ -81,7 +82,6 @@ bool Buffer::addNewEdge(uint32_t edge_id, uint32_t nodeId, NodeIndex &index) {
     if(len < N){ //if the capacity is not full add it
         nodes[listHead].set_neighbor(len, edge_id);
         nodes[listHead].set_length(len + 1);
-        return true; //edge added to existing list_node
     }
     else{ //else, alloc a new listnode and then add the edge
         new_listnode_id = allocNewNode();
@@ -91,7 +91,8 @@ bool Buffer::addNewEdge(uint32_t edge_id, uint32_t nodeId, NodeIndex &index) {
         nodes[new_listnode_id].set_neighbor(0, edge_id);
         nodes[new_listnode_id].set_length(1);
         index.setListTail(nodeId, new_listnode_id);
-        return true; //edge added to new listnode, return its id
     }
 
+    index.addNeighbor(nodeId);
+    return true; //edge added
 }

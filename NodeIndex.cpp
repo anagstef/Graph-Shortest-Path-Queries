@@ -11,6 +11,7 @@ NodeIndex::NodeIndex() {
     for (uint32_t i = 0; i < size; i++)
         // IndexedNodes[i] = false;
         Index[i].indexed = false;
+        Index[i].numOfNeighbors = 0;
 }
 
 NodeIndex::~NodeIndex() {
@@ -57,6 +58,7 @@ bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
         for (uint32_t i = size; i < new_size; i++) {
             // IndexedNodes[i] = false;
             Index[i].indexed = false;
+            Index[i].numOfNeighbors = 0;
         }
         size = new_size; //update index size
     }
