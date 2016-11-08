@@ -5,26 +5,26 @@
 #include <cstdint>
 
 //10067
-#define HASH_ENTRIES 500
-#define BUCKET_ENTRIES 15
+#define HASH_ENTRIES 500  //need a prime number
+#define BUCKET_ENTRIES 15 //chosen after tests
 
 struct Bucket {
-    uint32_t bucket_entries;
-    uint32_t offset;
-    uint32_t* nodes;
+    uint32_t bucket_entries; //entries of each bucket
+    uint32_t offset;         //until where is the bucket full
+    uint32_t* nodes;         //array of the contents of the bucket
 };
 
 class HashTable {
 private:
-    uint32_t entries;
-    Bucket* bucketData;
+    uint32_t entries;   //number of entries
+    Bucket* bucketData; //buckets
 public:
-    HashTable();
-    ~HashTable();
-    uint32_t hashFunction(uint32_t value);
-    void add(uint32_t value);
-    bool find(uint32_t value);
-    void printHT();
+    HashTable();  //constructor
+    ~HashTable(); //destructor
+    uint32_t hashFunction(uint32_t value); //simple modulo
+    void add(uint32_t value); //insert a value into hash table
+    bool find(uint32_t value); //search if the value already exists
+    void printHT(); //unit testing
 };
 
 #endif
