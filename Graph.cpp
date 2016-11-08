@@ -1,6 +1,4 @@
 #include "Graph.h"
-#include <queue>
-#include <unordered_set>
 
 using namespace std;
 
@@ -86,17 +84,89 @@ void Graph::add(uint32_t from, uint32_t to) {
 
 int Graph::query(uint32_t from, uint32_t to) {
     Queue ForwardFringe, BackwardsFringe;
-    // queue<uint32_t> ForwardFringe, BackwardsFringe;//////////////////////
     uint32_t temp, popedNode;
     HashTable Explored;
-    // unordered_set<uint32_t> Explored;//////////////////////
     int cost = 0, len;
     list_node* current;
     uint32_t* neighArray;
 
-    //////////////////////////////////////////////
-    ///////////// SIMPLE BFS /////////////////////
-    //////////////////////////////////////////////
+    // //////////////////////////////////////////////
+    // ///////////// SIMPLE BFS /////////////////////
+    // //////////////////////////////////////////////
+    //
+    // //get the neighbors of the two nodes
+    // uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
+    // uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
+    //
+    // //if one of the nodes dows not have any neighbors, then one of them is not indexed
+    // if(forward_neighbors == 0 || backwards_neighbors == 0) {
+    //     return -1;
+    // }
+    //
+    // //if it is the same node, then the cost is 0
+    // if(from == to){
+    //     return 0;
+    // }
+    //
+    // ForwardFringe.push(from);
+    //
+    // while(1){
+    //
+    //     //If one of the two fringes is empty, then there is no path
+    //     if(ForwardFringe.isEmpty())
+    //         return -1;
+    //
+    //       // if(ForwardFringe.empty())//////////////////////////
+    //       //   return -1;
+    //
+    //       temp = ForwardFringe.getSize();
+    //       // temp = ForwardFringe.size();//////////////////
+    //
+    //       //EXPANDING FORWARD BFS
+    //       for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
+    //           popedNode = ForwardFringe.pop();
+    //           // popedNode = ForwardFringe.front();///////////
+    //           // ForwardFringe.pop();//////////////////////
+    //           //if goal state return the total cost
+    //           if(Explored.find(popedNode))
+    //           // if(Explored.find(popedNode) != Explored.end())///////////////////////////
+    //               return cost; //shortest path found
+    //
+    //           //if this is not a goal, add it to Explored Set
+    //           Explored.add(popedNode);
+    //           // Explored.insert(popedNode);//////////////////////////////////////
+    //
+    //           //get current list node
+    //           current = Out_Buf.getListNode(Out.getListHead(popedNode));
+    //
+    //           while(1){ //loop for all neighbors
+    //               len = current->get_length();
+    //               neighArray = current->get_neighborArray();
+    //               for(int j=0; j<len; j++){ //for every node in a list_node
+    //                   //if the node is not already visited
+    //                   if(!Explored.find(neighArray[j]))
+    //                   // if(Explored.find(neighArray[j]) == Explored.end()){////////////////////////////////
+    //                       //add it to fringe
+    //                       ForwardFringe.push(neighArray[j]);
+    //                   // }
+    //               }
+    //
+    //               if(current->get_hasNext()){ //get the next list_node
+    //                   current = Out_Buf.getListNode(current->get_nextNode());
+    //               }
+    //               else{ //break loop if there are no more listnodes
+    //                   break;
+    //               }
+    //           }
+    //
+    //       }
+    //       cost++; //increment cost
+    // } //while(1)
+    //
+    //
+    // //////////////////////////////////////////////
+    // /////////////////// END //////////////////////
+    // //////////////////////////////////////////////
 
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
@@ -112,190 +182,102 @@ int Graph::query(uint32_t from, uint32_t to) {
         return 0;
     }
 
+    //add the nodes to each Fringe
     ForwardFringe.push(from);
+    BackwardsFringe.push(to);
 
+    //loop until solution is found or not found
     while(1){
 
         //If one of the two fringes is empty, then there is no path
-        if(ForwardFringe.isEmpty())
+        if(ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
             return -1;
 
-          // if(ForwardFringe.empty())//////////////////////////
-          //   return -1;
 
-          temp = ForwardFringe.getSize();
-          // temp = ForwardFringe.size();//////////////////
+        //select to expand the Fringe that has the least next neighbors
+        if(forward_neighbors <= backwards_neighbors){
+            forward_neighbors = 0; //init the sum
+            temp = ForwardFringe.getSize();
 
-          //EXPANDING FORWARD BFS
-          for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
-              popedNode = ForwardFringe.pop();
-              // popedNode = ForwardFringe.front();///////////
-              // ForwardFringe.pop();//////////////////////
-              //if goal state return the total cost
-              if(Explored.find(popedNode))
-              // if(Explored.find(popedNode) != Explored.end())///////////////////////////
-                  return cost; //shortest path found
+            //EXPANDING FORWARD BFS
+            for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
+                popedNode = ForwardFringe.pop();
+                //if goal state return the total cost
+                if(Explored.find(popedNode))
+                    return cost; //shortest path found
 
-              //if this is not a goal, add it to Explored Set
-              Explored.add(popedNode);
-              // Explored.insert(popedNode);//////////////////////////////////////
+                //if this is not a goal, add it to Explored Set
+                Explored.add(popedNode);
 
-              //get current list node
-              current = Out_Buf.getListNode(Out.getListHead(popedNode));
+                //get current list node
+                current = Out_Buf.getListNode(Out.getListHead(popedNode));
 
-              while(1){ //loop for all neighbors
-                  len = current->get_length();
-                  neighArray = current->get_neighborArray();
-                  for(int j=0; j<len; j++){ //for every node in a list_node
-                      //if the node is not already visited
-                      if(!Explored.find(neighArray[j]))
-                      // if(Explored.find(neighArray[j]) == Explored.end()){////////////////////////////////
-                          //add it to fringe
-                          ForwardFringe.push(neighArray[j]);
-                      // }
-                  }
+                while(1){ //loop for all neighbors
+                    len = current->get_length();
+                    neighArray = current->get_neighborArray();
+                    for(int j=0; j<len; j++){ //for every node in a list_node
+                        //if the node is not already visited
+                        if(!Explored.find(neighArray[j])){
+                            //add its neighbors to the variable-counter
+                            forward_neighbors += Out.getNumOfNeighbors(neighArray[j]);
+                            //add it to fringe
+                            ForwardFringe.push(neighArray[j]);
+                        }
+                    }
 
-                  if(current->get_hasNext()){ //get the next list_node
-                      current = Out_Buf.getListNode(current->get_nextNode());
-                  }
-                  else{ //break loop if there are no more listnodes
-                      break;
-                  }
-              }
+                    if(current->get_hasNext()){ //get the next list_node
+                        current = Out_Buf.getListNode(current->get_nextNode());
+                    }
+                    else{ //break loop if there are no more listnodes
+                        break;
+                    }
+                }
 
-          }
-          cost++; //increment cost
+            }
+            cost++; //increment cost
+        } else{
+            backwards_neighbors = 0;
+            temp = BackwardsFringe.getSize();
+
+            //EXPANDING BACKWARDS BFS
+            for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
+                popedNode = BackwardsFringe.pop();
+                //if goal state return the total cost
+                if(Explored.find(popedNode))
+                    return cost; //shortest path found
+
+                //if this is not a goal, add it to Explored Set
+                Explored.add(popedNode);
+
+                //get current list node
+                current = In_Buf.getListNode(In.getListHead(popedNode));
+
+                while(1){ //loop for all neighbors
+                    len = current->get_length();
+                    neighArray = current->get_neighborArray();
+                    for(int j=0; j<len; j++){ //for every node in a list_node
+                        //if the node is not already visited
+                        if(!Explored.find(neighArray[j])){
+                            //add its neighbors to the variable-counter
+                            backwards_neighbors += In.getNumOfNeighbors(neighArray[j]);
+                            //add it to fringe
+                            BackwardsFringe.push(neighArray[j]);
+                        }
+                    }
+
+                    if(current->get_hasNext()){ //get the next list_node
+                        current = In_Buf.getListNode(current->get_nextNode());
+                    }
+                    else{ //break loop if there are no more listnodes
+                        break;
+                    }
+                }
+
+            }
+            cost++; //increment cost
+        }
+
     } //while(1)
-
-
-    //////////////////////////////////////////////
-    /////////////////// END //////////////////////
-    //////////////////////////////////////////////
-
-    // //get the neighbors of the two nodes
-    // uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
-    // uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
-    //
-    // //if one of the nodes dows not have any neighbors, then one of them is not indexed
-    // if(forward_neighbors == 0 || backwards_neighbors == 0) {
-    //     return -1;
-    // }
-    //
-    // //if it is the same node, then the cost is 0
-    // if(from == to){
-    //     return 0;
-    // }
-    //
-    // //add the nodes to each Fringe
-    // ForwardFringe.push(from);
-    // BackwardsFringe.push(to);
-    //
-    // //loop until solution is found or not found
-    // while(1){
-    //
-    //     //If one of the two fringes is empty, then there is no path
-    //     // if(ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
-    //     //     return -1;
-    //
-    //     if(ForwardFringe.empty() || BackwardsFringe.empty())//////////////////////////
-    //         return -1;
-    //
-    //     //select to expand the Fringe that has the least next neighbors
-    //     if(forward_neighbors <= backwards_neighbors){
-    //         forward_neighbors = 0; //init the sum
-    //         // temp = ForwardFringe.getSize();
-    //         temp = ForwardFringe.size();//////////////////
-    //
-    //         //EXPANDING FORWARD BFS
-    //         for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
-    //             // popedNode = ForwardFringe.pop();
-    //             popedNode = ForwardFringe.front();///////////
-    //             ForwardFringe.pop();//////////////////////
-    //             //if goal state return the total cost
-    //             // if(Explored.find(popedNode))
-    //             if(Explored.find(popedNode) != Explored.end())///////////////////////////
-    //                 return cost - 1; //shortest path found
-    //
-    //             //if this is not a goal, add it to Explored Set
-    //             // Explored.add(popedNode);
-    //             Explored.insert(popedNode);//////////////////////////////////////
-    //
-    //             //get current list node
-    //             current = Out_Buf.getListNode(Out.getListHead(popedNode));
-    //
-    //             while(1){ //loop for all neighbors
-    //                 len = current->get_length();
-    //                 neighArray = current->get_neighborArray();
-    //                 for(int j=0; j<len; j++){ //for every node in a list_node
-    //                     //if the node is not already visited
-    //                     // if(!Explored.find(neighArray[j]))
-    //                     if(Explored.find(neighArray[j]) == Explored.end()){////////////////////////////////
-    //                         //add its neighbors to the variable-counter
-    //                         forward_neighbors += Out.getNumOfNeighbors(neighArray[j]);
-    //                         //add it to fringe
-    //                         ForwardFringe.push(neighArray[j]);
-    //                     }
-    //                 }
-    //
-    //                 if(current->get_hasNext()){ //get the next list_node
-    //                     current = Out_Buf.getListNode(current->get_nextNode());
-    //                 }
-    //                 else{ //break loop if there are no more listnodes
-    //                     break;
-    //                 }
-    //             }
-    //
-    //         }
-    //         cost++; //increment cost
-    //     } else{
-    //         backwards_neighbors = 0;
-    //         // temp = BackwardsFringe.getSize();
-    //         temp = BackwardsFringe.size();
-    //
-    //         //EXPANDING BACKWARDS BFS
-    //         for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
-    //             // popedNode = BackwardsFringe.pop();
-    //             popedNode = BackwardsFringe.front();///////////
-    //             BackwardsFringe.pop();//////////////////////
-    //             //if goal state return the total cost
-    //             // if(Explored.find(popedNode))
-    //             if(Explored.find(popedNode) != Explored.end())///////////////////////////
-    //                 return cost - 1; //shortest path found
-    //
-    //             //if this is not a goal, add it to Explored Set
-    //             // Explored.add(popedNode);
-    //             Explored.insert(popedNode);//////////////////////////////////////
-    //
-    //             //get current list node
-    //             current = In_Buf.getListNode(In.getListHead(popedNode));
-    //
-    //             while(1){ //loop for all neighbors
-    //                 len = current->get_length();
-    //                 neighArray = current->get_neighborArray();
-    //                 for(int j=0; j<len; j++){ //for every node in a list_node
-    //                     //if the node is not already visited
-    //                     // if(!Explored.find(neighArray[j])){
-    //                     if(Explored.find(neighArray[j]) == Explored.end()){////////////////////////////////
-    //                         //add its neighbors to the variable-counter
-    //                         backwards_neighbors += In.getNumOfNeighbors(neighArray[j]);
-    //                         //add it to fringe
-    //                         BackwardsFringe.push(neighArray[j]);
-    //                     }
-    //                 }
-    //
-    //                 if(current->get_hasNext()){ //get the next list_node
-    //                     current = In_Buf.getListNode(current->get_nextNode());
-    //                 }
-    //                 else{ //break loop if there are no more listnodes
-    //                     break;
-    //                 }
-    //             }
-    //
-    //         }
-    //         cost++; //increment cost
-    //     }
-    //
-    // } //while(1)
 }
 
 //PRINTING GRAPH FOR UNIT TESTING
