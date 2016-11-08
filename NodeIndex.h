@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <new>
-#define INDEX_INIT_SIZE 15
+#define INDEX_INIT_SIZE 2
 
 typedef struct {
   uint32_t listHead;
@@ -27,6 +27,7 @@ public:
     uint32_t getListHead(uint32_t nodeId);
     uint32_t getListTail(uint32_t nodeId);
     uint32_t getNumOfNeighbors(uint32_t nodeId);
+    uint32_t getSize() {return size;}
     void addNeighbor(uint32_t nodeId){ (Index[nodeId].numOfNeighbors)++; }
     void setListTail(uint32_t nodeId, uint32_t tail);
     bool insertNode(uint32_t nodeId, uint32_t buffer_offset);

@@ -7,6 +7,8 @@
 #include <new>
 #include "Buffer.h"
 #include "NodeIndex.h"
+#include "HashTable.h"
+#include "Queue.h"
 
 class Graph{
 private:
@@ -17,6 +19,7 @@ private:
 public:
     void add(uint32_t from, uint32_t to);
     int query(uint32_t from, uint32_t to);
+    void printGraph();
 };
 
 #endif

@@ -4,8 +4,9 @@
 #include <iostream>
 #include <cstdint>
 
-#define HASH_ENTRIES 10067
-#define BUCKET_ENTRIES 50
+//10067
+#define HASH_ENTRIES 500
+#define BUCKET_ENTRIES 15
 
 struct Bucket {
     uint32_t bucket_entries;
