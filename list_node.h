@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
-#define N 2 //the size of the static array on each list node
+#define N 10 //the size of the static array on each list node
 
 class list_node {
 

@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <new>
-#define INDEX_INIT_SIZE 2
+#define INDEX_INIT_SIZE 15
 
 typedef struct {
   uint32_t listHead; //pointer to the starting listnode of its neighbors
