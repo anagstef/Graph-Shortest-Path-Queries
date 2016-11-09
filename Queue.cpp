@@ -32,7 +32,6 @@ bool Queue::isFull() { //return the queue status
 
 void Queue::push(uint32_t value) {
     if (isFull()) { //if queue is full
-        cout << "Increasing" << endl;
         increaseCapacity(); //realloc the array
     }
     queue[end] = value; //append new element at the end of the queue
@@ -44,8 +43,8 @@ void Queue::increaseCapacity() {
     //printQueue();
     uint32_t new_capacity = capacity*2; //double the capacity
     queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * new_capacity); //realloc a new array
-    uint32_t j = capacity+1;
-    for (uint32_t i = 0; i <=end; ++i) { //move the values from 0 to end
+    uint32_t j = front + size - end;
+    for (uint32_t i = 0; i < end; ++i) { //move the values from 0 to end
         queue[j] = queue[i]; //next to the last value of the old array, now realloced
         j++;
     }
@@ -115,10 +114,11 @@ void Queue::printQueue() {
             printf("%d, ", queue[i]);
         }
     }
+    cout << endl;
     cout << "------------------------------------" << endl;
 }
 
-int main(void) {
+/*int main(void) {
 	Queue q;
     ifstream input;
     input.open("tinyGraph.txt");
@@ -157,4 +157,4 @@ int main(void) {
     }
     q.printQueue();
     return 0;
-}
+}*/
