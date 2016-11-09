@@ -31,45 +31,29 @@ bool Queue::isFull() { //return the queue status
 }
 
 void Queue::push(uint32_t value) {
-//    if (isEmpty()) { //if queue is empty
-//        cout << "pushing " << value << endl;
-//        queue[front] = value;   //append the element at the front of the queue
-//        end = (end+1)%capacity; //set ending node
-//        cout << queue[front] << " " << end << endl;
-//        size++; //increase the size (how many elements are in the queue)
-//        return;
-//    }
     if (isFull()) { //if queue is full
+        cout << "Increasing" << endl;
         increaseCapacity(); //realloc the array
-    }
-    else {
-        cout << "No increase needed" << endl;
     }
     queue[end] = value; //append new element at the end of the queue
     end = (end+1)%capacity; //set ending node
     size++; //increase the size
-    cout << "Pushed " << value << endl;
-    printQueue();
 }
 
 void Queue::increaseCapacity() {
-    cout << "MEGALWNWWWW" << endl;
     //printQueue();
-    uint32_t new_capacity = capacity*2;
-    cout << "cap " << capacity << " new cap " << new_capacity << endl;
-    queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * new_capacity);
+    uint32_t new_capacity = capacity*2; //double the capacity
+    queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * new_capacity); //realloc a new array
     uint32_t j = capacity+1;
-    //cout << "--------" << queue[0] << endl;
-    for (uint32_t i = 0; i <=end; ++i) {
-        queue[j] = queue[i];
+    for (uint32_t i = 0; i <=end; ++i) { //move the values from 0 to end
+        queue[j] = queue[i]; //next to the last value of the old array, now realloced
         j++;
     }
-    capacity = new_capacity;
+    capacity = new_capacity; //set the new capacity
+    end = front + size; //end is now front + how many nodes we have
 
     /*uint32_t* new_queue = (uint32_t*) malloc(sizeof(uint32_t) * new_capacity);
     uint32_t j = 0;
-
-
     if (front == 0) {
         for (uint32_t i = front; i < capacity-1; ++i) {
             new_queue[j] = queue[i];
@@ -86,7 +70,6 @@ void Queue::increaseCapacity() {
             j++;
         }
     }
-
     front = 0;
     end = capacity;
     free(queue);
@@ -112,19 +95,19 @@ void Queue::clear() {
 
 void Queue::printQueue() {
     if (front == 0) {
-        cout << "1 " << front << " " << end << endl;
+        cout << "1 " << front << " " << end << " " << capacity << " " << size << endl;
         for (uint32_t i = front; i < end; ++i) {
             printf("%d, ", queue[i]);
         }
     }
     else if (front < end) {
-        cout << "2 " << front << " " << end << endl;
+        cout << "2 " << front << " " << end << " " << capacity << " " << size << endl;
         for (uint32_t i = front ; i < end; ++i) {
             printf("%d, ", queue[i]);
         }
     }
     else if (front > end) {
-        cout << "3 " << front << " " << end << endl;
+        cout << "3 " << front << " " << end << " " << capacity << " " << size << endl;
         for (uint32_t i = front; i < capacity; ++i) {
             printf("%d, ", queue[i]);
         }
@@ -137,9 +120,27 @@ void Queue::printQueue() {
 
 int main(void) {
 	Queue q;
-    /*ifstream input;
+    ifstream input;
     input.open("tinyGraph.txt");
     string line;
+    if (input.is_open()) {
+        do {
+            getline(input, line);
+            if (line != "S") {
+                uint32_t node;
+                istringstream command(line);
+                command >> node;
+                q.push(node);
+            }
+        } while (line != "S");
+        input.close();
+    }
+    q.printQueue();
+    q.pop();
+    q.pop();
+    q.pop();
+    q.printQueue();
+    input.open("tinyGraph.txt");
     if (input.is_open()) {
         do {
             getline(input, line);
@@ -147,28 +148,13 @@ int main(void) {
                 uint32_t node, neighbour;
                 istringstream command(line);
                 command >> node;
+                cout << "neighbour " << neighbour << endl;
                 command >> neighbour;
-                q.push(node);
+                q.push(neighbour);
             }
         } while (line != "S");
         input.close();
-    }*/
-    //q.push(0);
-    //q.push(1);
-//    q.printQueue();
-
-    for (uint32_t i = 0; i < 100; i++) {
-        q.push(i);
     }
     q.printQueue();
-    /*q.pop();
-    q.pop();
-    q.pop();
-    q.pop();
-    q.printQueue();*/
-//    for (uint32_t i = 100; i < 200; i++) {
-//        q.push(i);
-//    }
-//    q.printQueue();
-	return 0;
+    return 0;
 }
