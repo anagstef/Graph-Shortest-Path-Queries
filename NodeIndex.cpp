@@ -18,11 +18,17 @@ NodeIndex::~NodeIndex() {
 }
 
 uint32_t NodeIndex::getListHead(uint32_t nodeId) {
-    return Index[nodeId].listHead;
+    if(isIndexed(nodeId))
+      return Index[nodeId].listHead;
+    else
+      return 0;
 }
 
 uint32_t NodeIndex::getListTail(uint32_t nodeId) {
-    return Index[nodeId].listTail;
+    if(isIndexed(nodeId))
+      return Index[nodeId].listTail;
+    else
+      return 0;
 }
 
 uint32_t NodeIndex::getNumOfNeighbors(uint32_t nodeId) {
