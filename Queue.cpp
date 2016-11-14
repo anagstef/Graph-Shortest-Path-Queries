@@ -1,15 +1,16 @@
 #include "Queue.h"
 #include <fstream>
 #include <sstream>
+#include <queue>
 
 using namespace std;
 
 Queue::Queue() {
     capacity = QUEUE_INIT_SIZE; //init capacity
     queue = (uint32_t*) malloc(sizeof(uint32_t) * capacity); //malloc the array
-    front = 0; //set front to 0
-    end = 0;   //set end to 0
-    size = 0;  //queue is empty
+    front = 0;
+    end = -1;
+    size = 0;
 }
 
 Queue::~Queue() {
@@ -24,62 +25,64 @@ bool Queue::isEmpty() { //return the queue status
 }
 
 bool Queue::isFull() { //return the queue status
-    if ((size+1) == capacity) {
+    if (size == capacity) {
         return true;
     }
     return false;
 }
 
 void Queue::push(uint32_t value) {
-    if (isFull()) { //if queue is full
-        increaseCapacity(); //realloc the array
+    /*if (value == 42) {
+        cout << "Before 42" << endl;
+        printQueue();
+        cout << "end is " << end << endl;
+        cout << "capacity is " << capacity << endl;
+        cout << "size is " << size << endl;
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+    }*/
+    if (isFull()) {
+        //cout << "INCREASING CAPACITY AT " << value << endl;
+        increaseCapacity();
     }
-    queue[end] = value; //append new element at the end of the queue
-    end = (end+1)%capacity; //set ending node
-    size++; //increase the size
+    end++;
+    if (end > capacity && size != capacity) {
+        end = 0;
+    }
+    queue[end] = value;
+    size++;
+    /*if (value == 42) {
+        cout << "After 42" << endl;
+        printQueue();
+        cout << "end is " << end << endl;
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+    }*/
 }
 
 void Queue::increaseCapacity() {
-    //printQueue();
-    uint32_t new_capacity = capacity*2; //double the capacity
-    queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * new_capacity); //realloc a new array
-    uint32_t j = front + size - end;
-    for (uint32_t i = 0; i < end; ++i) { //move the values from 0 to end
-        queue[j] = queue[i]; //next to the last value of the old array, now realloced
-        j++;
-    }
-    capacity = new_capacity; //set the new capacity
-    end = front + size; //end is now front + how many nodes we have
-
-    /*uint32_t* new_queue = (uint32_t*) malloc(sizeof(uint32_t) * new_capacity);
-    uint32_t j = 0;
-    if (front == 0) {
-        for (uint32_t i = front; i < capacity-1; ++i) {
-            new_queue[j] = queue[i];
-            j++;
+    //cout << "klspr" << endl;
+    int new_capacity = capacity*2;
+    queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * new_capacity);
+    int temp_end = size + 1;
+    if (queue[0] != queue[front]) {
+        //printf("kalispera ");
+        for (int i = 0; i <= end; ++i) {
+        //    printf("%d, ", queue[i]);
+            queue[temp_end] = queue[i];
+            temp_end++;
         }
+        //cout << endl;
     }
-    else {
-        for (uint32_t i = front; i < capacity-1; ++i) {
-            new_queue[j] = queue[i];
-            j++;
-        }
-        for (uint32_t i = 0; i < end; ++i) {
-            new_queue[j] = queue[i];
-            j++;
-        }
-    }
-    front = 0;
-    end = capacity;
-    free(queue);
     capacity = new_capacity;
-    queue = new_queue;*/
+    end = front + size - 1;
 }
 
 uint32_t Queue::pop() {
     uint32_t ret_val;
     ret_val = queue[front];
-    front = front+1;
+    front++;
+    if (front == capacity) {
+        front = 0;
+    }
     size--;
     return ret_val;
 }
@@ -87,30 +90,35 @@ uint32_t Queue::pop() {
 void Queue::clear() {
     capacity = QUEUE_INIT_SIZE;
     front = 0;
-    end = 0;
+    end = -1;
     size = 0;
     queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * capacity);
 }
 
 void Queue::printQueue() {
     if (front == 0) {
-        cout << "1 " << front << " " << end << " " << capacity << " " << size << endl;
-        for (uint32_t i = front; i < end; ++i) {
+        //cout << "1 " << front << " " << end << " " << capacity << " " << size << endl;
+        for (int i = front; i <= end; ++i) {
+            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
+
         }
     }
     else if (front < end) {
-        cout << "2 " << front << " " << end << " " << capacity << " " << size << endl;
-        for (uint32_t i = front ; i < end; ++i) {
+        //cout << "2 " << front << " " << end << " " << capacity << " " << size << endl;
+        for (int i = front ; i <= end; ++i) {
+            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
         }
     }
     else if (front > end) {
-        cout << "3 " << front << " " << end << " " << capacity << " " << size << endl;
-        for (uint32_t i = front; i < capacity; ++i) {
+        //cout << "3 " << front << " " << end << " " << capacity << " " << size << endl;
+        for (int i = front; i <= capacity; ++i) {
+            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
         }
-        for (uint32_t i = 0; i < end; ++i) {
+        for (int i = 0; i <= end; ++i) {
+            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
         }
     }
@@ -120,9 +128,12 @@ void Queue::printQueue() {
 
 /*int main(void) {
 	Queue q;
+    queue<uint32_t> q1;
+    queue<uint32_t> temp1;
     ifstream input;
     input.open("tinyGraph.txt");
     string line;
+    int i = 0;
     if (input.is_open()) {
         do {
             getline(input, line);
@@ -130,16 +141,63 @@ void Queue::printQueue() {
                 uint32_t node;
                 istringstream command(line);
                 command >> node;
-                q.push(node);
+                q.push(i);
+                q1.push(i);
+                ++i;
             }
-        } while (line != "S");
+        } while (line != "S" && i < 25);
         input.close();
     }
     q.printQueue();
-    q.pop();
-    q.pop();
-    q.pop();
+    temp1 = q1;
+    cout << "STD QUEUE" << endl;
+    while (!temp1.empty()) {
+        uint32_t val = temp1.front();
+        printf("%d, ", val);
+        temp1.pop();
+    }
+    cout << endl;
+    cout << "END OF STD QUEUE" << endl;
+    q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();
+    q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();
     q.printQueue();
+    temp1 = q1;
+    cout << "STD QUEUE" << endl;
+    while (!temp1.empty()) {
+        uint32_t val = temp1.front();
+        printf("%d, ", val);
+        temp1.pop();
+    }
+    cout << endl;
+    cout << "END OF STD QUEUE" << endl;
+    cout << "Add more" << endl;
+    for (i = 35; i < 45; ++i) {
+        q.push(i);
+        q1.push(i);
+    }
+    q.printQueue();
+    temp1 = q1;
+    cout << "STD QUEUE" << endl;
+    while (!temp1.empty()) {
+        uint32_t val = temp1.front();
+        printf("%d, ", val);
+        temp1.pop();
+    }
+    cout << endl;
+    cout << "END OF STD QUEUE" << endl;
+    cout << "Pop more" << endl;
+    q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();q.pop();
+    q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();q1.pop();
+    q.printQueue();
+    temp1 = q1;
+    cout << "STD QUEUE" << endl;
+    while (!temp1.empty()) {
+        uint32_t val = temp1.front();
+        printf("%d, ", val);
+        temp1.pop();
+    }
+    cout << endl;
+    cout << "END OF STD QUEUE" << endl;
     input.open("tinyGraph.txt");
     if (input.is_open()) {
         do {
@@ -148,13 +206,40 @@ void Queue::printQueue() {
                 uint32_t node, neighbour;
                 istringstream command(line);
                 command >> node;
-                cout << "neighbour " << neighbour << endl;
                 command >> neighbour;
                 q.push(neighbour);
+                q1.push(neighbour);
             }
         } while (line != "S");
         input.close();
     }
+    for (i = 0; i < 36; ++i) {
+        q.push(i);
+        q1.push(i);
+    }
     q.printQueue();
+    temp1 = q1;
+    cout << "STD QUEUE" << endl;
+    while (!temp1.empty()) {
+        uint32_t val = temp1.front();
+        printf("%d, ", val);
+        temp1.pop();
+    }
+    cout << endl;
+    cout << "END OF STD QUEUE" << endl;
+    for (i = 0; i < 20; ++i) {
+        q.pop();
+        q1.pop();
+    }
+    q.printQueue();
+    temp1 = q1;
+    cout << "STD QUEUE" << endl;
+    while (!temp1.empty()) {
+        uint32_t val = temp1.front();
+        printf("%d, ", val);
+        temp1.pop();
+    }
+    cout << endl;
+    cout << "END OF STD QUEUE" << endl;
     return 0;
 }*/

@@ -3,17 +3,17 @@
 
 #include <iostream>
 #include <cstdint>
-#define QUEUE_INIT_SIZE 2
+#define QUEUE_INIT_SIZE 100
 
 //cyclic array for queue implementation
 
 class Queue {
 private:
-    uint32_t capacity; //how many uint32_t can fit in the table
+    int capacity; //how many uint32_t can fit in the table
     uint32_t* queue;   //the table
-    uint32_t front;    //1st element of the table
-    uint32_t end;      //last element of the table
-    uint32_t size;     //offset
+    int front;    //1st element of the table
+    int end;      //last element of the table
+    int size;     //offset
 public:
     Queue();
     ~Queue();
@@ -26,10 +26,10 @@ public:
     void printQueue(); //unit testing
     //setters - getters
     uint32_t* getQueue() { return queue; }
-    uint32_t  getCap() { return capacity; }
-    uint32_t  getFront() { return front; }
-    uint32_t  getEnd() { return end; }
-    uint32_t  getSize() { return size; }
+    int  getCap() { return capacity; }
+    int  getFront() { return front; }
+    int  getEnd() { return end; }
+    int  getSize() { return size; }
 };
 
 #endif

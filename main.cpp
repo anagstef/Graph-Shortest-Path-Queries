@@ -14,7 +14,7 @@ void create_graph(istream &input, Graph &graph) {
     string line;
     do {
         getline(input, line);
-        if (line != "S") {
+        if (line != "S" && line != "") {
             uint32_t node, neighbour;
             istringstream command(line);
             command >> node;
@@ -68,6 +68,7 @@ int main(int argc, char const *argv[]) {
         create_graph(input, graph);
         input.close();
         // graph.printGraph();
+        //cout << "end of insertion" << endl;
         input.open(&argv[2][0]);
         if (!input.is_open()) {
             cout << "Couldn't open file. End of execution." << endl;

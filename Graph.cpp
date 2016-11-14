@@ -84,8 +84,8 @@ void Graph::add(uint32_t from, uint32_t to) {
 
 
 int Graph::query(uint32_t from, uint32_t to) {
-    // Queue ForwardFringe, BackwardsFringe;
-    queue<uint32_t> ForwardFringe, BackwardsFringe;
+     Queue ForwardFringe, BackwardsFringe;
+    //queue<uint32_t> ForwardFringe, BackwardsFringe;
     uint32_t temp, popedNode;
     HashTable ForwardExplored, BackwardsExplored;
     int cost = 0, len;
@@ -192,7 +192,7 @@ int Graph::query(uint32_t from, uint32_t to) {
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
     uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
 
-    //if one of the nodes dows not have any neighbors, then one of them is not indexed
+    //if one of the nodes does not have any neighbors, then one of them is not indexed
     if(forward_neighbors == 0 || backwards_neighbors == 0) {
         return -1;
     }
@@ -214,26 +214,26 @@ int Graph::query(uint32_t from, uint32_t to) {
     while(1){
 
         //If one of the two fringes is empty, then there is no path
-        // if(ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
-        //     return -1;
+         if(ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
+             return -1;
 
-        if(ForwardFringe.empty() || BackwardsFringe.empty())
-            return -1;
+        //if(ForwardFringe.empty() || BackwardsFringe.empty())
+        //    return -1;
 
 
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
             forward_neighbors = 0; //init the sum
-            // temp = ForwardFringe.getSize();
-            temp = ForwardFringe.size();
+             temp = ForwardFringe.getSize();
+            //temp = ForwardFringe.size();
             cost++;
 
             //EXPANDING FORWARD BFS
             for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
                 // cout << "Size of ForwardFringe is: " << ForwardFringe.getSize() << endl;
-                // popedNode = ForwardFringe.pop();
-                popedNode = ForwardFringe.front();
-                ForwardFringe.pop();
+                 popedNode = ForwardFringe.pop();
+                // popedNode = ForwardFringe.front();
+                //ForwardFringe.pop();
 
 
 
@@ -285,16 +285,16 @@ int Graph::query(uint32_t from, uint32_t to) {
             // cost++; //increment cost
         } else{
             backwards_neighbors = 0;
-            // temp = BackwardsFringe.getSize();
-            temp = BackwardsFringe.size();
+            temp = BackwardsFringe.getSize();
+            //temp = BackwardsFringe.size();
             cost++;
 
             //EXPANDING BACKWARDS BFS
             for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
               // cout << "Size of BackwardsFringe is: " << BackwardsFringe.getSize() << endl;
-                // popedNode = BackwardsFringe.pop();
-                popedNode = BackwardsFringe.front();
-                BackwardsFringe.pop();
+                 popedNode = BackwardsFringe.pop();
+                //popedNode = BackwardsFringe.front();
+                //BackwardsFringe.pop();
 
 
 
