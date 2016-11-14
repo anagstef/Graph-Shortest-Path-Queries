@@ -25,21 +25,13 @@ bool Queue::isEmpty() { //return the queue status
 }
 
 bool Queue::isFull() { //return the queue status
-    if (size == capacity) {
+    if (size == capacity - 1) {
         return true;
     }
     return false;
 }
 
 void Queue::push(uint32_t value) {
-    /*if (value == 42) {
-        cout << "Before 42" << endl;
-        printQueue();
-        cout << "end is " << end << endl;
-        cout << "capacity is " << capacity << endl;
-        cout << "size is " << size << endl;
-        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-    }*/
     if (isFull()) {
         //cout << "INCREASING CAPACITY AT " << value << endl;
         increaseCapacity();
@@ -50,27 +42,24 @@ void Queue::push(uint32_t value) {
     }
     queue[end] = value;
     size++;
-    /*if (value == 42) {
-        cout << "After 42" << endl;
-        printQueue();
-        cout << "end is " << end << endl;
-        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-    }*/
 }
 
 void Queue::increaseCapacity() {
-    //cout << "klspr" << endl;
     int new_capacity = capacity*2;
     queue = (uint32_t*) realloc(queue, sizeof(uint32_t) * new_capacity);
-    int temp_end = size + 1;
-    if (queue[0] != queue[front]) {
-        //printf("kalispera ");
+    //int temp_end = size + 1;
+    //if (queue[0] != queue[front]) {
+        //for (int i = 0; i <= end; ++i) {
+        //  queue[temp_end] = queue[i];
+        //  temp_end++;
+        //}
+    //}
+    int temp_end = capacity;
+    if (end < front) {
         for (int i = 0; i <= end; ++i) {
-        //    printf("%d, ", queue[i]);
-            queue[temp_end] = queue[i];
             temp_end++;
+            queue[temp_end] = queue[i];
         }
-        //cout << endl;
     }
     capacity = new_capacity;
     end = front + size - 1;
@@ -99,7 +88,6 @@ void Queue::printQueue() {
     if (front == 0) {
         //cout << "1 " << front << " " << end << " " << capacity << " " << size << endl;
         for (int i = front; i <= end; ++i) {
-            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
 
         }
@@ -107,23 +95,20 @@ void Queue::printQueue() {
     else if (front < end) {
         //cout << "2 " << front << " " << end << " " << capacity << " " << size << endl;
         for (int i = front ; i <= end; ++i) {
-            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
         }
     }
     else if (front > end) {
         //cout << "3 " << front << " " << end << " " << capacity << " " << size << endl;
         for (int i = front; i <= capacity; ++i) {
-            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
         }
         for (int i = 0; i <= end; ++i) {
-            //printf(" -%d-  %d, ", i, queue[i]);
             printf("%d, ", queue[i]);
         }
     }
     cout << endl;
-    cout << "------------------------------------" << endl;
+    cout << "-------------------------------------------------------------------" << endl;
 }
 
 /*int main(void) {

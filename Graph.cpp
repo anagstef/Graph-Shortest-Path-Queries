@@ -220,7 +220,6 @@ int Graph::query(uint32_t from, uint32_t to) {
         //if(ForwardFringe.empty() || BackwardsFringe.empty())
         //    return -1;
 
-
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
             forward_neighbors = 0; //init the sum
