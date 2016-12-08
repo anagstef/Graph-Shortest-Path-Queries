@@ -1,5 +1,6 @@
 #include "Graph.h"
-#include <queue>
+//#include "HT_Template.h"
+#include "Queue_.h"
 
 using namespace std;
 
@@ -84,10 +85,15 @@ void Graph::add(uint32_t from, uint32_t to) {
 
 
 int Graph::query(uint32_t from, uint32_t to) {
-     Queue ForwardFringe, BackwardsFringe;
-    //queue<uint32_t> ForwardFringe, BackwardsFringe;
     uint32_t temp, popedNode;
-    HashTable ForwardExplored, BackwardsExplored;
+    Queue<uint32_t> ForwardFringe;
+    Queue<uint32_t> BackwardsFringe;
+    //Queue ForwardFringe;
+    //Queue BackwardsFringe;
+    HashTable ForwardExplored;
+    HashTable BackwardsExplored;
+    //HashTable<uint32_t> ForwardExplored;
+    //HashTable<uint32_t> BackwardsExplored;
     int cost = 0, len;
     list_node* current;
     uint32_t* neighArray;
@@ -254,8 +260,11 @@ int Graph::query(uint32_t from, uint32_t to) {
                     len = current->get_length();
                     neighArray = current->get_neighborArray();
                     for(int j=0; j<len; j++){ //for every node in a list_node
-                        if(BackwardsExplored.find(neighArray[j]))
-                          return cost;
+                        if(BackwardsExplored.find(neighArray[j])) {
+                            //ForwardFringe.clear();
+                            //BackwardsFringe.clear();
+                            return cost;
+                        }
                         if(!ForwardExplored.find(neighArray[j])){
                             ForwardExplored.add(neighArray[j]);
                             forward_neighbors += Out.getNumOfNeighbors(neighArray[j]);
@@ -316,8 +325,11 @@ int Graph::query(uint32_t from, uint32_t to) {
                     len = current->get_length();
                     neighArray = current->get_neighborArray();
                     for(int j=0; j<len; j++){ //for every node in a list_node
-                        if(ForwardExplored.find(neighArray[j]))
-                          return cost;
+                        if(ForwardExplored.find(neighArray[j])) {
+                            //ForwardFringe.clear();
+                            //BackwardsFringe.clear();
+                            return cost;
+                        }
                         if(!BackwardsExplored.find(neighArray[j])){
                             BackwardsExplored.add(neighArray[j]);
                             backwards_neighbors += In.getNumOfNeighbors(neighArray[j]);

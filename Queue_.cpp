@@ -6,107 +6,80 @@
 using namespace std;
 
 template <class T>
-Queue<T>::Queue(int d) {
+Queue<T>::Queue() {
+//Queue::Queue() {
     capacity = QUEUE_INIT_SIZE; //init capacity
-    currsize = 0;
-    data = d;
-    front.line = 0;
-    end.line = -1;
-    front.column = 0;
-    end.column = -1;
-    int arrays;
-    arrays = data/capacity;
-    if (arrays != 0) arrays++;
-    queue = (T**) malloc(arrays * sizeof(T*));
-    queue[0] = (T*) malloc(capacity * sizeof(T));
+    size = 0;
+    front = 0;
+    end = 0;
+    queue = (uint32_t*) malloc(capacity * sizeof(uint32_t));
+    //printf("Queue is ready\n");
 }
 
 template <class T>
 Queue<T>::~Queue() {
+//Queue::~Queue() {
+    free(queue);
+}
 
+template <class T>
+void Queue<T>::clear() {
+//void Queue::clear() {
+    size = 0;
+    front = 0;
+    end = 0;
 }
 
 template <class T>
 bool Queue<T>::isFull() {
-    if (currsize == datasize) return true;
+//bool Queue::isFull() {
+    if (end == capacity) return true;
     return false;
 }
 
 template <class T>
 bool Queue<T>::isEmpty() {
-    if (currsize == 0) return true;
+//bool Queue::isEmpty() {
+    if (size == 0) return true;
     return false;
 }
 
 template <class T>
-T Queue<T>::pop() {
-    T value = queue[front.line][front.column];
-    front.column++;
-    if (front.column == capacity) {
-        free(queue[front.line]);
-        front.line = front.line + 1;
-        front.column = 0;
-    }
-    currsize--;
-    return value;
-}
-
-template <class T>
 void Queue<T>::push(T value) {
-    printf("Inserting --%u\n", value);
-    if (end.line == -1) {
-        queue[0][0] = value;
-        end.column = 1;
-        end.line = 0;
-        currsize++;
+//void Queue::push(uint32_t value) {
+    if (isFull()) {
+        capacity = capacity*2;
+        //queue = (uint32_t*) realloc(queue, capacity*sizeof(uint32_t));
+        queue = (T*) realloc(queue, capacity*sizeof(T));
+        queue[end] = value;
+        end++;
+        size++;
         return;
     }
-    else if (end.column == capacity) {
-        printf("New array for %u line: %d column: %d\n", value, end.line, end.column);
-        queue[end.line + 1] = (T*) malloc(capacity * sizeof(T));
-        end.line = end.line + 1;
-        end.column = 0;
-        queue[end.line][0] = value;
-        end.column = end.column + 1;
-        currsize++;
-        return;
-    }
-    else {
-        queue[end.line][end.column] = value;
-        end.column = end.column + 1;
-        currsize++;
-        return;
-    }
+    queue[end] = value;
+    end++;
+    size++;
+    return;
 }
 
 template <class T>
-void Queue<T>::clear() {
-
+T Queue<T>::pop() {
+//uint32_t Queue::pop() {
+    //uint32_t ret_value = queue[front];
+    T ret_value = queue[front];
+    front++;
+    size--;
+    return ret_value;
 }
 
-template <class T>
-void Queue<T>::printQueue() {
-    int i, j;
-    printf("FL %d FC %d EL %d EC %d\n", front.line, front.column, end.line, end.column);
-    for (i = front.line; i <= end.line; ++i) {
-        if (i == front.line) {
-            for (j = front.column; j < capacity; ++j) {
-                //printf("-i %d- -j %d-", i,j);
-                printf("%d, ", queue[i][j]);
-            }
-        }
-        else {
-            for (j = 0; j < capacity; ++j) {
-                //printf("-i %d- -j %d-", i,j);
-                printf("%d, ", queue[i][j]);
-            }
-        }
-    }
-    cout << endl;
-}
+//template <class T>
+//void Queue<T>::printQueue() {
+//    for (int i = front; i < end; ++i) printf("%u, ", queue[i]);
+//    cout << endl;
+//}
 
 /*int main(void) {
-	Queue<uint32_t> q(500);
+	Queue<uint32_t> q;
     queue<uint32_t> q1;
     queue<uint32_t> temp1;
     ifstream input;
@@ -221,4 +194,5 @@ void Queue<T>::printQueue() {
     cout << endl;
     cout << "END OF STD QUEUE" << endl;
     return 0;
-}*/
+}
+*/

@@ -3,25 +3,18 @@
 
 #include <iostream>
 #include <cstdint>
-#define QUEUE_INIT_SIZE 10
-
-struct line_col {
-    int line;
-    int column;
-};
+#define QUEUE_INIT_SIZE 100
 
 template <class T>
 class Queue {
 private:
-    int datasize;
+    int front;
+    int end;
     int capacity;
-    int currsize;
-    int data;
-    line_col front;
-    line_col end;
-    T** queue;
+    int size;
+    T* queue;
 public:
-    Queue(int data);
+    Queue();
     ~Queue();
     T pop();
     void push(T value);
@@ -31,11 +24,12 @@ public:
     void clear(); //reset the queue
     void printQueue(); //unit testing
     //setters - getters
-    T** getQueue() { return queue; }
+    T* getQueue() { return queue; }
     int  getCap() { return capacity; }
     int  getFront() { return front; }
     int  getEnd() { return end; }
-    int  getSize() { return currsize; }
+    int  getSize() { return size; }
 };
 
+#include "Queue_.cpp"
 #endif

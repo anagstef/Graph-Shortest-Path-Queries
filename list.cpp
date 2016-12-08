@@ -14,6 +14,7 @@ node::~node() {
 list::list() {
     size = 0;
     head = NULL;
+    tail = NULL;
 }
 
 list::~list() {
@@ -36,35 +37,26 @@ void list::print_list() {
     }
 }
 
-void list::push(node &n) {
+void list::push(uint32_t value) {
+    node* new_node = new node(value);
     if (head == NULL) {
-        head = &n;
-        head->set_next(NULL);
+        head = new_node;
+        tail = new_node;
+        tail->set_next(tail);
     }
     else {
-        n.set_next(head);
-        head = &n;
+        tail->set_next(new_node);
     }
     size++;
 }
 
 uint32_t list::pop() {
-    node* temp = head;
     uint32_t ret_value;
-    if (temp->get_next() != NULL) {
-        ret_value = temp->get_id();
-        head = temp->get_next();
-        delete temp;
-        size--;
-        return ret_value;
-    }
-    else {
-        ret_value = temp->get_id();
-        head = NULL;
-        delete temp;
-        size--;
-        return ret_value;
-    }
+    ret_value = head->get_id();
+    head = head->get_next();
+    delete(head);
+    size--;
+    return ret_value;
 }
 
 bool list::search(uint32_t id) {
@@ -78,9 +70,16 @@ bool list::search(uint32_t id) {
     return false;
 }
 
-bool list::is_empty() {
-    if (size > 0) {
-        return false;
-    }
+bool list::isEmpty() {
+    if (size > 0) return false;
     return true;
+}
+
+bool list::isFull() {
+    if (size == 0) return true;
+    return false;
+}
+
+int list::getSize() {
+    return size;
 }

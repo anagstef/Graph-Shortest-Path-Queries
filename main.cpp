@@ -7,6 +7,7 @@
 #include <string>
 #include "list_node.h"
 #include "Graph.h"
+#include "HashTable.h"
 
 using namespace std;
 

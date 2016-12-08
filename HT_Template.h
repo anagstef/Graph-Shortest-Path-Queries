@@ -23,4 +23,5 @@ public:
     void printHT();
 };
 
+#include "HT_Template.cpp"
 #endif

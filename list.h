@@ -21,14 +21,17 @@ class list {
 private:
     int size;
     node* head;
+    node* tail;
 public:
     list();
     ~list();
     void print_list();
-    void push(node& n);
+    void push(uint32_t value);
     uint32_t pop();
+    int  getSize();
     bool search(uint32_t id);
-    bool is_empty();
+    bool isEmpty();
+    bool isFull();
 };
 
 #endif

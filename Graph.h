@@ -7,8 +7,8 @@
 #include <new>
 #include "Buffer.h"
 #include "NodeIndex.h"
+#include "Queue_.h"
 #include "HashTable.h"
-#include "Queue.h"
 
 class Graph{
 private:
@@ -17,6 +17,8 @@ private:
     Buffer In_Buf;//buffer for incoming edges
     Buffer Out_Buf;//buffer for outcoming edges
 public:
+    //Queue<uint32_t> ForwardFringe;
+    //Queue<uint32_t> BackwardsFringe;
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     void printGraph(); //unit testing
