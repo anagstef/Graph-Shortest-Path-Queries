@@ -9,6 +9,7 @@
 #include "NodeIndex.h"
 #include "Queue_.h"
 #include "HashTable.h"
+#include "Explored.h"
 
 class Graph {
 private:
@@ -18,8 +19,8 @@ private:
     Buffer Out_Buf;//buffer for outcoming edges
     Queue<uint32_t> ForwardFringe;
     Queue<uint32_t> BackwardsFringe;
-    HashTable ForwardExplored;
-    HashTable BackwardsExplored;
+    Explored ForwardExplored;
+    Explored BackwardsExplored;
 public:
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
