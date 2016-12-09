@@ -4,6 +4,13 @@
 
 using namespace std;
 
+void Graph::clean() {
+    ForwardFringe.clear();
+    BackwardsFringe.clear();
+    ForwardExplored.clear();
+    BackwardsExplored.clear();
+}
+
 void Graph::add(uint32_t from, uint32_t to) {
     uint32_t temp;
     bool NewEdgeAdded;
@@ -86,12 +93,12 @@ void Graph::add(uint32_t from, uint32_t to) {
 
 int Graph::query(uint32_t from, uint32_t to) {
     uint32_t temp, popedNode;
-    Queue<uint32_t> ForwardFringe;
-    Queue<uint32_t> BackwardsFringe;
+    //Queue<uint32_t> ForwardFringe;
+    //Queue<uint32_t> BackwardsFringe;
     //Queue ForwardFringe;
     //Queue BackwardsFringe;
-    HashTable ForwardExplored;
-    HashTable BackwardsExplored;
+    //HashTable ForwardExplored;
+    //HashTable BackwardsExplored;
     //HashTable<uint32_t> ForwardExplored;
     //HashTable<uint32_t> BackwardsExplored;
     int cost = 0, len;

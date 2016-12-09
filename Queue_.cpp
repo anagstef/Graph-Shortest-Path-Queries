@@ -12,7 +12,7 @@ Queue<T>::Queue() {
     size = 0;
     front = 0;
     end = 0;
-    queue = (uint32_t*) malloc(capacity * sizeof(uint32_t));
+    queue = (T*) malloc(capacity * sizeof(T));
     //printf("Queue is ready\n");
 }
 
@@ -49,7 +49,6 @@ void Queue<T>::push(T value) {
 //void Queue::push(uint32_t value) {
     if (isFull()) {
         capacity = capacity*2;
-        //queue = (uint32_t*) realloc(queue, capacity*sizeof(uint32_t));
         queue = (T*) realloc(queue, capacity*sizeof(T));
         queue[end] = value;
         end++;
@@ -65,7 +64,6 @@ void Queue<T>::push(T value) {
 template <class T>
 T Queue<T>::pop() {
 //uint32_t Queue::pop() {
-    //uint32_t ret_value = queue[front];
     T ret_value = queue[front];
     front++;
     size--;

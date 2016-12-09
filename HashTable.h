@@ -25,6 +25,7 @@ public:
     void add(uint32_t value); //insert a value into hash table
     bool find(uint32_t value); //search if the value already exists
     void printHT(); //unit testing
+    void clear();
 };
 
 #endif

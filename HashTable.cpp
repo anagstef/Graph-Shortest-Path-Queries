@@ -44,6 +44,12 @@ bool HashTable::find(uint32_t value) {
     return false;
 }
 
+void HashTable::clear() {
+    for (uint32_t i = 0; i < entries; ++i) {
+        bucketData[i].offset = 0;
+    }
+}
+
 void HashTable::printHT() { //simple printing function
     for (uint32_t i = 0; i < entries; i++) {
         cout << "bucket: " << i << endl;

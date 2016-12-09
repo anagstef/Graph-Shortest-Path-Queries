@@ -45,6 +45,7 @@ void operations(istream &input, Graph &graph) {
             else if (c == "Q") {
                 // cout << "Query" << source << "--" << dest << endl;
                 cout << graph.query(source, dest) << endl;
+                graph.clean();
             }
             else if (c != "") {
                 cout << "Unknown command" << endl;
