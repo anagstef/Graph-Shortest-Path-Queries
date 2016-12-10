@@ -13,10 +13,10 @@ void list_node::print_node() {
     for (i = 0; i < length; ++i) {
         cout << i << " " << neighbor[i] << endl;
     }
-    cout << "Edges: " << endl;
-    for (i = 0; i < length; ++i) {
-        cout << i << " " << edgeProperty[i] << endl;
-    }
+    // cout << "Edges: " << endl;
+    // for (i = 0; i < length; ++i) {
+    //     cout << i << " " << edgeProperty[i] << endl;
+    // }
     if (hasNext) {
         cout << "Next: " << nextNode << endl;
     }

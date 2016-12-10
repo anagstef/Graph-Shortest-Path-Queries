@@ -8,8 +8,22 @@
 #include "Buffer.h"
 #include "NodeIndex.h"
 #include "Queue_.h"
-#include "HashTable.h"
+#include "HT_Template.h"
 #include "Explored.h"
+
+struct InsEdge{
+  uint32_t from;
+  uint32_t to;
+  int operator%(const int& a) const{
+    return (from + to)%a;
+  }
+  bool operator==(const InsEdge& a) const{
+    if (a.from == from && a.to == to)
+      return true;
+    else
+      return false;
+  }
+};
 
 class Graph {
 private:
@@ -21,6 +35,7 @@ private:
     Queue<uint32_t> BackwardsFringe;
     Explored ForwardExplored;
     Explored BackwardsExplored;
+    HashTable<InsEdge> duplicates;
 public:
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it

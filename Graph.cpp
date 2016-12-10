@@ -15,12 +15,21 @@ void Graph::add(uint32_t from, uint32_t to) {
     uint32_t temp;
     bool NewEdgeAdded;
 
+    InsEdge check;
+    check.from = from;
+    check.to = to;
+
+    if(duplicates.find(check))
+      return;
+    else
+      duplicates.add(check);
+
     //get the number of neighbors for each node
     uint32_t from_neighbors = Out.getNumOfNeighbors(from);
     uint32_t to_neighbors = In.getNumOfNeighbors(to);
 
     //if one of these has zero neighbors, then the edge does not exist
-    if(from_neighbors == 0 || to_neighbors == 0) {
+    // if(from_neighbors == 0 || to_neighbors == 0) {
 
         if (Out.isIndexed(from)) { //if the node exists
             Out_Buf.addNewEdgeDirectly(to, from, Out); //add directly to the end
@@ -39,7 +48,7 @@ void Graph::add(uint32_t from, uint32_t to) {
             In_Buf.addNewEdgeDirectly(from, to, In);
         }
         return;
-    }
+    // }
 
     //if the number of neighbors is less for on of the nodes
     if(from_neighbors <= to_neighbors){

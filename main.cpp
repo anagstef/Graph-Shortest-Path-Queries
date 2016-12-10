@@ -7,7 +7,7 @@
 #include <string>
 #include "list_node.h"
 #include "Graph.h"
-#include "HashTable.h"
+// #include "HashTable.h"
 
 using namespace std;
 
@@ -62,22 +62,23 @@ int main(int argc, char const *argv[]) {
     Graph graph;
 
     // if (argc == 3) {
-        input.open(&argv[1][0]);
-        if (!input.is_open()) {
-            cout << "Couldn't open file. End of execution." << endl;
-            exit(-1);
-        }
-        create_graph(input, graph);
-        input.close();
-        // graph.printGraph();
-        //cout << "end of insertion" << endl;
-        input.open(&argv[2][0]);
-        if (!input.is_open()) {
-            cout << "Couldn't open file. End of execution." << endl;
-            exit(-1);
-        }
-        operations(input, graph);
-        input.close();
+    input.open(&argv[1][0]);
+    if (!input.is_open()) {
+        cout << "Couldn't open file. End of execution." << endl;
+        exit(-1);
+    }
+    create_graph(input, graph);
+    input.close();
+    // return 0;
+    // graph.printGraph();
+    //cout << "end of insertion" << endl;
+    input.open(&argv[2][0]);
+    if (!input.is_open()) {
+        cout << "Couldn't open file. End of execution." << endl;
+        exit(-1);
+    }
+    operations(input, graph);
+    input.close();
     // }
 
 

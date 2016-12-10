@@ -13,7 +13,7 @@ template <class T>
 class HashTable {
 private:
     int entries;
-    Bucket<T>** bucketData;
+    Bucket<T>* bucketData;
 public:
     HashTable();
     ~HashTable();
