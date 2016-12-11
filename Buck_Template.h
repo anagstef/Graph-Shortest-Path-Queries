@@ -19,6 +19,7 @@ public:
     void clear();
     T* getNodes() {return nodes;}
     int getOffset() {return offset;}
+    void setOffset(int o) {offset = o;}
 };
 
 #include "Buck_Template.cpp"

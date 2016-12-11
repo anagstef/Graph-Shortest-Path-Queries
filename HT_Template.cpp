@@ -53,6 +53,13 @@ void HashTable<T>::add(T value) {
 }
 
 template <class T>
+void HashTable<T>::clear() {
+    for (int i = 0; i < entries; ++i) {
+        bucketData[i]->setOffset(0);
+    }
+}
+
+template <class T>
 void HashTable<T>::printHT() {
     for (int i = 0; i < entries; ++i) {
         T* nodes = bucketData[i].getNodes();
@@ -66,25 +73,3 @@ void HashTable<T>::printHT() {
         }
     }
 }
-
-/*int main(void) {
-    HashTable<uint32_t> ht;
-    ifstream input;
-    input.open("smallGraph.txt");
-    string line;
-    if (input.is_open()) {
-        do {
-            getline(input, line);
-            if (line != "S") {
-                uint32_t node, neighbour;
-                istringstream command(line);
-                command >> node;
-                command >> neighbour;
-                ht.add(node);
-                ht.add(neighbour);
-            }
-        } while (line != "S");
-        input.close();
-    }
-    ht.printHT();
-}*/

@@ -11,6 +11,12 @@
 
 using namespace std;
 
+struct op {
+    string type;
+    uint32_t node1;
+    uint32_t node2;
+};
+
 void create_graph(istream &input, Graph &graph) {
     string line;
     do {
@@ -80,21 +86,5 @@ int main(int argc, char const *argv[]) {
     operations(input, graph);
     input.close();
     // }
-
-
-
-    /*cout << "Please give the operations file name" << endl;
-    const char* file;
-    getline(cin, filename);
-    file = filename.c_str();
-    input.open(file);
-    if (input.is_open()) {
-        operations(input);
-        input.close();
-    }
-    else {
-        cout << "Wrong operations file, end of execution" << endl;
-        exit(1);
-    }*/
     return 0;
 }
