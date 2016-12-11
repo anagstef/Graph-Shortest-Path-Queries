@@ -6,25 +6,28 @@
 #include <cstdlib>
 #include "Graph.h"
 
+#define METRIC 0.7
 
 class CC{
 private:
   uint32_t* ccindex;
   uint32_t indexsize;
   UpdateIndex* UpdateIndex;
-  uint32_t metricVal;
   uint32_t componentCount;
+  uint32_t QueryNum;
+  uint32_t UpdateUsed;
+  Queue<uint32_t>* queue;
   uint32_t offset;
   Graph* graph;
-  Queue<uint32_t> queue;
 public:
-  CC(Graph& graph);
+  CC(Graph& g);
   ~CC();
 
   void CC_BFS();
   bool insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE);
-  int findNodeConnectedComponentID(uint32_t nodeId);
+  bool areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE);
   bool rebuildIndexes();
+  void increaseQueryNum();
 };
 
 #endif

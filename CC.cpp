@@ -5,9 +5,13 @@
 using namespace std;
 
 CC::CC(Graph& g){
+  QueryNum = 0;
+  UpdateUsed = 0;
   graph = g;
   componentCount = 1;
   offset = 0;
+  queue = new Queue<uint32_t>();
+
 
   indexsize = graph->In.getSize();
   if (graph->Out.getSize() > indexsize)
@@ -31,6 +35,7 @@ CC::CC(Graph& g){
   if(DEBUG)
    cout << "Number of CC is " << componentCount - 1 << endl;
 
+  delete queue;
   UpdateIndex = new UpdateIndex(componentCount);
 }
 
@@ -108,4 +113,105 @@ void CC::CC_BFS(){
 
   }
 
+}
+
+//returns true if something cahnged, else false
+bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
+  //if both nodes exist
+  if((nodeIdS < indexsize) && (ccindex[nodeIdS] > 0) && (nodeIdE < indexsize) && (ccindex[nodeIdE] > 0)){
+    //if they are on the same CC
+    if (ccindex[nodeIdS] == ccindex[nodeIdE]) {
+      return false;
+    }
+    else{
+      //if it is not already indexed
+      if(!UpdateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
+        UpdateIndex->addEdge(ccindex[nodeIdS], ccindex[nodeIdE]);
+        return true;
+      }
+      return false;
+    }
+  }
+
+  //if both nodes do not exist
+  if(((nodeIdS >= indexsize) || (ccindex[nodeIdS] == 0)) && ((nodeIdE >= indexsize) || (ccindex[nodeIdE] == 0))){
+    //if one or both of the nodes exceeds the index
+    if((nodeIdS >= indexsize) || (nodeIdE >= indexsize)){
+      //get the new size
+      uint32_t new_size = indexsize * 2;
+      if ((nodeIdS >= new_size) || (nodeIdE >= new_size)) {
+        new_size = nodeIdS + 5;
+        if(new_size <= nodeIdE)
+          new_size = nodeIdE + 5;
+      }
+
+      ccindex = (uint32_t*) realloc(ccindex, sizeof(uint32_t) * new_size);
+      for(uint32_t i=indexsize; i<new_size; i++){
+        ccindex[i] = 0;
+      }
+      indexsize = new_size;
+    }
+
+    ccindex[nodeIdS] = componentCount;
+    ccindex[nodeIdE] = componentCount;
+    componentCount++;
+    return true;
+  }
+  else{//if one of the nodes exists
+    //if one of the nodes exceeds the index
+    if((nodeIdS >= indexsize) || (nodeIdE >= indexsize)){
+      //get the new size
+      uint32_t new_size = indexsize * 2;
+      if ((nodeIdS >= new_size) || (nodeIdE >= new_size)) {
+        new_size = nodeIdS + 5;
+        if(new_size <= nodeIdE)
+          new_size = nodeIdE + 5;
+      }
+
+      ccindex = (uint32_t*) realloc(ccindex, sizeof(uint32_t) * new_size);
+      for(uint32_t i=indexsize; i<new_size; i++){
+        ccindex[i] = 0;
+      }
+      indexsize = new_size;
+    }
+
+    if(ccindex[nodeIdS] > 0)
+      ccindex[nodeIdE] = ccindex[nodeIdS];
+    else
+      ccindex[nodeIdS] = ccindex[nodeIdE];
+
+    return true;
+  }
+}
+
+bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
+  if(nodeIdS >= indexsize || nodeIdE >= indexsize)
+    return false;
+
+  if (ccindex[nodeIdS] == ccindex[nodeIdE]) {
+    return true;
+  }
+  else{
+    UpdateUsed++;
+    return UpdateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE]);
+  }
+}
+
+bool CC::rebuildIndexes(){
+  double value = (double) (UpdateUsed / QueryNum);
+  if(value >= METRIC){
+    UpdateIndex->update(this);
+    QueryNum = 0;
+    UpdateUsed = 0;
+    return true;
+  }
+  else{
+    QueryNum = 0;
+    UpdateUsed = 0;
+    return false;
+  }
+}
+
+void CC::increaseQueryNum(){
+  QueryNum++;
 }
