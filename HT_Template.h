@@ -21,6 +21,7 @@ public:
     void add(T value);
     bool find(T value);
     void printHT();
+    void clear();
 };
 
 #include "HT_Template.cpp"

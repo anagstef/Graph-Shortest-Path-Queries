@@ -1,6 +1,6 @@
 #include "Graph.h"
 //#include "HT_Template.h"
-#include "Queue_.h"
+//#include "Queue_.h"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ void Graph::add(uint32_t from, uint32_t to) {
     uint32_t to_neighbors = In.getNumOfNeighbors(to);
 
     //if one of these has zero neighbors, then the edge does not exist
-    if(from_neighbors == 0 || to_neighbors == 0) {
+    if (from_neighbors == 0 || to_neighbors == 0) {
 
         if (Out.isIndexed(from)) { //if the node exists
             Out_Buf.addNewEdgeDirectly(to, from, Out); //add directly to the end
@@ -62,7 +62,6 @@ void Graph::add(uint32_t from, uint32_t to) {
             }
         }
         return;
-
     }
 
     //the other way around
@@ -86,21 +85,12 @@ void Graph::add(uint32_t from, uint32_t to) {
             }
         }
         return;
-
     }
 }
 
 
 int Graph::query(uint32_t from, uint32_t to) {
     uint32_t temp, popedNode;
-    //Queue<uint32_t> ForwardFringe;
-    //Queue<uint32_t> BackwardsFringe;
-    //Queue ForwardFringe;
-    //Queue BackwardsFringe;
-    //HashTable ForwardExplored;
-    //HashTable BackwardsExplored;
-    //HashTable<uint32_t> ForwardExplored;
-    //HashTable<uint32_t> BackwardsExplored;
     int cost = 0, len;
     list_node* current;
     uint32_t* neighArray;
@@ -224,31 +214,22 @@ int Graph::query(uint32_t from, uint32_t to) {
     // cout << "STARTING: Pushed " << to << " to BackwardsFringe" << endl;
 
     //loop until solution is found or not found
-    while(1){
+    while (1) {
 
         //If one of the two fringes is empty, then there is no path
-         if(ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
-             return -1;
-
-        //if(ForwardFringe.empty() || BackwardsFringe.empty())
-        //    return -1;
+        if (ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
+            return -1;
 
         //select to expand the Fringe that has the least next neighbors
-        if((forward_neighbors <= backwards_neighbors)){
+        if ((forward_neighbors <= backwards_neighbors)) {
             forward_neighbors = 0; //init the sum
-             temp = ForwardFringe.getSize();
-            //temp = ForwardFringe.size();
+            temp = ForwardFringe.getSize();
             cost++;
 
             //EXPANDING FORWARD BFS
-            for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
+            for (uint32_t i = 0; i < temp; i++) { //for every node in Fringe
                 // cout << "Size of ForwardFringe is: " << ForwardFringe.getSize() << endl;
-                 popedNode = ForwardFringe.pop();
-                // popedNode = ForwardFringe.front();
-                //ForwardFringe.pop();
-
-
-
+                popedNode = ForwardFringe.pop();
                 // cout << "FORWARD: Poped " << popedNode << " from ForwardFringe" << endl;
                 // //if goal state return the total cost
                 // if(Explored.find(popedNode))
@@ -257,22 +238,19 @@ int Graph::query(uint32_t from, uint32_t to) {
                 // //if this is not a goal, add it to Explored Set
                 // Explored.add(popedNode);
 
-                if(!Out.isIndexed(popedNode))
-                  continue;
+                if (!Out.isIndexed(popedNode))
+                    continue;
 
                 //get current list node
                 current = Out_Buf.getListNode(Out.getListHead(popedNode));
 
-                while(1){ //loop for all neighbors
+                while (1) { //loop for all neighbors
                     len = current->get_length();
                     neighArray = current->get_neighborArray();
-                    for(int j=0; j<len; j++){ //for every node in a list_node
-                        if(BackwardsExplored.find(neighArray[j])) {
-                            //ForwardFringe.clear();
-                            //BackwardsFringe.clear();
+                    for (int j = 0; j < len; j++) { //for every node in a list_node
+                        if (BackwardsExplored.find(neighArray[j]))
                             return cost;
-                        }
-                        if(!ForwardExplored.find(neighArray[j])){
+                        if (!ForwardExplored.find(neighArray[j])){
                             ForwardExplored.add(neighArray[j]);
                             forward_neighbors += Out.getNumOfNeighbors(neighArray[j]);
                             ForwardFringe.push(neighArray[j]);
@@ -288,32 +266,23 @@ int Graph::query(uint32_t from, uint32_t to) {
                         }
                     }
 
-                    if(current->get_hasNext()){ //get the next list_node
+                    if (current->get_hasNext()) { //get the next list_node
                         current = Out_Buf.getListNode(current->get_nextNode());
                     }
-                    else{ //break loop if there are no more listnodes
+                    else { //break loop if there are no more listnodes
                         break;
                     }
                 }
-
-            }
-            // cost++; //increment cost
-        } else{
+            } // cost++; //increment cost
+        } else {
             backwards_neighbors = 0;
             temp = BackwardsFringe.getSize();
-            //temp = BackwardsFringe.size();
             cost++;
 
             //EXPANDING BACKWARDS BFS
-            for(uint32_t i=0; i<temp; i++){ //for every node in Fringe
-              // cout << "Size of BackwardsFringe is: " << BackwardsFringe.getSize() << endl;
-                 popedNode = BackwardsFringe.pop();
-                //popedNode = BackwardsFringe.front();
-                //BackwardsFringe.pop();
-
-
-
-
+            for (uint32_t i = 0; i < temp; i++) { //for every node in Fringe
+                // cout << "Size of BackwardsFringe is: " << BackwardsFringe.getSize() << endl;
+                popedNode = BackwardsFringe.pop();
                 // cout << "BACKWARDS: Poped " << popedNode << " from BackwardsFringe" << endl;
                 // //if goal state return the total cost
                 // if(Explored.find(popedNode))
@@ -322,22 +291,19 @@ int Graph::query(uint32_t from, uint32_t to) {
                 // //if this is not a goal, add it to Explored Set
                 // Explored.add(popedNode);
 
-                if(!In.isIndexed(popedNode))
-                  continue;
+                if (!In.isIndexed(popedNode))
+                    continue;
 
                 //get current list node
                 current = In_Buf.getListNode(In.getListHead(popedNode));
 
-                while(1){ //loop for all neighbors
+                while(1) { //loop for all neighbors
                     len = current->get_length();
                     neighArray = current->get_neighborArray();
-                    for(int j=0; j<len; j++){ //for every node in a list_node
-                        if(ForwardExplored.find(neighArray[j])) {
-                            //ForwardFringe.clear();
-                            //BackwardsFringe.clear();
+                    for (int j = 0; j < len; j++) { //for every node in a list_node
+                        if (ForwardExplored.find(neighArray[j]))
                             return cost;
-                        }
-                        if(!BackwardsExplored.find(neighArray[j])){
+                        if (!BackwardsExplored.find(neighArray[j])){
                             BackwardsExplored.add(neighArray[j]);
                             backwards_neighbors += In.getNumOfNeighbors(neighArray[j]);
                             BackwardsFringe.push(neighArray[j]);
@@ -347,23 +313,19 @@ int Graph::query(uint32_t from, uint32_t to) {
                             //     backwards_neighbors += In.getNumOfNeighbors(neighArray[j]);
                             //     //add it to fringe
                             //     BackwardsFringe.push(neighArray[j]);
-                                // cout << "BACKWARDS: Pushed " << neighArray[j] << " to BackwardsFringe" << endl;
+                            // cout << "BACKWARDS: Pushed " << neighArray[j] << " to BackwardsFringe" << endl;
                             // }
                         }
                     }
 
-                    if(current->get_hasNext()){ //get the next list_node
+                    if (current->get_hasNext()) { //get the next list_node
                         current = In_Buf.getListNode(current->get_nextNode());
-                    }
-                    else{ //break loop if there are no more listnodes
+                    } else { //break loop if there are no more listnodes
                         break;
                     }
                 }
-
-            }
-            // cost++; //increment cost
-        }
-        // cost++;
+            } // cost++; //increment cost
+        } // cost++;
     } //while(1)
 }
 

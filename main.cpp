@@ -7,7 +7,7 @@
 #include <string>
 #include "list_node.h"
 #include "Graph.h"
-#include "HashTable.h"
+//#include "HashTable.h"
 
 using namespace std;
 
@@ -24,6 +24,8 @@ void create_graph(istream &input, Graph &graph) {
             // cout << "Added" << node << " " << neighbour << endl;
         }
     } while (line != "S");
+    //cout << graph.getIn().getSize() << " -- " << graph.getOut().getSize() << endl;
+    //getchar();
 }
 
 void operations(istream &input, Graph &graph) {
@@ -58,10 +60,16 @@ int main(int argc, char const *argv[]) {
     //create_graph(cin);
     ifstream input;
     string filename;
-
     Graph graph;
-
-    // if (argc == 3) {
+    if (argc == 2) {
+        input.open(&argv[1][0]);
+        if (!input.is_open()) {
+            cout << "Couldn't open file. End of execution." << endl;
+            exit(-1);
+        }
+        create_graph(input, graph);
+        input.close();
+    } else if (argc == 3) {
         input.open(&argv[1][0]);
         if (!input.is_open()) {
             cout << "Couldn't open file. End of execution." << endl;
@@ -70,7 +78,7 @@ int main(int argc, char const *argv[]) {
         create_graph(input, graph);
         input.close();
         // graph.printGraph();
-        //cout << "end of insertion" << endl;
+        // cout << "end of insertion" << endl;
         input.open(&argv[2][0]);
         if (!input.is_open()) {
             cout << "Couldn't open file. End of execution." << endl;
@@ -78,22 +86,9 @@ int main(int argc, char const *argv[]) {
         }
         operations(input, graph);
         input.close();
-    // }
-
-
-
-    /*cout << "Please give the operations file name" << endl;
-    const char* file;
-    getline(cin, filename);
-    file = filename.c_str();
-    input.open(file);
-    if (input.is_open()) {
-        operations(input);
-        input.close();
+    } else {
+        cout << "Missing arguments" << endl;
+        exit(-1);
     }
-    else {
-        cout << "Wrong operations file, end of execution" << endl;
-        exit(1);
-    }*/
     return 0;
 }

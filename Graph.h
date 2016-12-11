@@ -8,8 +8,16 @@
 #include "Buffer.h"
 #include "NodeIndex.h"
 #include "Queue_.h"
-#include "HashTable.h"
+//#include "HT_Template.h"
+//#include "Queue.h"
+//#include "HashTable.h"
 #include "Explored.h"
+
+//struct ConectedComponents {
+//    uint32_t component_id;
+//    uint32_t included_nodes_count;
+//    uint32_t* included_nodes_ids;
+//};
 
 class Graph {
 private:
@@ -21,11 +29,14 @@ private:
     Queue<uint32_t> BackwardsFringe;
     Explored ForwardExplored;
     Explored BackwardsExplored;
+    //ConectedComponents* components;
 public:
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     void printGraph(); //unit testing
     void clean();
+    NodeIndex getIn() {return In;}
+    NodeIndex getOut() {return Out;}
 };
 
 #endif
