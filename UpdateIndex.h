@@ -4,6 +4,7 @@
 #include <iostream>
 #include "HT_Template.h"
 #include "Graph.h"
+#include "CC.h"
 
 #define CELL_SIZE 10
 
@@ -23,10 +24,11 @@ public:
   ~UpdateIndex();
 
   void clear();
-  void increaseCapacity(uint32_t comp);
+  void increaseCapacity(uint32_t new_size);
   void add(uint32_t cell, uint32_t comp);
   void addEdge(uint32_t comp1, uint32_t comp2);
-  uint32_t update(uint32_t& ccindex);
+  bool isConnected(uint32_t comp1, uint32_t comp2);
+  void update(CC& cc);
 
 };
 
