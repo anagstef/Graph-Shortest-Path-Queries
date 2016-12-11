@@ -41,6 +41,8 @@ public:
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     void printGraph(); //unit testing
     void clean();
+    NodeIndex getIn() {return In;}
+    NodeIndex getOut() {return Out;}
 };
 
 #endif

@@ -6,9 +6,17 @@
 #include "Graph.h"
 #include "Stack.h"
 
-#define COMPONENTS 10    //Component* components (how many components the graph has)
+#define COMPONENTS 100    //Component* components (how many components the graph has)
                          //Same size with id_belongs_to_component, parallel matrix
-#define NODES 10         //Included_nodes_ids (for every component, the nodes it has)
+#define NODES 100         //Included_nodes_ids (for every component, the nodes it has)
+
+struct Node {
+    uint32_t id;
+    uint32_t index;
+    uint32_t lowlink;
+    uint32_t vindex;
+    Node* nodes;
+};
 
 struct Component {
     uint32_t component_id;
@@ -18,6 +26,7 @@ struct Component {
 
 class SCC {
 private:
+    Stack<Node> stack;
     Component* components;
     uint32_t  components_count;
     uint32_t* id_belongs_to_component;
@@ -26,6 +35,7 @@ public:
     SCC();
     ~SCC();
     void estimateStronglyConnectedComponents(Graph graph);
+    void tarjan(Node *node, uint32_t &index, bool* onStack);
 };
 
 #endif
