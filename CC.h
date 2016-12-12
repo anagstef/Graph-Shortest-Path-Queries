@@ -7,7 +7,7 @@
 #include "NodeIndex.h"
 #include "UpdateIndex.h"
 
-#define METRIC 0.32
+#define METRIC 0.7
 
 class UpdateIndex;
 

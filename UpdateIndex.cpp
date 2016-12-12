@@ -113,16 +113,13 @@ uint32_t UpdateIndex::update(uint32_t* ccindex, uint32_t indexsize, uint32_t com
   }
 
   for(uint32_t i=1; (i<size) && (i<componentCount); i++){ //for every CC in update index
-    // std::cout << "For comp " << i;
     if(!visited[i]){ //if it is not visited yet
       for(uint32_t j=0; j<indexsize; j++){ //run through the whole ccindex
-        std::cout << "For comp " << i << " at index position " << j << endl;
         if(ccindex[j] >= i){ //if the CC is greater than the current CC of the update
           if(ccindex[j] == i)
             ccindex[j] = currCC;
           else{
             for(uint32_t k=0; k < uindex[i].size ; k++){
-              // std::cout << "looping here3???" << std::endl;
               if(ccindex[j] == uindex[i].components[k]){
                 ccindex[j] = currCC;
                 break;
