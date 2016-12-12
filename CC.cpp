@@ -39,6 +39,7 @@ CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
 }
 
 CC::~CC(){
+  delete updateIndex;
   free(ccindex);
 }
 

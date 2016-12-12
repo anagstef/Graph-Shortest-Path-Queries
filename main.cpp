@@ -38,25 +38,29 @@ void operations(istream &input, Graph &graph) {
         getline(input, line);
         string c;
         uint32_t source, dest;
-        if (line != "F") {
-            //create prob a list to execute blocks of commands
-            istringstream command(line);
-            command >> c;
-            command >> source;
-            command >> dest;
-            if (c == "A") {
-                // cout << "Add" << source << "--" << dest << endl;
-                graph.add(source, dest);
-            }
-            else if (c == "Q") {
-                // cout << "Query" << source << "--" << dest << endl;
-                cout << graph.query(source, dest) << endl;
-                graph.clean();
-            }
-            else if (c != "") {
-                cout << "Unknown command" << endl;
-            }
+
+        if (line == "F"){
+          graph.rebuildCC();
+          continue;
         }
+        //create prob a list to execute blocks of commands
+        istringstream command(line);
+        command >> c;
+        command >> source;
+        command >> dest;
+        if (c == "A") {
+            // cout << "Add" << source << "--" << dest << endl;
+            graph.add(source, dest);
+        }
+        else if (c == "Q") {
+            // cout << "Query" << source << "--" << dest << endl;
+            cout << graph.query(source, dest) << endl;
+            graph.clean();
+        }
+        else if (c != "") {
+            cout << "Unknown command" << endl;
+        }
+
     }
 }
 
@@ -75,6 +79,7 @@ int main(int argc, char const *argv[]) {
     }
     create_graph(input, graph);
     input.close();
+    graph.createComponents();
     // return 0;
     // graph.printGraph();
     //cout << "end of insertion" << endl;
