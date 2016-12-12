@@ -9,6 +9,15 @@ void Graph::clean() {
     BackwardsExplored.clear();
 }
 
+void Graph::createComponents(){
+  cc = new CC(In, Out, In_Buf, Out_Buf);
+  opAdds = true;
+}
+
+void Graph::rebuildCC(){
+  cc->rebuildIndexes();
+}
+
 void Graph::add(uint32_t from, uint32_t to) {
     uint32_t temp;
     bool NewEdgeAdded;
@@ -43,8 +52,8 @@ void Graph::add(uint32_t from, uint32_t to) {
         } else {
             temp = In_Buf.allocNewNode();
             In.insertNode(to, temp);
-            In_Buf.addNewEdgeDirectly(from, to, In);
-        }
+            In_B"For comp " << is)
+          cc->insertNewEdge(from, to);
         return;
     // }
 
@@ -208,6 +217,8 @@ int Graph::query(uint32_t from, uint32_t to) {
     /////////////////// END //////////////////////
     //////////////////////////////////////////////
 
+    cc->increaseQueryNum();
+
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
     uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
@@ -221,6 +232,9 @@ int Graph::query(uint32_t from, uint32_t to) {
     if(from == to){
         return 0;
     }
+
+    if(!cc->areNodesConnected(from, to))
+      return -1;
 
     //add the nodes to each Fringe
     ForwardFringe.push(from);

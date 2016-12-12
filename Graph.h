@@ -41,8 +41,12 @@ private:
     Explored BackwardsExplored;
     HashTable<InsEdge> duplicates;
     CC* cc;
+    bool opAdds = false;
+    bool isDynamic;
 public:
 
+    void createComponents();
+    void rebuildCC();
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     void printGraph(); //unit testing
