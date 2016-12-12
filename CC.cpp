@@ -4,18 +4,17 @@
 
 using namespace std;
 
-CC::CC(Graph& g){
+CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
   QueryNum = 0;
   UpdateUsed = 0;
-  graph = g;
   componentCount = 1;
   offset = 0;
   queue = new Queue<uint32_t>();
 
 
-  indexsize = graph->In.getSize();
-  if (graph->Out.getSize() > indexsize)
-    indexsize = graph->Out.getSize();
+  indexsize = In.getSize();
+  if (Out.getSize() > indexsize)
+    indexsize = Out.getSize();
 
   ccindex = (uint32_t*) malloc(sizeof(uint32_t) * indexsize);
 
@@ -24,10 +23,10 @@ CC::CC(Graph& g){
   }
 
   while(offset < indexsize){
-    if((graph->In.isIndexed(offset) || graph->Out.isIndexed(offset)) && ccindex[offset] == 0){
-      CC_BFS();
+    if((In.isIndexed(offset) || Out.isIndexed(offset)) && ccindex[offset] == 0){
+      CC_BFS(In, Out, In_Buf, Out_Buf);
       componentCount++;
-      queue.clear();
+      queue->clear();
     }
     offset++;
   }
@@ -36,32 +35,32 @@ CC::CC(Graph& g){
    cout << "Number of CC is " << componentCount - 1 << endl;
 
   delete queue;
-  UpdateIndex = new UpdateIndex(componentCount);
+  updateIndex = new UpdateIndex(componentCount);
 }
 
 CC::~CC(){
   free(ccindex);
 }
 
-void CC::CC_BFS(){
+void CC::CC_BFS(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
   uint32_t tempQueueSize, tempListNodeLength, popedNode;
   list_node* current;
   uint32_t* neighArray;
 
-  queue.push(offset);
+  queue->push(offset);
   ccindex[offset] = componentCount;
 
-  while(!queue.isEmpty()){
-     tempQueueSize = queue.getSize();
+  while(!queue->isEmpty()){
+     tempQueueSize = queue->getSize();
 
     //EXPANDING FORWARD BFS
     for(uint32_t i=0; i<tempQueueSize; i++){ //for every node in Fringe
-        popedNode = queue.pop();
+        popedNode = queue->pop();
 
-        if(graph->Out.isIndexed(popedNode)){
+        if(Out.isIndexed(popedNode)){
 
           //get current list node
-          current = graph->Out_Buf.getListNode(graph->Out.getListHead(popedNode));
+          current = Out_Buf.getListNode(Out.getListHead(popedNode));
 
           while(1){ //loop for all neighbors
               tempListNodeLength = current->get_length();
@@ -69,12 +68,12 @@ void CC::CC_BFS(){
               for(uint32_t j=0; j<tempListNodeLength; j++){ //for every node in a list_node
                   if(ccindex[neighArray[j]] == 0){
                       ccindex[neighArray[j]] = componentCount;
-                      queue.push(neighArray[j]);
+                      queue->push(neighArray[j]);
                   }
               }
 
               if(current->get_hasNext()){ //get the next list_node
-                  current = graph->Out_Buf.getListNode(current->get_nextNode());
+                  current = Out_Buf.getListNode(current->get_nextNode());
               }
               else{ //break loop if there are no more listnodes
                   break;
@@ -84,10 +83,10 @@ void CC::CC_BFS(){
         }
 
 
-        if(graph->In.isIndexed(popedNode)){
+        if(In.isIndexed(popedNode)){
 
           //get current list node
-          current = graph->In_Buf.getListNode(graph->In.getListHead(popedNode));
+          current = In_Buf.getListNode(In.getListHead(popedNode));
 
           while(1){ //loop for all neighbors
               tempListNodeLength = current->get_length();
@@ -95,12 +94,12 @@ void CC::CC_BFS(){
               for(uint32_t j=0; j<tempListNodeLength; j++){ //for every node in a list_node
                   if(ccindex[neighArray[j]] == 0){
                       ccindex[neighArray[j]] = componentCount;
-                      queue.push(neighArray[j]);
+                      queue->push(neighArray[j]);
                   }
               }
 
               if(current->get_hasNext()){ //get the next list_node
-                  current = graph->In_Buf.getListNode(current->get_nextNode());
+                  current = In_Buf.getListNode(current->get_nextNode());
               }
               else{ //break loop if there are no more listnodes
                   break;
@@ -125,8 +124,8 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
     }
     else{
       //if it is not already indexed
-      if(!UpdateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
-        UpdateIndex->addEdge(ccindex[nodeIdS], ccindex[nodeIdE]);
+      if(!updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
+        updateIndex->addEdge(ccindex[nodeIdS], ccindex[nodeIdE]);
         return true;
       }
       return false;
@@ -193,14 +192,14 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
   }
   else{
     UpdateUsed++;
-    return UpdateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE]);
+    return updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE]);
   }
 }
 
 bool CC::rebuildIndexes(){
   double value = (double) (UpdateUsed / QueryNum);
   if(value >= METRIC){
-    UpdateIndex->update(this);
+    componentCount = updateIndex->update(ccindex, indexsize, componentCount);
     QueryNum = 0;
     UpdateUsed = 0;
     return true;

@@ -2,9 +2,10 @@
 #define UPDATEINDEX_H
 
 #include <iostream>
+#include <cstdint>
+#include <cstdlib>
 #include "HT_Template.h"
 #include "Graph.h"
-#include "CC.h"
 
 #define CELL_SIZE 10
 
@@ -12,7 +13,9 @@ struct UIndexCell{
   uint32_t* components;
   uint32_t size;
   uint32_t actual_size;
-}
+};
+
+struct InsEdge;
 
 class UpdateIndex{
 private:
@@ -28,7 +31,7 @@ public:
   void add(uint32_t cell, uint32_t comp);
   void addEdge(uint32_t comp1, uint32_t comp2);
   bool isConnected(uint32_t comp1, uint32_t comp2);
-  void update(CC& cc);
+  uint32_t update(uint32_t* ccindex, uint32_t indexsize, uint32_t componentCount);
 
 };
 

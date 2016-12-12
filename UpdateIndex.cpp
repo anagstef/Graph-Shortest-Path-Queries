@@ -97,31 +97,31 @@ void UpdateIndex::add(uint32_t cell, uint32_t comp){
   uindex[cell].size++;
 }
 
-bool isConnected(uint32_t comp1, uint32_t comp2){
+bool UpdateIndex::isConnected(uint32_t comp1, uint32_t comp2){
   InsEdge edge;
   edge.from = comp1;
   edge.to = comp2;
   return quickFind.find(edge);
 }
 
-void update(CC& CC){
+uint32_t UpdateIndex::update(uint32_t* ccindex, uint32_t indexsize, uint32_t componentCount){
   uint32_t currCC = 1;
 
-  bool* visited = (bool*) malloc(sizeof(bool) * CC->componentCount);
-  for(uint32_t i=1; i< CC->componentCount; i++){
+  bool* visited = (bool*) malloc(sizeof(bool) * componentCount);
+  for(uint32_t i=1; i< componentCount; i++){
     visited[i] = false;
   }
 
-  for(uint32_t i=1; (i<size) && (i< CC->componentCount); i++){ //for every CC in update index
+  for(uint32_t i=1; (i<size) && (i<componentCount); i++){ //for every CC in update index
     if(!visited[i]){ //if it is not visited yet
-      for(uint32_t j=0; j< CC->indexsize; j++){ //run through the whole ccindex
-        if(CC->ccindex[j] >= i){ //if the CC is greater than the current CC of the update
-          if(CC->ccindex[j] == i)
-            CC->ccindex[j] = currCC;
+      for(uint32_t j=0; j<indexsize; j++){ //run through the whole ccindex
+        if(ccindex[j] >= i){ //if the CC is greater than the current CC of the update
+          if(ccindex[j] == i)
+            ccindex[j] = currCC;
           else{
             for(uint32_t k=0; k < uindex[i].size ; k++){
-              if(CC->ccindex[j] == uindex[i].components[k]){
-                CC->ccindex[j] = currCC;
+              if(ccindex[j] == uindex[i].components[k]){
+                ccindex[j] = currCC;
                 break;
               }
             }
@@ -136,8 +136,8 @@ void update(CC& CC){
     }
   }
 
-  CC->componentCount = currCC;
   clear();
+  return currCC;
 }
 
 void UpdateIndex::clear(){

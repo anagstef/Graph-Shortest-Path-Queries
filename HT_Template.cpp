@@ -55,7 +55,7 @@ void HashTable<T>::add(T value) {
 template <class T>
 void HashTable<T>::clear() {
     for (int i = 0; i < entries; ++i) {
-        bucketData[i]->setOffset(0);
+        bucketData[i].setOffset(0);
     }
 }
 

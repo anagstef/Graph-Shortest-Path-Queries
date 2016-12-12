@@ -10,6 +10,9 @@
 #include "Queue_.h"
 #include "HT_Template.h"
 #include "Explored.h"
+#include "CC.h"
+
+class CC;
 
 struct InsEdge{
   uint32_t from;
@@ -25,6 +28,7 @@ struct InsEdge{
   }
 };
 
+
 class Graph {
 private:
     NodeIndex In; //index for incoming edges
@@ -36,7 +40,9 @@ private:
     Explored ForwardExplored;
     Explored BackwardsExplored;
     HashTable<InsEdge> duplicates;
+    CC* cc;
 public:
+
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     void printGraph(); //unit testing
