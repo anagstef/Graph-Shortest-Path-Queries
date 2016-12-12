@@ -2,6 +2,8 @@
 #define STACK_H
 
 #include <cstdint>
+#include <cstdlib>
+
 #define STACK_INIT_SIZE 100
 
 template <class T>
@@ -21,10 +23,11 @@ public:
     void increaseCapacity();
     void clear();
     //setters - getters
-    T* getStack() { return stack; }
-    int  getCap() { return capacity; }
-    int  getEnd() { return end; }
+    T* getStack()  { return stack; }
+    int  getCap()  { return capacity; }
+    int  getEnd()  { return end; }
     int  getSize() { return size; }
+    T top() { return stack[end]; }
 };
 
 #include "Stack.cpp"
