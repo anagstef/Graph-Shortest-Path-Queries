@@ -198,14 +198,18 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
 }
 
 bool CC::rebuildIndexes(){
-  double value = (double) (UpdateUsed / QueryNum);
+  float value = (float)UpdateUsed / (float)QueryNum;
+  cout << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
+  cout << "Metric value is: " << value;
   if(value >= METRIC){
+    cout << "   -Rebuilding..." << endl;
     componentCount = updateIndex->update(ccindex, indexsize, componentCount);
     QueryNum = 0;
     UpdateUsed = 0;
     return true;
   }
   else{
+    cout << "   -Will not rebuild..." << endl;
     QueryNum = 0;
     UpdateUsed = 0;
     return false;
