@@ -20,6 +20,7 @@ CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
     indexsize = Out.getSize();
 
   ccindex = (uint32_t*) malloc(sizeof(uint32_t) * indexsize);
+  // ccindex = (uint32_t*) calloc(indexsize, sizeof(uint32_t));
 
   estimateConnectedComponents();
 
@@ -49,6 +50,10 @@ void CC::estimateConnectedComponents(){
   uint32_t maxsize = In->getSize();
   if (Out->getSize() > maxsize)
     maxsize = Out->getSize();
+
+  // free(ccindex);
+  // ccindex = (uint32_t*) calloc(maxsize, sizeof(uint32_t));
+  // indexsize = maxsize;
 
   if(maxsize > indexsize)
     maxsize = indexsize;

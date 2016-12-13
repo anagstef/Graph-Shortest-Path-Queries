@@ -80,6 +80,7 @@ int main(int argc, char const *argv[]) {
     }
     create_graph(input, graph);
     input.close();
+    // return 0;
     graph.createComponents();
     // return 0;
     // graph.printGraph();
