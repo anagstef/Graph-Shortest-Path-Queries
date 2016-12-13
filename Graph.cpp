@@ -52,7 +52,10 @@ void Graph::add(uint32_t from, uint32_t to) {
         } else {
             temp = In_Buf.allocNewNode();
             In.insertNode(to, temp);
-            In_B"For comp " << is)
+            In_Buf.addNewEdgeDirectly(from, to, In);
+         }
+
+        if(opAdds)
           cc->insertNewEdge(from, to);
         return;
     // }
