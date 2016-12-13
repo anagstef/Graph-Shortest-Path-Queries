@@ -14,7 +14,6 @@ node::~node() {
 list::list() {
     size = 0;
     head = NULL;
-    tail = NULL;
 }
 
 list::~list() {
@@ -26,7 +25,7 @@ list::~list() {
         delete temp;
         temp = the_next;
     }
-    delete  temp;
+    delete temp;
 }
 
 void list::print_list() {
@@ -41,11 +40,11 @@ void list::push(uint32_t value) {
     node* new_node = new node(value);
     if (head == NULL) {
         head = new_node;
-        tail = new_node;
-        tail->set_next(tail);
+        head->set_next(NULL);
     }
     else {
-        tail->set_next(new_node);
+        head->set_next(head);
+        head = new_node;
     }
     size++;
 }

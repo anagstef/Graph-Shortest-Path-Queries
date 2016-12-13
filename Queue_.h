@@ -11,10 +11,11 @@ private:
     int front;
     int end;
     int capacity;
-    int size;
+    uint32_t size;
     //uint32_t* queue;
-    T* queue;
+
 public:
+    T* queue;
     Queue();
     ~Queue();
     T pop();
@@ -29,7 +30,7 @@ public:
     int  getCap() { return capacity; }
     int  getFront() { return front; }
     int  getEnd() { return end; }
-    int  getSize() { return size; }
+    uint32_t  getSize() { return size; }
 };
 
 #include "Queue_.cpp"

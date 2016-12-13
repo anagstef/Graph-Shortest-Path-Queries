@@ -21,7 +21,6 @@ class list {
 private:
     int size;
     node* head;
-    node* tail;
 public:
     list();
     ~list();

@@ -36,7 +36,7 @@ public:
     ~SCC();
     void addComponent(Component *component);
     void estimateStronglyConnectedComponents(Graph graph);
-    Component* tarjan(Node *node, uint32_t &index, uint32_t** onStack, Stack<uint32_t> stack);
+    Component* tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack);
 };
 
 #endif
