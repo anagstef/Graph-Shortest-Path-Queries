@@ -14,9 +14,9 @@ struct Node {
     uint32_t id;
     uint32_t index;
     uint32_t lowlink;
-    int vindex;
+    uint32_t vindex;
     Node* prevNode;
-    Queue<Node> nodes;
+    Queue <Node*> nodes;
 };
 
 struct Component {

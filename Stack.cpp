@@ -51,10 +51,8 @@ void Stack<T>::push(T value) {
 
 template <class T>
 T Stack<T>::pop() {
-    if (!isEmpty()) {
-        T ret_value = stack[end];
-        end--;
-        size--;
-        return ret_value;
-    }
+    T ret_value = stack[end];
+    end--;
+    size--;
+    return ret_value;
 }

@@ -48,25 +48,40 @@ void SCC::estimateStronglyConnectedComponents(Graph graph) {
     for (uint32_t i = 0; i < graphNodes; i++) {
         if (nodes[i].index == 0) {
             Component* tempComponent = tarjan(&nodes[i], index, onStack, stack);
-            components.addComponent(tempComponent);
+            if (tempComponent != NULL) components.addComponent(tempComponent);
         }
         stack.clear();
     }
 }
 
 Component* SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack) {
-    Component *component;
+    Component *component = NULL;
     node->index = index;
     node->lowlink = index;
     node->vindex = 0;
     node->prevNode = NULL;
     index++;
-    stack.push(index);
+    stack.push(node->id);
     (onStack[node->id]) = 1;
     Node* lastVisited = node;
     while (1) {
-        if (0) {
-
+        if (lastVisited->vindex < lastVisited->nodes.getSize()) {
+            Node *w = lastVisited->nodes.queue[lastVisited->index];
+            lastVisited->vindex++;
+            if (w->index == 0) {
+                w->index = index;
+                w->lowlink = index;
+                w->vindex = 0;
+                w->prevNode = lastVisited;
+                index++;
+                stack.push(w->id);
+                onStack[w->id] = 1;
+                lastVisited = w;
+            }
+            else if (onStack[w->id] == 1) {
+                if (lastVisited->lowlink > w->index)
+                    lastVisited->lowlink = w->index;
+            }
         }
         else {
             if (lastVisited->lowlink == lastVisited->index) {
@@ -76,8 +91,12 @@ Component* SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t
                 component->included_nodes_count = compSize;
                 component->included_nodes_ids = (uint32_t*) malloc(compSize * sizeof(uint32_t));
                 for (uint32_t i = 0; i < compSize; ++i) {
-                    component->included_nodes_ids[i] = stack.pop();
-                    onStack[component->included_nodes_ids[i]] = 0;
+                    if (!stack.isEmpty()) {
+                        component->included_nodes_ids[i] = stack.pop();
+                        onStack[component->included_nodes_ids[i]] = 0;
+                    }
+                    else
+                        break;
                 }
                 return component;
             }
