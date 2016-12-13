@@ -48,7 +48,7 @@ bool HashTable<T>::find(T value) {
 template <class T>
 void HashTable<T>::add(T value) {
     int hash = hashFunction(value);
-    if (find(value)) return;
+    // if (find(value)) return;
     bucketData[hash].add(value);
 }
 

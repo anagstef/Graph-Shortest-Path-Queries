@@ -7,10 +7,13 @@ using namespace std;
 CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
   QueryNum = 0;
   UpdateUsed = 0;
-  componentCount = 1;
-  offset = 0;
-  queue = new Queue<uint32_t>();
-
+  this->In = &In;
+  this->Out = &Out;
+  this->In_Buf = &In_Buf;
+  this->Out_Buf = &Out_Buf;
+  // componentCount = 1;
+  // offset = 0;
+  // queue = new Queue<uint32_t>();
 
   indexsize = In.getSize();
   if (Out.getSize() > indexsize)
@@ -18,15 +21,47 @@ CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
 
   ccindex = (uint32_t*) malloc(sizeof(uint32_t) * indexsize);
 
-  for(uint32_t i=0; i<indexsize; i++){
+  estimateConnectedComponents();
+
+  // for(uint32_t i=0; i<indexsize; i++){
+  //   ccindex[i] = 0;
+  // }
+  //
+  // while(offset < indexsize){
+  //   if((In.isIndexed(offset) || Out.isIndexed(offset)) && ccindex[offset] == 0){
+  //     CC_BFS(In, Out, In_Buf, Out_Buf);
+  //     componentCount++;
+  //     queue.clear();
+  //   }
+  //   offset++;
+  // }
+
+
+
+  // delete queue;
+  updateIndex = new UpdateIndex(componentCount);
+}
+
+void CC::estimateConnectedComponents(){
+  componentCount = 1;
+  offset = 0;
+
+  uint32_t maxsize = In->getSize();
+  if (Out->getSize() > maxsize)
+    maxsize = Out->getSize();
+
+  if(maxsize > indexsize)
+    maxsize = indexsize;
+
+  for(uint32_t i=0; i<maxsize; i++){
     ccindex[i] = 0;
   }
 
-  while(offset < indexsize){
-    if((In.isIndexed(offset) || Out.isIndexed(offset)) && ccindex[offset] == 0){
-      CC_BFS(In, Out, In_Buf, Out_Buf);
+  while(offset < maxsize){
+    if((In->isIndexed(offset) || Out->isIndexed(offset)) && ccindex[offset] == 0){
+      CC_BFS();
       componentCount++;
-      queue->clear();
+      queue.clear();
     }
     offset++;
   }
@@ -34,8 +69,6 @@ CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
   if(DEBUG)
    cout << "Number of CC is " << componentCount - 1 << endl;
 
-  delete queue;
-  updateIndex = new UpdateIndex(componentCount);
 }
 
 CC::~CC(){
@@ -43,25 +76,25 @@ CC::~CC(){
   free(ccindex);
 }
 
-void CC::CC_BFS(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
+void CC::CC_BFS(){
   uint32_t tempQueueSize, tempListNodeLength, popedNode;
   list_node* current;
   uint32_t* neighArray;
 
-  queue->push(offset);
+  queue.push(offset);
   ccindex[offset] = componentCount;
 
-  while(!queue->isEmpty()){
-     tempQueueSize = queue->getSize();
+  while(!queue.isEmpty()){
+     tempQueueSize = queue.getSize();
 
     //EXPANDING FORWARD BFS
     for(uint32_t i=0; i<tempQueueSize; i++){ //for every node in Fringe
-        popedNode = queue->pop();
+        popedNode = queue.pop();
 
-        if(Out.isIndexed(popedNode)){
+        if(Out->isIndexed(popedNode)){
 
           //get current list node
-          current = Out_Buf.getListNode(Out.getListHead(popedNode));
+          current = Out_Buf->getListNode(Out->getListHead(popedNode));
 
           while(1){ //loop for all neighbors
               tempListNodeLength = current->get_length();
@@ -69,12 +102,12 @@ void CC::CC_BFS(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
               for(uint32_t j=0; j<tempListNodeLength; j++){ //for every node in a list_node
                   if(ccindex[neighArray[j]] == 0){
                       ccindex[neighArray[j]] = componentCount;
-                      queue->push(neighArray[j]);
+                      queue.push(neighArray[j]);
                   }
               }
 
               if(current->get_hasNext()){ //get the next list_node
-                  current = Out_Buf.getListNode(current->get_nextNode());
+                  current = Out_Buf->getListNode(current->get_nextNode());
               }
               else{ //break loop if there are no more listnodes
                   break;
@@ -84,10 +117,10 @@ void CC::CC_BFS(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
         }
 
 
-        if(In.isIndexed(popedNode)){
+        if(In->isIndexed(popedNode)){
 
           //get current list node
-          current = In_Buf.getListNode(In.getListHead(popedNode));
+          current = In_Buf->getListNode(In->getListHead(popedNode));
 
           while(1){ //loop for all neighbors
               tempListNodeLength = current->get_length();
@@ -95,12 +128,12 @@ void CC::CC_BFS(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
               for(uint32_t j=0; j<tempListNodeLength; j++){ //for every node in a list_node
                   if(ccindex[neighArray[j]] == 0){
                       ccindex[neighArray[j]] = componentCount;
-                      queue->push(neighArray[j]);
+                      queue.push(neighArray[j]);
                   }
               }
 
               if(current->get_hasNext()){ //get the next list_node
-                  current = In_Buf.getListNode(current->get_nextNode());
+                  current = In_Buf->getListNode(current->get_nextNode());
               }
               else{ //break loop if there are no more listnodes
                   break;
@@ -199,17 +232,23 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
 
 bool CC::rebuildIndexes(){
   float value = (float)UpdateUsed / (float)QueryNum;
-  cout << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
-  cout << "Metric value is: " << value;
+  if(DEBUG){
+    cout << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
+    cout << "Metric value is: " << value;
+  }
   if(value >= METRIC){
-    cout << "   -Rebuilding..." << endl;
-    componentCount = updateIndex->update(ccindex, indexsize, componentCount);
+    if(DEBUG)
+      cout << "   -Rebuilding..." << endl;
+    // componentCount = updateIndex->update(ccindex, indexsize, componentCount);
+    estimateConnectedComponents();
+    updateIndex->clear();
     QueryNum = 0;
     UpdateUsed = 0;
     return true;
   }
   else{
-    cout << "   -Will not rebuild..." << endl;
+    if(DEBUG)
+      cout << "   -Will not rebuild..." << endl;
     QueryNum = 0;
     UpdateUsed = 0;
     return false;
