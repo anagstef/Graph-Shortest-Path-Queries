@@ -63,7 +63,6 @@ void SCC::estimateStronglyConnectedComponents() {
 
 
 void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node** nodesArray) {
-    Component *component = NULL;
     node->index = index;
     node->lowlink = index;
     node->vindex = 0;
@@ -97,19 +96,20 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
             if (lastVisited->lowlink == lastVisited->index) {
                 uint32_t compSize = stack.getSize();
                 components_count++;
-                component->component_id = components_count;
-                component->included_nodes_count = compSize;
-                component->included_nodes_ids = (uint32_t*) malloc(compSize * sizeof(uint32_t));
+                Component component;
+                component.component_id = components_count;
+                component.included_nodes_count = compSize;
+                component.included_nodes_ids = (uint32_t*) malloc(compSize * sizeof(uint32_t));
                 for (uint32_t i = 0; i < compSize; ++i) {
                     if (!stack.isEmpty()) {
-                        component->included_nodes_ids[i] = stack.pop();
-                        onStack[component->included_nodes_ids[i]] = 0;
+                        component.included_nodes_ids[i] = stack.pop();
+                        onStack[component.included_nodes_ids[i]] = 0;
 
                     }
                     else
                         break;
                 }
-                addComponent(component);
+                addComponent(&component);
             }
             Node *newLast = lastVisited->prevNode;
             if (newLast != NULL) {
