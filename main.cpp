@@ -54,8 +54,8 @@ void operations(istream &input, Graph &graph) {
         }
         else if (c == "Q") {
             // cout << "Query" << source << "--" << dest << endl;
-            graph.query(source, dest);
-            // cout << graph.query(source, dest) << endl;
+            // graph.query(source, dest);
+            cout << graph.query(source, dest) << endl;
             graph.clean();
         }
         else if (c != "") {
@@ -80,8 +80,9 @@ int main(int argc, char const *argv[]) {
     }
     create_graph(input, graph);
     input.close();
+    // return 0;
     graph.createComponents();
-    return 0;
+    // return 0;
     // graph.printGraph();
     //cout << "end of insertion" << endl;
     input.open(&argv[2][0]);
