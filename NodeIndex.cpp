@@ -3,6 +3,7 @@
 using namespace std;
 
 NodeIndex::NodeIndex() {
+    numOfNodes = 0;
     size = INDEX_INIT_SIZE;
     Index = (iNode*) malloc(sizeof(iNode) * size);
 
@@ -78,6 +79,7 @@ bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
     Index[nodeId].listHead = buffer_offset;
     Index[nodeId].listTail = buffer_offset;
     Index[nodeId].indexed = true;
+    numOfNodes++;
 
     return true;
 }
