@@ -82,6 +82,7 @@ int main(int argc, char const *argv[]) {
     input.close();
     // return 0;
     graph.createComponents();
+    graph.createSCComponents();
     // return 0;
     // graph.printGraph();
     //cout << "end of insertion" << endl;

@@ -1,13 +1,18 @@
 #include "SCC.h"
 
-SCC::SCC(Graph graph) {
+SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
+    this->In = &In;
+    this->Out = &Out;
+    this->In_Buf = &In_Buf;
+    this->Out_Buf = &Out_Buf;
     comps_size = COMPONENTS;
     components = (Component*) malloc (comps_size * sizeof(Component));
     components_count = 0;
     uint32_t graphNodes;
-    if (graph.getIn().getSize() < graph.getOut().getSize()) graphNodes = graph.getOut().getSize();
-    else graphNodes = graph.getIn().getSize();
+    if (In.getSize() < Out.getSize()) graphNodes = Out.getSize();
+    else graphNodes = In.getSize();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
+    estimateStronglyConnectedComponents();
 }
 
 SCC::~SCC() {
@@ -27,35 +32,37 @@ void SCC::addComponent(Component *component) {
     }
 }
 
-void SCC::estimateStronglyConnectedComponents(Graph graph) {
-    SCC components(graph);
+void SCC::estimateStronglyConnectedComponents() {
     uint32_t graphNodes;
 
-    if (graph.getIn().getSize() < graph.getOut().getSize()) graphNodes = graph.getOut().getSize();
-    else graphNodes = graph.getIn().getSize();
+    if (In->getSize() < Out->getSize()) graphNodes = Out->getSize();
+    else graphNodes = In->getSize();
 
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
     Stack <uint32_t> stack;
-
 
     Node* nodes = (Node*) malloc(graphNodes*sizeof(Node));
     for (uint32_t i = 0; i < graphNodes; i++) {
         nodes[i].id = i;
         nodes[i].index  = 0;
         nodes[i].vindex = 0;
-        nodes[i].nodes  = graph.getIn().getNumOfNeighbors(i);
-        //nodes[i].neighbors = ?.get_neighborArray();
+        nodes[i].nodes  = In->getNumOfNeighbors(i);
+        list_node* current;
+        current = Out_Buf->getListNode(Out->getListHead(i));
+        nodes[i].neighbors = current->get_neighborArray();
     }
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
         if (nodes[i].index == 0) {
-            tarjan(&nodes[i], index, onStack, stack, &components);
+            tarjan(&nodes[i], index, onStack, stack, &nodes);
             stack.clear();
         }
     }
 }
 
-void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, SCC* components) {
+
+
+void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node** nodesArray) {
     Component *component = NULL;
     node->index = index;
     node->lowlink = index;
@@ -68,7 +75,8 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
     Node* lastVisited = node;
     while (1) {
         if (lastVisited->vindex < lastVisited->nodes) {
-            Node *w = lastVisited->nodes.//neighbors[lastVisited->index];
+            uint32_t neighbor = lastVisited->neighbors[lastVisited->vindex];
+            Node *w = nodesArray[neighbor];
             lastVisited->vindex++;
             if (w->index == 0) {
                 w->index = index;
@@ -101,7 +109,7 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
                     else
                         break;
                 }
-                components->addComponent(component);
+                addComponent(component);
             }
             Node *newLast = lastVisited->prevNode;
             if (newLast != NULL) {

@@ -28,16 +28,20 @@ struct Component {
 
 class SCC {
 private:
+    NodeIndex* In;
+    NodeIndex* Out;
+    Buffer* In_Buf;
+    Buffer* Out_Buf;
     Component* components;
     uint32_t  components_count;
     uint32_t* id_belongs_to_component;
     uint32_t  comps_size;
 public:
-    SCC(Graph graph);
+    SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf);
     ~SCC();
     void addComponent(Component *component);
-    void estimateStronglyConnectedComponents(Graph graph);
-    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, SCC* components);
+    void estimateStronglyConnectedComponents();
+    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node** nodesArray);
 };
 
 #endif

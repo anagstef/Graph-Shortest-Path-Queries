@@ -14,13 +14,17 @@ void Graph::createComponents(){
   opAdds = true;
 }
 
+void Graph::createSCComponents() {
+    scc = new SCC(In, Out, In_Buf, Out_Buf);
+}
+
 void Graph::rebuildCC(){
   cc->rebuildIndexes();
 }
 
 void Graph::add(uint32_t from, uint32_t to) {
     uint32_t temp;
-    bool NewEdgeAdded;
+    //bool NewEdgeAdded;
 
     InsEdge check;
     check.from = from;

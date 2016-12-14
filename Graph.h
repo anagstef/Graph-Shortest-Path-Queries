@@ -11,8 +11,10 @@
 #include "HT_Template.h"
 #include "Explored.h"
 #include "CC.h"
+#include "SCC.h"
 
 class CC;
+class SCC;
 
 struct InsEdge{
   uint32_t from;
@@ -41,18 +43,22 @@ private:
     Explored BackwardsExplored;
     HashTable<InsEdge> duplicates;
     CC* cc;
+    SCC* scc;
     bool opAdds = false;
     bool isDynamic;
 public:
 
     void createComponents();
+    void createSCComponents();
     void rebuildCC();
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     void printGraph(); //unit testing
     void clean();
-    NodeIndex getIn() {return In;}
-    NodeIndex getOut() {return Out;}
+    NodeIndex getIn()  { return In; }
+    NodeIndex getOut() { return Out;}
+    Buffer getBIn()    { return In_Buf; }
+    Buffer getBOut()   { return Out_Buf;}
 };
 
 #endif
