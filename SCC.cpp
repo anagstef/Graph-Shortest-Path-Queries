@@ -46,7 +46,6 @@ void SCC::estimateStronglyConnectedComponents(Graph graph) {
         nodes[i].nodes  = graph.getIn().getNumOfNeighbors(i);
         //nodes[i].neighbors = ?.get_neighborArray();
     }
-
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
         if (nodes[i].index == 0) {
