@@ -16,7 +16,8 @@ struct Node {
     uint32_t lowlink;
     uint32_t vindex;
     Node* prevNode;
-    Queue <Node*> nodes;
+    uint32_t nodes;
+    uint32_t* neighbors;
 };
 
 struct Component {
@@ -36,7 +37,7 @@ public:
     ~SCC();
     void addComponent(Component *component);
     void estimateStronglyConnectedComponents(Graph graph);
-    Component* tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack);
+    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, SCC* components);
 };
 
 #endif
