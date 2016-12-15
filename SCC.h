@@ -41,7 +41,7 @@ public:
     ~SCC();
     void addComponent(Component *component);
     void estimateStronglyConnectedComponents();
-    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node** nodesArray);
+    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node* nodesArray);
 };
 
 #endif

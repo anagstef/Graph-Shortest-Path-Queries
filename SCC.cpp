@@ -9,8 +9,8 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     components = (Component*) malloc (comps_size * sizeof(Component));
     components_count = 0;
     uint32_t graphNodes;
-    if (In.getSize() < Out.getSize()) graphNodes = Out.getSize();
-    else graphNodes = In.getSize();
+    if (In.getNumOfNodes() < Out.getNumOfNodes()) graphNodes = Out.getNumOfNodes();
+    else graphNodes = In.getNumOfNodes();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
     estimateStronglyConnectedComponents();
 }
@@ -34,9 +34,8 @@ void SCC::addComponent(Component *component) {
 
 void SCC::estimateStronglyConnectedComponents() {
     uint32_t graphNodes;
-
-    if (In->getSize() < Out->getSize()) graphNodes = Out->getSize();
-    else graphNodes = In->getSize();
+    if (In->getNumOfNodes() < Out->getNumOfNodes()) graphNodes = Out->getNumOfNodes();
+    else graphNodes = In->getNumOfNodes();
 
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
     Stack <uint32_t> stack;
@@ -48,48 +47,66 @@ void SCC::estimateStronglyConnectedComponents() {
         nodes[i].vindex = 0;
         nodes[i].nodes  = In->getNumOfNeighbors(i);
         list_node* current;
-        current = Out_Buf->getListNode(Out->getListHead(i));
+        current = In_Buf->getListNode(In->getListHead(i));
         nodes[i].neighbors = current->get_neighborArray();
     }
+    /*for (uint32_t i = 0; i < graphNodes; i++) {
+        cout << "ID: " << nodes[i].id << endl;
+        cout << "Index: " << nodes[i].index << endl;
+        cout << "VIndex: " << nodes[i].vindex << endl;
+        cout << "Nodes count: " << nodes[i].nodes << endl;
+        for (uint32_t j = 0; j < nodes[i].nodes; ++j) {
+            printf("%u, ", nodes[i].neighbors[j]);
+        }
+        cout << endl;
+        getchar();
+    }*/
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
         if (nodes[i].index == 0) {
-            tarjan(&nodes[i], index, onStack, stack, &nodes);
+            tarjan(&nodes[i], index, onStack, stack, nodes);
             stack.clear();
         }
     }
 }
 
-
-
-void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node** nodesArray) {
+void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node* nodesArray) {
     node->index = index;
     node->lowlink = index;
     node->vindex = 0;
     node->prevNode = NULL;
-
     index++;
     stack.push(node->id);
     onStack[node->id] = 1;
     Node* lastVisited = node;
     while (1) {
         if (lastVisited->vindex < lastVisited->nodes) {
-            uint32_t neighbor = lastVisited->neighbors[lastVisited->vindex];
-            Node *w = nodesArray[neighbor];
-            lastVisited->vindex++;
-            if (w->index == 0) {
-                w->index = index;
-                w->lowlink = index;
-                w->vindex = 0;
-                w->prevNode = lastVisited;
-                index++;
-                stack.push(w->id);
-                onStack[w->id] = 1;
-                lastVisited = w;
+            if (lastVisited->nodes != 0) {
+                printf("CHECK1\n");
+                uint32_t neighbor = lastVisited->neighbors[lastVisited->vindex];
+                printf("%u\n", neighbor);
+                printf("%u\n", nodesArray[neighbor].id);
+                Node w = nodesArray[neighbor];
+                lastVisited->vindex++;
+                printf("CHECK2\n");
+                if (w.index == 0) {
+                    w.index = index;
+                    w.lowlink = index;
+                    w.vindex = 0;
+                    w.prevNode = lastVisited;
+                    index++;
+                    stack.push(w.id);
+                    onStack[w.id] = 1;
+                    lastVisited = &w;
+                }
+                else if (onStack[w.id] == 1) {
+                    if (lastVisited->lowlink > w.index)
+                        lastVisited->lowlink = w.index;
+                }
             }
-            else if (onStack[w->id] == 1) {
-                if (lastVisited->lowlink > w->index)
-                    lastVisited->lowlink = w->index;
+            else  {
+                printf("CHECK2\n");
+                continue;
             }
         }
         else {
