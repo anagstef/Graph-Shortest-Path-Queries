@@ -12,11 +12,11 @@
 
 struct Node {
     uint32_t id;
-    uint32_t index;
-    uint32_t lowlink;
-    uint32_t vindex;
+    int index;
+    int lowlink;
+    int vindex;
     Node* prevNode;
-    uint32_t nodes;
+    int nodes;
     uint32_t* neighbors;
 };
 
@@ -40,8 +40,8 @@ public:
     SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf);
     ~SCC();
     void addComponent(Component *component);
-    void estimateStronglyConnectedComponents(Stack<uint32_t> stack);
-    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stack, Node* nodesArray);
+    void estimateStronglyConnectedComponents(Stack<uint32_t> *stack);
+    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray);
 };
 
 #endif
