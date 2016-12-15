@@ -53,20 +53,9 @@ void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> stack) {
         nodes[i].vindex = 0;
         nodes[i].nodes  = In->getNumOfNeighbors(i);
         list_node* current;
-        current = In_Buf->getListNode(In->getListHead(i));
+        current = Out_Buf->getListNode(Out->getListHead(i));
         nodes[i].neighbors = current->get_neighborArray();
     }
-    /*for (uint32_t i = 0; i < graphNodes; i++) {
-        cout << "ID: " << nodes[i].id << endl;
-        cout << "Index: " << nodes[i].index << endl;
-        cout << "VIndex: " << nodes[i].vindex << endl;
-        cout << "Nodes count: " << nodes[i].nodes << endl;
-        for (uint32_t j = 0; j < nodes[i].nodes; ++j) {
-            printf("%u, ", nodes[i].neighbors[j]);
-        }
-        cout << endl;
-        getchar();
-    }*/
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
         if (nodes[i].index == 0) {
@@ -93,7 +82,6 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
                 printf("%u\n", nodesArray[neighbor].id);
                 Node w = nodesArray[neighbor];
                 lastVisited->vindex++;
-
                 if (w.index == 0) {
                     w.index = index;
                     w.lowlink = index;
