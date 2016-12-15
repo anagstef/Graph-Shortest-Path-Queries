@@ -1,5 +1,7 @@
 #include "SCC.h"
 
+using namespace std;
+
 SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     this->In = &In;
     this->Out = &Out;
@@ -9,10 +11,14 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     components = (Component*) malloc (comps_size * sizeof(Component));
     components_count = 0;
     uint32_t graphNodes;
-    if (In.getNumOfNodes() < Out.getNumOfNodes()) graphNodes = Out.getNumOfNodes();
-    else graphNodes = In.getNumOfNodes();
+    if (In.getNumOfNodes() < Out.getNumOfNodes())
+        graphNodes = Out.getNumOfNodes();
+    else
+        graphNodes = In.getNumOfNodes();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
-    estimateStronglyConnectedComponents();
+    Stack <uint32_t> stack;
+    estimateStronglyConnectedComponents(stack);
+    cout << "Components Count: " << components_count << endl;
 }
 
 SCC::~SCC() {
@@ -32,14 +38,14 @@ void SCC::addComponent(Component *component) {
     }
 }
 
-void SCC::estimateStronglyConnectedComponents() {
+void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> stack) {
     uint32_t graphNodes;
-    if (In->getNumOfNodes() < Out->getNumOfNodes()) graphNodes = Out->getNumOfNodes();
-    else graphNodes = In->getNumOfNodes();
+    if (In->getNumOfNodes() < Out->getNumOfNodes())
+        graphNodes = Out->getNumOfNodes();
+    else
+        graphNodes = In->getNumOfNodes();
 
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
-    Stack <uint32_t> stack;
-
     Node* nodes = (Node*) malloc(graphNodes*sizeof(Node));
     for (uint32_t i = 0; i < graphNodes; i++) {
         nodes[i].id = i;
@@ -82,13 +88,12 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
     while (1) {
         if (lastVisited->vindex < lastVisited->nodes) {
             if (lastVisited->nodes != 0) {
-                printf("CHECK1\n");
                 uint32_t neighbor = lastVisited->neighbors[lastVisited->vindex];
                 printf("%u\n", neighbor);
                 printf("%u\n", nodesArray[neighbor].id);
                 Node w = nodesArray[neighbor];
                 lastVisited->vindex++;
-                printf("CHECK2\n");
+
                 if (w.index == 0) {
                     w.index = index;
                     w.lowlink = index;
@@ -105,7 +110,6 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
                 }
             }
             else  {
-                printf("CHECK2\n");
                 continue;
             }
         }
@@ -134,9 +138,8 @@ void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> stac
                     newLast->lowlink = lastVisited->lowlink;
                 lastVisited = newLast;
             }
-            else {
+            else
                 break;
-            }
         }
     }
 }
