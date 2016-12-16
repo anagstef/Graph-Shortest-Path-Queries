@@ -86,11 +86,9 @@ void operations(istream &input, Graph &graph) {
 }
 
 int main(int argc, char const *argv[]) {
-    //create_graph(cin);
     ifstream input;
     string filename;
     Graph graph;
-    // if (argc == 3) {
     input.open(&argv[1][0]);
     if (!input.is_open()) {
         cout << "Couldn't open file. End of execution." << endl;
