@@ -34,34 +34,54 @@ void create_graph(istream &input, Graph &graph) {
 
 void operations(istream &input, Graph &graph) {
     string line;
-    while (!input.eof()) {
-        getline(input, line);
-        string c;
-        uint32_t source, dest;
-
-        if (line == "F"){
-          graph.rebuildCC();
-          continue;
+    getline(input, line);
+    if (line == "STATIC") {
+        graph.createSCComponents();
+        while (!input.eof()) {
+            getline(input, line);
+            string c;
+            uint32_t source, dest;
+            if (line == "F"){
+              continue;
+            }
+            istringstream command(line);
+            command >> c;
+            command >> source;
+            command >> dest;
+            if (c == "Q") {
+                cout << graph.query(source, dest) << endl;
+                graph.clean();
+            }
+            else if (c != "") {
+                cout << "Unknown command" << endl;
+            }
         }
-        //create prob a list to execute blocks of commands
-        istringstream command(line);
-        command >> c;
-        command >> source;
-        command >> dest;
-        if (c == "A") {
-            // cout << "Add" << source << "--" << dest << endl;
-            graph.add(source, dest);
+    }
+    else if (line == "DYNAMIC") {
+        graph.createComponents();
+        while (!input.eof()) {
+            getline(input, line);
+            string c;
+            uint32_t source, dest;
+            if (line == "F") {
+                graph.rebuildCC();
+                continue;
+            }
+            istringstream command(line);
+            command >> c;
+            command >> source;
+            command >> dest;
+            if (c == "Q") {
+                cout << graph.query(source, dest) << endl;
+                graph.clean();
+            }
+            if (c == "A") {
+                graph.add(source, dest);
+            }
+            else if (c != "") {
+                cout << "Unknown command" << endl;
+            }
         }
-        else if (c == "Q") {
-            // cout << "Query" << source << "--" << dest << endl;
-            // graph.query(source, dest);
-            cout << graph.query(source, dest) << endl;
-            graph.clean();
-        }
-        else if (c != "") {
-            cout << "Unknown command" << endl;
-        }
-
     }
 }
 
@@ -69,9 +89,7 @@ int main(int argc, char const *argv[]) {
     //create_graph(cin);
     ifstream input;
     string filename;
-
     Graph graph;
-
     // if (argc == 3) {
     input.open(&argv[1][0]);
     if (!input.is_open()) {
@@ -80,12 +98,6 @@ int main(int argc, char const *argv[]) {
     }
     create_graph(input, graph);
     input.close();
-    // return 0;
-    graph.createComponents();
-    graph.createSCComponents();
-    // return 0;
-    // graph.printGraph();
-    //cout << "end of insertion" << endl;
     input.open(&argv[2][0]);
     if (!input.is_open()) {
         cout << "Couldn't open file. End of execution." << endl;
@@ -93,6 +105,5 @@ int main(int argc, char const *argv[]) {
     }
     operations(input, graph);
     input.close();
-    // }
     return 0;
 }
