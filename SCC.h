@@ -5,9 +5,10 @@
 #include <cstdlib>
 #include "Graph.h"
 #include "Stack.h"
+#include <stack>
 
 #define COMPONENTS 100    //Component* components (how many components the graph has)
-                         //Same size with id_belongs_to_component, parallel matrix
+                          //Same size with id_belongs_to_component, parallel matrix
 #define NODES 100         //Included_nodes_ids (for every component, the nodes it has)
 
 struct Node {
@@ -15,8 +16,8 @@ struct Node {
     int index;
     int lowlink;
     int vindex;
-    Node* prevNode;
-    int nodes;
+    uint32_t prevNode;
+    int numOfNeighbors;
     uint32_t* neighbors;
 };
 
@@ -41,7 +42,8 @@ public:
     ~SCC();
     void addComponent(Component *component);
     void estimateStronglyConnectedComponents(Stack<uint32_t> *stack);
-    void tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray);
+    void tarjan(uint32_t nodeID, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray);
+    void printComponents();
 };
 
 #endif

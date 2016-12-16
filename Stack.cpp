@@ -1,4 +1,5 @@
 #include "Stack.h"
+#include <stack>
 
 using namespace std;
 
@@ -51,8 +52,8 @@ void Stack<T>::push(T value) {
 
 template <class T>
 T Stack<T>::pop() {
-    T ret_value = stack[end];
     end--;
+    T ret_value = stack[end];
     size--;
     return ret_value;
 }

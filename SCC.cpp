@@ -16,14 +16,25 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     else
         graphNodes = In.getNumOfNodes();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
-    Stack <uint32_t> stack;
-    estimateStronglyConnectedComponents(&stack);
+    Stack<uint32_t> *stack = new Stack<uint32_t>();
+    estimateStronglyConnectedComponents(stack);
     cout << "Components Count: " << components_count << endl;
+    printComponents();
 }
 
 SCC::~SCC() {
     free(components);
     free(id_belongs_to_component);
+}
+
+void SCC::printComponents() {
+    for (uint32_t i = 0; i < components_count; i++) {
+        cout << "Component " << i << endl;
+        for (uint32_t j = 0; j < components[i].included_nodes_count; j++) {
+            printf("%u, ", components[i].included_nodes_ids[j]);
+        }
+        cout <<  endl;
+    }
 }
 
 void SCC::addComponent(Component *component) {
@@ -51,87 +62,90 @@ void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> *stack) {
         if (In->isIndexed(i) || Out->isIndexed(i)) {
             nodes[i].id = i;
             nodes[i].index  = 0;
-            nodes[i].vindex = 0;
-            nodes[i].nodes  = Out->getNumOfNeighbors(i);
+            nodes[i].lowlink = 0;
+            nodes[i].vindex = graphNodes;
+            nodes[i].prevNode = UINT32_MAX;
+            nodes[i].numOfNeighbors = Out->getNumOfNeighbors(i);
             list_node* current;
             current = Out_Buf->getListNode(Out->getListHead(i));
             nodes[i].neighbors = current->get_neighborArray();
         }
         else {
-            nodes[i].nodes = -1;
+            nodes[i].numOfNeighbors = -1;
         }
 
     }
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
-        if (nodes[i].index == 0) {
-            tarjan(&nodes[i], index, onStack, stack, nodes);
-            stack->clear();
+        if (Out->isIndexed(i)) {
+            if (nodes[i].index == 0) {
+                tarjan(i, index, onStack, stack, nodes);
+                stack->clear();
+                cout << "Finished with -- " << i << endl;
+                cout << endl;
+            }
         }
-        cout << i << endl;
     }
 }
 
-void SCC::tarjan(Node *node, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray) {
-    node->index = index;
-    node->lowlink = index;
-    node->vindex = 0;
-    node->prevNode = NULL;
+void SCC::tarjan(uint32_t nodeID, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray) {
+    nodesArray[nodeID].index = index;
+    nodesArray[nodeID].lowlink = index;
+    nodesArray[nodeID].vindex = 0;
+    nodesArray[nodeID].prevNode = UINT32_MAX;
     index++;
-    stack->push(node->id);
-    onStack[node->id] = 1;
-    Node* lastVisited = node;
+    stack->push(nodeID);
+    onStack[nodeID] = 1;
+    uint32_t lastVisited = nodeID;
     while (1) {
-        if (lastVisited->nodes != -1) {
-            if (lastVisited->vindex < lastVisited->nodes) {
-                printf("Last Visited vindex: %d Last Visited nodes:%d\n", lastVisited->vindex, lastVisited->nodes);
-                uint32_t neighbor = lastVisited->neighbors[lastVisited->vindex];
-                printf("%u\n", nodesArray[neighbor].id);
-                Node w = nodesArray[neighbor];
-                lastVisited->vindex++;
-                printf("LV vindex %d\n", lastVisited->index);
-                if (w.index == 0) {
-                    w.index = index;
-                    w.lowlink = index;
-                    w.vindex = 0;
-                    w.prevNode = lastVisited;
-                    index++;
-                    stack->push(w.id);
-                    onStack[w.id] = 1;
-                    lastVisited = &w;
-                    printf("---->Low link %d\n", lastVisited->lowlink);
-                    printf("---->Index %d\n", lastVisited->index);
-                }
-                else if (onStack[w.id] == 1) {
-                    if (lastVisited->lowlink > w.index)
-                        lastVisited->lowlink = w.index;
-                    printf("----<Low link %d\n", lastVisited->lowlink);
-                    printf("----<Index %d\n", lastVisited->index);
-                }
+        if (nodesArray[lastVisited].vindex < nodesArray[lastVisited].numOfNeighbors) {
+            printf("Last vindex: %d Last nodes: %d ID: %u\n", nodesArray[lastVisited].vindex, nodesArray[lastVisited].numOfNeighbors, lastVisited);
+            uint32_t neighbor = nodesArray[lastVisited].neighbors[nodesArray[lastVisited].vindex];
+            printf("Neighbor of %u is %u\n", lastVisited, neighbor);//nodesArray[neighbor].id);
+            //Node w = nodesArray[neighbor];
+            nodesArray[lastVisited].vindex++;
+            if (nodesArray[neighbor].index == 0) {
+                nodesArray[neighbor].index = index;
+                nodesArray[neighbor].lowlink = index;
+                nodesArray[neighbor].vindex = 0;
+                nodesArray[neighbor].prevNode = nodesArray[lastVisited].prevNode;
+                index++;
+                stack->push(neighbor);
+                onStack[neighbor] = 1;
+                lastVisited = neighbor;
+                printf("---->Low link %d\n", nodesArray[lastVisited].lowlink);
+                printf("---->Index %d\n", nodesArray[lastVisited].index);
             }
-            else {
-                if (lastVisited->lowlink == lastVisited->index) {
-                    uint32_t compSize = stack->getSize();
-                    components_count++;
-                    Component component;
-                    component.component_id = components_count;
-                    component.included_nodes_count = compSize;
-                    component.included_nodes_ids = (uint32_t*) malloc(compSize * sizeof(uint32_t));
-                    for (uint32_t i = 0; i < compSize; ++i) {
-                        component.included_nodes_ids[i] = stack->pop();
-                        onStack[component.included_nodes_ids[i]] = 0;
-                    }
-                    addComponent(&component);
-                }
-                Node *newLast = lastVisited->prevNode;
-                if (newLast != NULL) {
-                    if (newLast->lowlink > lastVisited->lowlink)
-                        newLast->lowlink = lastVisited->lowlink;
-                    lastVisited = newLast;
-                }
-                else
-                    break;
+            else if (onStack[neighbor] == 1) {
+                printf("LowLink is %d and index is %d\n", nodesArray[lastVisited].lowlink, nodesArray[neighbor].index);
+                nodesArray[lastVisited].lowlink = (nodesArray[neighbor].lowlink < nodesArray[lastVisited].index) ? nodesArray[lastVisited].lowlink : nodesArray[neighbor].index;
+                printf("----<Low link %d\n", nodesArray[lastVisited].lowlink);
+                printf("----<Index %d\n", nodesArray[lastVisited].index);
             }
+        }
+        else {
+            if (nodesArray[lastVisited].lowlink == nodesArray[lastVisited].index) {
+                cout << "SCC FOUND" << endl;
+                uint32_t compSize = stack->getSize();
+                cout << compSize << endl;
+                Component component;
+                component.component_id = components_count;
+                component.included_nodes_count = compSize;
+                component.included_nodes_ids = (uint32_t*) malloc(compSize * sizeof(uint32_t));
+                for (uint32_t i = 0; i < compSize; ++i) {
+                    component.included_nodes_ids[i] = stack->pop();
+                    onStack[component.included_nodes_ids[i]] = 0;
+                }
+                addComponent(&component);
+                cout << "Component added" << endl;
+            }
+            uint32_t newLast = nodesArray[nodeID].prevNode;
+            if (newLast != UINT32_MAX) {
+                nodesArray[newLast].lowlink = (nodesArray[newLast].lowlink < nodesArray[lastVisited].lowlink) ? nodesArray[newLast].lowlink : nodesArray[lastVisited].lowlink;
+                lastVisited = newLast;
+            }
+            else
+                break;
         }
     }
 }
