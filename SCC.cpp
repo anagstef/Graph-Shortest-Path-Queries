@@ -29,7 +29,7 @@ SCC::~SCC() {
 
 void SCC::printComponents() {
     for (uint32_t i = 0; i < components_count; i++) {
-        cout << "Component " << i << endl;
+        cout << "Component " << components[i].component_id << endl;
         for (uint32_t j = 0; j < components[i].included_nodes_count; j++) {
             printf("%u, ", components[i].included_nodes_ids[j]);
         }
@@ -42,6 +42,7 @@ void SCC::addComponent(Component *component) {
         comps_size = comps_size*2;
         components = (Component*) realloc (components, comps_size * sizeof(Component));
     }
+    component->component_id = components_count + 1;
     components[components_count] = *component;
     components_count++;
     for (uint32_t i = 0; i < component->included_nodes_count; ++i) {
@@ -49,100 +50,107 @@ void SCC::addComponent(Component *component) {
     }
 }
 
-void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> *stack) {
-    uint32_t graphNodes;
-    if (In->getSize() < Out->getSize())
-        graphNodes = Out->getSize();
-    else
-        graphNodes = In->getSize();
-
-    int* onStack = (int*) calloc(graphNodes, sizeof(int));
-    Node* nodes = (Node*) malloc(graphNodes * sizeof(Node));
-    for (uint32_t i = 0; i < graphNodes; i++) {
-        if (In->isIndexed(i) || Out->isIndexed(i)) {
-            nodes[i].id = i;
-            nodes[i].index  = 0;
+Node* SCC::tarjanInit(uint32_t numOfNodes) {
+    Node* nodes = (Node*) malloc(sizeof(Node) * numOfNodes);
+    list_node* current;
+    for (uint32_t i = 0; i < numOfNodes; i++) {
+        if (Out->isIndexed(i)) {
+            nodes[i].index  = UINT32_MAX;
             nodes[i].lowlink = 0;
-            nodes[i].vindex = graphNodes;
-            nodes[i].prevNode = UINT32_MAX;
+            nodes[i].vindex = UINT32_MAX;
             nodes[i].numOfNeighbors = Out->getNumOfNeighbors(i);
-            list_node* current;
             current = Out_Buf->getListNode(Out->getListHead(i));
             nodes[i].neighbors = current->get_neighborArray();
         }
         else {
             nodes[i].numOfNeighbors = -1;
         }
-
     }
+    return nodes;
+}
+
+void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> *stack) {
+    uint32_t graphNodes = Out->getSize();
+    int* onStack = (int*) calloc(graphNodes, sizeof(int));
+    Node* nodes = tarjanInit(graphNodes);
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
         if (Out->isIndexed(i)) {
-            if (nodes[i].index == 0) {
-                tarjan(i, index, onStack, stack, nodes);
+            if (nodes[i].index == UINT32_MAX) {
+                tarjan(i, index, stack, nodes, onStack);
                 stack->clear();
-                cout << "Finished with -- " << i << endl;
+                cout << "Finished with -- " << i << " -- " << index << endl;
                 cout << endl;
             }
         }
     }
 }
 
-void SCC::tarjan(uint32_t nodeID, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray) {
-    nodesArray[nodeID].index = index;
-    nodesArray[nodeID].lowlink = index;
-    nodesArray[nodeID].vindex = 0;
-    nodesArray[nodeID].prevNode = UINT32_MAX;
+void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> *stack, Node* nodes, int* onStack) {
+    uint32_t last, w, newLast;
+    nodes[nodeID].index = index;
+    nodes[nodeID].lowlink = index;
+    nodes[nodeID].vindex = 0;
+    nodes[nodeID].prevNode = UINT32_MAX;
     index++;
     stack->push(nodeID);
     onStack[nodeID] = 1;
-    uint32_t lastVisited = nodeID;
+    last = nodeID;
     while (1) {
-        if (nodesArray[lastVisited].vindex < nodesArray[lastVisited].numOfNeighbors) {
-            printf("Last vindex: %d Last nodes: %d ID: %u\n", nodesArray[lastVisited].vindex, nodesArray[lastVisited].numOfNeighbors, lastVisited);
-            uint32_t neighbor = nodesArray[lastVisited].neighbors[nodesArray[lastVisited].vindex];
-            printf("Neighbor of %u is %u\n", lastVisited, neighbor);//nodesArray[neighbor].id);
-            //Node w = nodesArray[neighbor];
-            nodesArray[lastVisited].vindex++;
-            if (nodesArray[neighbor].index == 0) {
-                nodesArray[neighbor].index = index;
-                nodesArray[neighbor].lowlink = index;
-                nodesArray[neighbor].vindex = 0;
-                nodesArray[neighbor].prevNode = nodesArray[lastVisited].prevNode;
+        if (nodes[last].vindex < nodes[last].numOfNeighbors) {
+            w = nodes[last].neighbors[nodes[last].vindex];
+            nodes[last].vindex++;
+            if (nodes[w].index == UINT32_MAX) {
+                nodes[w].prevNode = last;
+                nodes[w].vindex = 0;
+                nodes[w].index = index;
+                nodes[w].lowlink = index;
                 index++;
-                stack->push(neighbor);
-                onStack[neighbor] = 1;
-                lastVisited = neighbor;
-                printf("---->Low link %d\n", nodesArray[lastVisited].lowlink);
-                printf("---->Index %d\n", nodesArray[lastVisited].index);
+                stack->push(w);
+                onStack[w] = 1;
+                last = w;
             }
-            else if (onStack[neighbor] == 1) {
-                printf("LowLink is %d and index is %d\n", nodesArray[lastVisited].lowlink, nodesArray[neighbor].index);
-                nodesArray[lastVisited].lowlink = (nodesArray[neighbor].lowlink < nodesArray[lastVisited].index) ? nodesArray[lastVisited].lowlink : nodesArray[neighbor].index;
-                printf("----<Low link %d\n", nodesArray[lastVisited].lowlink);
-                printf("----<Index %d\n", nodesArray[lastVisited].index);
+            else if (onStack[w] == 1) {
+                if (nodes[last].lowlink < nodes[w].index)
+                    nodes[last].lowlink = nodes[last].lowlink;
+                else
+                    nodes[last].lowlink = nodes[w].index;
             }
         }
         else {
-            if (nodesArray[lastVisited].lowlink == nodesArray[lastVisited].index) {
-                cout << "SCC FOUND" << endl;
+            if (nodes[last].lowlink == nodes[last].index) {
+                cout << "Component found" << endl;
+                cout << "Stack size " << stack->getSize() << endl;
                 uint32_t compSize = stack->getSize();
-                cout << compSize << endl;
-                Component component;
-                component.component_id = components_count;
-                component.included_nodes_count = compSize;
-                component.included_nodes_ids = (uint32_t*) malloc(compSize * sizeof(uint32_t));
-                for (uint32_t i = 0; i < compSize; ++i) {
-                    component.included_nodes_ids[i] = stack->pop();
-                    onStack[component.included_nodes_ids[i]] = 0;
+                uint32_t* tempArray = (uint32_t*) malloc(compSize*sizeof(uint32_t));
+                uint32_t offset = 0;
+                uint32_t id = stack->pop();
+                onStack[id] = 0;
+                tempArray[offset] = id;
+                offset++;
+                while (id != last) {
+                    id = stack->pop();
+                    onStack[id] = 0;
+                    tempArray[offset] = id;
+                    offset++;
                 }
-                addComponent(&component);
-                cout << "Component added" << endl;
+                Component cmp;
+                cmp.included_nodes_count = offset;
+                cmp.included_nodes_ids = (uint32_t*) malloc((offset)*sizeof(uint32_t));
+                for (uint32_t i = 0; i < offset; i++) {
+                    cout << tempArray[i] << endl;
+                    cmp.included_nodes_ids[i] = tempArray[i];
+                }
+                free(tempArray);
+                addComponent(&cmp);
             }
-            uint32_t newLast = nodesArray[nodeID].prevNode;
+            newLast = nodes[last].prevNode;
             if (newLast != UINT32_MAX) {
-                nodesArray[newLast].lowlink = (nodesArray[newLast].lowlink < nodesArray[lastVisited].lowlink) ? nodesArray[newLast].lowlink : nodesArray[lastVisited].lowlink;
-                lastVisited = newLast;
+                if (nodes[newLast].lowlink < nodes[last].lowlink)
+                    nodes[newLast].lowlink = nodes[newLast].lowlink;
+                else
+                    nodes[newLast].lowlink = nodes[last].lowlink;
+                last = newLast;
             }
             else
                 break;

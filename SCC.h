@@ -12,12 +12,11 @@
 #define NODES 100         //Included_nodes_ids (for every component, the nodes it has)
 
 struct Node {
-    uint32_t id;
-    int index;
-    int lowlink;
-    int vindex;
+    uint32_t index;
+    uint32_t lowlink;
+    uint32_t vindex;
     uint32_t prevNode;
-    int numOfNeighbors;
+    uint32_t numOfNeighbors;
     uint32_t* neighbors;
 };
 
@@ -42,8 +41,9 @@ public:
     ~SCC();
     void addComponent(Component *component);
     void estimateStronglyConnectedComponents(Stack<uint32_t> *stack);
-    void tarjan(uint32_t nodeID, uint32_t &index, int* onStack, Stack<uint32_t> *stack, Node* nodesArray);
+    void tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> *stack, Node* nodesArray, int* onStack);
     void printComponents();
+    Node* tarjanInit(uint32_t numOfNodes);
 };
 
 #endif
