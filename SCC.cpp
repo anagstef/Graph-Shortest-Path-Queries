@@ -100,7 +100,7 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> *stack, Node*
         if (nodes[last].vindex < nodes[last].numOfNeighbors) {
             w = nodes[last].neighbors[nodes[last].vindex];
             nodes[last].vindex++;
-            if (nodes[w].index == UINT32_MAX) {
+            if (Out->isIndexed(w) && nodes[w].index == UINT32_MAX) {
                 nodes[w].prevNode = last;
                 nodes[w].vindex = 0;
                 nodes[w].index = index;
