@@ -16,7 +16,6 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     else
         graphNodes = In.getNumOfNodes();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
-    Stack<uint32_t> *stack = new Stack<uint32_t>();
     estimateStronglyConnectedComponents(stack);
     cout << "Components Count: " << components_count << endl;
     printComponents();
@@ -69,7 +68,7 @@ Node* SCC::tarjanInit(uint32_t numOfNodes) {
     return nodes;
 }
 
-void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> *stack) {
+void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> stack) {
     uint32_t graphNodes = Out->getSize();
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
     Node* nodes = tarjanInit(graphNodes);
@@ -78,22 +77,24 @@ void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> *stack) {
         if (Out->isIndexed(i)) {
             if (nodes[i].index == UINT32_MAX) {
                 tarjan(i, index, stack, nodes, onStack);
-                stack->clear();
+                stack.clear();
                 cout << "Finished with -- " << i << " -- " << index << endl;
                 cout << endl;
             }
         }
     }
+    free(nodes);
+    free(onStack);
 }
 
-void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> *stack, Node* nodes, int* onStack) {
+void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> stack, Node* nodes, int* onStack) {
     uint32_t last, w, newLast;
     nodes[nodeID].index = index;
     nodes[nodeID].lowlink = index;
     nodes[nodeID].vindex = 0;
     nodes[nodeID].prevNode = UINT32_MAX;
     index++;
-    stack->push(nodeID);
+    stack.push(nodeID);
     onStack[nodeID] = 1;
     last = nodeID;
     while (1) {
@@ -106,7 +107,7 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> *stack, Node*
                 nodes[w].index = index;
                 nodes[w].lowlink = index;
                 index++;
-                stack->push(w);
+                stack.push(w);
                 onStack[w] = 1;
                 last = w;
             }
@@ -120,16 +121,16 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> *stack, Node*
         else {
             if (nodes[last].lowlink == nodes[last].index) {
                 cout << "Component found" << endl;
-                cout << "Stack size " << stack->getSize() << endl;
-                uint32_t compSize = stack->getSize();
+                cout << "Stack size " << stack.getSize() << endl;
+                uint32_t compSize = stack.getSize();
                 uint32_t* tempArray = (uint32_t*) malloc(compSize*sizeof(uint32_t));
                 uint32_t offset = 0;
-                uint32_t id = stack->pop();
+                uint32_t id = stack.pop();
                 onStack[id] = 0;
                 tempArray[offset] = id;
                 offset++;
                 while (id != last) {
-                    id = stack->pop();
+                    id = stack.pop();
                     onStack[id] = 0;
                     tempArray[offset] = id;
                     offset++;
