@@ -29,7 +29,6 @@ public:
     uint32_t getNumOfNeighbors(uint32_t nodeId);
     uint32_t getSize() {return size;}
     uint32_t getNumOfNodes() {return numOfNodes;}
-    uint32_t* getNeighbors(uint32_t nodeId);
     void addNeighbor(uint32_t nodeId){ (Index[nodeId].numOfNeighbors)++; }
     void setListTail(uint32_t nodeId, uint32_t tail);
     bool insertNode(uint32_t nodeId, uint32_t buffer_offset);

@@ -39,13 +39,6 @@ uint32_t NodeIndex::getNumOfNeighbors(uint32_t nodeId) {
     return 0;
 }
 
-uint32_t* NodeIndex::getNeighbors(uint32_t nodeId) {
-    uint32_t num = getNumOfNeighbors(nodeId);
-    uint32_t* neighborsArray = (uint32_t*) malloc(num*sizeof(uint32_t));
-
-    return neighborsArray;
-}
-
 void NodeIndex::setListTail(uint32_t nodeId, uint32_t tail){
     Index[nodeId].listTail = tail;
 }

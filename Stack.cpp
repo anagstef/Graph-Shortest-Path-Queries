@@ -44,7 +44,6 @@ void Stack<T>::push(T value) {
         size++;
         return;
     }
-    cout << "end -- " << end << endl;
     stack[end] = value;
     end++;
     size++;

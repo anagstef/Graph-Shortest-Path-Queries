@@ -18,7 +18,7 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
     estimateStronglyConnectedComponents();
     cout << "Components Count: " << components_count << endl;
-    printComponents();
+    //printComponents();
 }
 
 SCC::~SCC() {
@@ -49,20 +49,49 @@ void SCC::addComponent(Component *component) {
     }
 }
 
+uint32_t* SCC::createNeighborsArrayFromOut(uint32_t nodeId) {
+      list_node* current;
+      uint32_t* neighArray;
+      uint32_t len;
+      uint32_t* retValue;
+      uint32_t iterator = 0;
+
+      retValue = (uint32_t*) malloc(sizeof(uint32_t) * Out->getNumOfNeighbors(nodeId));
+      //get current list node
+      current = Out_Buf->getListNode(Out->getListHead(nodeId));
+
+      while(1) { //loop for all neighbors
+          len = current->get_length();
+          neighArray = current->get_neighborArray();
+          for (uint32_t j = 0; j < len; j++) { //for every node in a list_node
+            retValue[iterator] = neighArray[j];
+            iterator++;
+          }
+
+          if(current->get_hasNext()) { //get the next list_node
+              current = Out_Buf->getListNode(current->get_nextNode());
+          }
+          else { //break loop if there are no more listnodes
+              return retValue;
+          }
+    }
+}
+
 Node* SCC::tarjanInit(uint32_t numOfNodes) {
     Node* nodes = (Node*) malloc(sizeof(Node) * numOfNodes);
-    list_node* current;
     for (uint32_t i = 0; i < numOfNodes; i++) {
         if (Out->isIndexed(i)) {
             nodes[i].index  = UINT32_MAX;
             nodes[i].lowlink = 0;
             nodes[i].vindex = UINT32_MAX;
             nodes[i].numOfNeighbors = Out->getNumOfNeighbors(i);
-            current = Out_Buf->getListNode(Out->getListHead(i));
-            nodes[i].neighbors = current->get_neighborArray();
+            nodes[i].neighbors = createNeighborsArrayFromOut(i);
         }
-        else {
-            nodes[i].numOfNeighbors = -1;
+        else if (In->isIndexed(i)){
+            nodes[i].index  = UINT32_MAX;
+            nodes[i].lowlink = 0;
+            nodes[i].vindex = UINT32_MAX;
+            nodes[i].numOfNeighbors = 0;
         }
     }
     return nodes;
@@ -78,10 +107,13 @@ void SCC::estimateStronglyConnectedComponents() {
         if (Out->isIndexed(i)) {
             if (nodes[i].index == UINT32_MAX) {
                 tarjan(i, index, stack, nodes, onStack);
-                cout << "Finished with -- " << i << " -- " << index << endl;
-                cout << endl;
                 stack.clear();
             }
+        }
+    }
+    for (uint32_t i = 0; i < graphNodes; ++i) {
+        if (Out->isIndexed(i)) {
+            free(nodes[i].neighbors);
         }
     }
     free(nodes);
@@ -102,7 +134,7 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
         if (nodes[last].vindex < nodes[last].numOfNeighbors) {
             w = nodes[last].neighbors[nodes[last].vindex];
             nodes[last].vindex++;
-            if (Out->isIndexed(w) && nodes[w].index == UINT32_MAX) {
+            if ((Out->isIndexed(w) || In->isIndexed(w)) && nodes[w].index == UINT32_MAX) {
                 nodes[w].prevNode = last;
                 nodes[w].vindex = 0;
                 nodes[w].index = index;
@@ -121,7 +153,7 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
         }
         else {
             if (nodes[last].lowlink == nodes[last].index) {
-                cout << "Component found" << endl;
+                //cout << "Component found" << endl;
                 uint32_t compSize = stack.getSize();
                 uint32_t* tempArray = (uint32_t*) malloc(compSize*sizeof(uint32_t));
                 uint32_t offset = 0;
