@@ -83,6 +83,8 @@ int main(int argc, char const *argv[]) {
     // return 0;
     //graph.createComponents();
     graph.createSCComponents();
+    //cout << graph.findNodeStronglyConnectedComponentID(1) << endl;
+    graph.destroyStronglyConnectedComponents();
     // return 0;
     // graph.printGraph();
     //cout << "end of insertion" << endl;

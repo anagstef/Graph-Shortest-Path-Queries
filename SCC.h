@@ -44,6 +44,7 @@ public:
     void tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node* nodesArray, int* onStack);
     void printComponents();
     uint32_t* createNeighborsArrayFromOut(uint32_t nodeId);
+    uint32_t* getIDbtc() { return id_belongs_to_component; }
     Node* tarjanInit(uint32_t numOfNodes);
 };
 

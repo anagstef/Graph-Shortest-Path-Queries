@@ -22,18 +22,26 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
 }
 
 SCC::~SCC() {
+    for (uint32_t i = 0; i < components_count; i++) {
+        free(components[i].included_nodes_ids);
+    }
     free(components);
     free(id_belongs_to_component);
 }
 
 void SCC::printComponents() {
+    int k = 0;
     for (uint32_t i = 0; i < components_count; i++) {
-        cout << "Component " << components[i].component_id << endl;
-        for (uint32_t j = 0; j < components[i].included_nodes_count; j++) {
-            printf("%u, ", components[i].included_nodes_ids[j]);
+        if (components[i].included_nodes_count > 1) {
+            k++;
+            cout << "Component " << components[i].component_id << endl;
+            for (uint32_t j = 0; j < components[i].included_nodes_count; j++) {
+                printf("%u, ", components[i].included_nodes_ids[j]);
+            }
+            cout <<  endl;
         }
-        cout <<  endl;
     }
+    cout << "With 2+ nodes: " << k << endl;
 }
 
 void SCC::addComponent(Component *component) {

@@ -18,6 +18,20 @@ void Graph::createSCComponents() {
     scc = new SCC(In, Out, In_Buf, Out_Buf);
 }
 
+void Graph::destroyStronglyConnectedComponents() {
+    delete(scc);
+}
+
+int Graph::findNodeStronglyConnectedComponentID(uint32_t nodeId) {
+    if (In.isIndexed(nodeId) || Out.isIndexed(nodeId)) {
+        uint32_t* id_belongs_to_component =  scc->getIDbtc();
+        return id_belongs_to_component[nodeId];
+    }
+    else {
+        return 0;
+    }
+}
+
 void Graph::rebuildCC(){
   cc->rebuildIndexes();
 }
