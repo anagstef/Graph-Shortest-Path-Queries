@@ -16,7 +16,7 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     else
         graphNodes = In.getNumOfNodes();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
-    estimateStronglyConnectedComponents(stack);
+    estimateStronglyConnectedComponents();
     cout << "Components Count: " << components_count << endl;
     printComponents();
 }
@@ -68,7 +68,8 @@ Node* SCC::tarjanInit(uint32_t numOfNodes) {
     return nodes;
 }
 
-void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> stack) {
+void SCC::estimateStronglyConnectedComponents() {
+    Stack <uint32_t> stack;
     uint32_t graphNodes = Out->getSize();
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
     Node* nodes = tarjanInit(graphNodes);
@@ -77,9 +78,9 @@ void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> stack) {
         if (Out->isIndexed(i)) {
             if (nodes[i].index == UINT32_MAX) {
                 tarjan(i, index, stack, nodes, onStack);
-                stack.clear();
                 cout << "Finished with -- " << i << " -- " << index << endl;
                 cout << endl;
+                stack.clear();
             }
         }
     }
@@ -87,7 +88,7 @@ void SCC::estimateStronglyConnectedComponents(Stack<uint32_t> stack) {
     free(onStack);
 }
 
-void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> stack, Node* nodes, int* onStack) {
+void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node* nodes, int* onStack) {
     uint32_t last, w, newLast;
     nodes[nodeID].index = index;
     nodes[nodeID].lowlink = index;
@@ -121,7 +122,6 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> stack, Node* 
         else {
             if (nodes[last].lowlink == nodes[last].index) {
                 cout << "Component found" << endl;
-                cout << "Stack size " << stack.getSize() << endl;
                 uint32_t compSize = stack.getSize();
                 uint32_t* tempArray = (uint32_t*) malloc(compSize*sizeof(uint32_t));
                 uint32_t offset = 0;
@@ -138,10 +138,8 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> stack, Node* 
                 Component cmp;
                 cmp.included_nodes_count = offset;
                 cmp.included_nodes_ids = (uint32_t*) malloc((offset)*sizeof(uint32_t));
-                for (uint32_t i = 0; i < offset; i++) {
-                    cout << tempArray[i] << endl;
+                for (uint32_t i = 0; i < offset; i++)
                     cmp.included_nodes_ids[i] = tempArray[i];
-                }
                 free(tempArray);
                 addComponent(&cmp);
             }

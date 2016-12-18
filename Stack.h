@@ -27,6 +27,8 @@ public:
     int  getCap()  { return capacity; }
     int  getEnd()  { return end; }
     int  getSize() { return size; }
+    void setEnd(int e)  { end = e; }
+    void setSize(int s) { size = s; }
     T top() { return stack[end]; }
 };
 

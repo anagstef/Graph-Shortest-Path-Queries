@@ -73,7 +73,7 @@ int main(int argc, char const *argv[]) {
     Graph graph;
 
     // if (argc == 3) {
-    input.open("test.txt");
+    input.open(&argv[1][0]);
     if (!input.is_open()) {
         cout << "Couldn't open file. End of execution." << endl;
         exit(-1);

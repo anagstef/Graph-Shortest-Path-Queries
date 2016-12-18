@@ -33,7 +33,6 @@ private:
     Buffer* In_Buf;
     Buffer* Out_Buf;
     Component* components;
-    Stack <uint32_t> stack;
     uint32_t  components_count;
     uint32_t* id_belongs_to_component;
     uint32_t  comps_size;
@@ -41,8 +40,8 @@ public:
     SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf);
     ~SCC();
     void addComponent(Component *component);
-    void estimateStronglyConnectedComponents(Stack<uint32_t> stack);
-    void tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> stack, Node* nodesArray, int* onStack);
+    void estimateStronglyConnectedComponents();
+    void tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node* nodesArray, int* onStack);
     void printComponents();
     Node* tarjanInit(uint32_t numOfNodes);
 };
