@@ -11,10 +11,10 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     components = (Component*) malloc (comps_size * sizeof(Component));
     components_count = 0;
     uint32_t graphNodes;
-    if (In.getNumOfNodes() < Out.getNumOfNodes())
-        graphNodes = Out.getNumOfNodes();
+    if (In.getSize() < Out.getSize())
+        graphNodes = Out.getSize();
     else
-        graphNodes = In.getNumOfNodes();
+        graphNodes = In.getSize();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
     estimateStronglyConnectedComponents();
     cout << "Components Count: " << components_count << endl;
@@ -104,7 +104,7 @@ void SCC::estimateStronglyConnectedComponents() {
     Node* nodes = tarjanInit(graphNodes);
     uint32_t index = 0;
     for (uint32_t i = 0; i < graphNodes; i++) {
-        if (Out->isIndexed(i)) {
+        if (Out->isIndexed(i) || In->isIndexed(i)) {
             if (nodes[i].index == UINT32_MAX) {
                 tarjan(i, index, stack, nodes, onStack);
                 stack.clear();
