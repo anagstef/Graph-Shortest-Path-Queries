@@ -18,6 +18,7 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
     estimateStronglyConnectedComponents();
     cout << "Components Count: " << components_count << endl;
+    cursor = cursorInit();
     printComponents();
 }
 
@@ -27,6 +28,7 @@ SCC::~SCC() {
     }
     free(components);
     free(id_belongs_to_component);
+    free(cursor);
 }
 
 ComponentCursor* SCC::cursorInit() {
