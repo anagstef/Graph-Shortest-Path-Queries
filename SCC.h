@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include "Graph.h"
 #include "Stack.h"
-#include <stack>
 
 #define COMPONENTS 100    //Component* components (how many components the graph has)
                           //Same size with id_belongs_to_component, parallel matrix
@@ -26,6 +25,12 @@ struct Component {
     uint32_t* included_nodes_ids;
 };
 
+struct ComponentCursor {
+    Component* component_ptr;
+    uint32_t offset;
+    uint32_t max_offset;
+};
+
 class SCC {
 private:
     NodeIndex* In;
@@ -33,6 +38,7 @@ private:
     Buffer* In_Buf;
     Buffer* Out_Buf;
     Component* components;
+    ComponentCursor* cursor;
     uint32_t  components_count;
     uint32_t* id_belongs_to_component;
     uint32_t  comps_size;
@@ -43,9 +49,14 @@ public:
     void estimateStronglyConnectedComponents();
     void tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node* nodesArray, int* onStack);
     void printComponents();
+    bool iterateStronglyConnectedComponentID();
     uint32_t* createNeighborsArrayFromOut(uint32_t nodeId);
     uint32_t* getIDbtc() { return id_belongs_to_component; }
     Node* tarjanInit(uint32_t numOfNodes);
+    Component* getComponents() { return components; }
+    ComponentCursor* cursorInit();
+    bool next_StronglyConnectedComponentID(ComponentCursor* cursor);
+    uint32_t getComponentsCount() { return components_count; }
 };
 
 #endif

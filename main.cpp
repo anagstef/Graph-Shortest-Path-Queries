@@ -82,7 +82,10 @@ int main(int argc, char const *argv[]) {
     input.close();
     // return 0;
     //graph.createComponents();
+    cout << "finished insertion" << endl;
     graph.createSCComponents();
+    cout << graph.estimateShortestPathStronglyConnectedComponents(0,1) << endl;
+    cout << graph.estimateShortestPathStronglyConnectedComponents(3,10) << endl;
     //cout << graph.findNodeStronglyConnectedComponentID(1) << endl;
     graph.destroyStronglyConnectedComponents();
     // return 0;

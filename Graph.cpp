@@ -127,6 +127,19 @@ void Graph::add(uint32_t from, uint32_t to) {
     // }
 }
 
+int Graph::estimateShortestPathStronglyConnectedComponents(uint32_t source_node, uint32_t target_node) {
+    if (!Out.isIndexed(source_node) || !Out.isIndexed(target_node)) {
+        return -1;
+    }
+    if (!In.isIndexed(source_node) || !In.isIndexed(target_node)) {
+        return -1;
+    }
+    if (findNodeStronglyConnectedComponentID(source_node) != findNodeStronglyConnectedComponentID(target_node)) {
+        return -1;
+    }
+    //bbfs with check if expanded node belongs to scc
+    return 0;
+}
 
 int Graph::query(uint32_t from, uint32_t to) {
     uint32_t temp, popedNode;
