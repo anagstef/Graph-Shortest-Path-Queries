@@ -57,6 +57,9 @@ public:
     ComponentCursor* cursorInit();
     bool next_StronglyConnectedComponentID(ComponentCursor* cursor);
     uint32_t getComponentsCount() { return components_count; }
+    bool nodesBelongToSCC(uint32_t node1, uint32_t node2);
+    bool nodeBelongsToSCC(uint32_t node, uint32_t component_id);
+    uint32_t findNodeStronglyConnectedComponentID(uint32_t nodeId);
 };
 
 #endif
