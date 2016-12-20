@@ -37,6 +37,8 @@ private:
     NodeIndex* Out;
     Buffer* In_Buf;
     Buffer* Out_Buf;
+    NodeIndex* HyperIndex;
+    Buffer* HyperBuf;
     Component* components;
     ComponentCursor* cursor;
     uint32_t  components_count;
@@ -57,6 +59,7 @@ public:
     ComponentCursor* cursorInit();
     bool next_StronglyConnectedComponentID(ComponentCursor* cursor);
     uint32_t getComponentsCount() { return components_count; }
+    void createHyperGraph();
 };
 
 #endif

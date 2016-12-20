@@ -17,6 +17,7 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
         graphNodes = In.getSize();
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
     estimateStronglyConnectedComponents();
+    createHyperGraph();
     cout << "Components Count: " << components_count << endl;
     cursor = cursorInit();
     printComponents();
@@ -29,6 +30,8 @@ SCC::~SCC() {
     free(components);
     free(id_belongs_to_component);
     free(cursor);
+    delete HyperIndex;
+    delete HyperBuf;
 }
 
 ComponentCursor* SCC::cursorInit() {
@@ -72,7 +75,7 @@ void SCC::addComponent(Component *component) {
         comps_size = comps_size*2;
         components = (Component*) realloc (components, comps_size * sizeof(Component));
     }
-    component->component_id = components_count + 1;
+    component->component_id = components_count;
     components[components_count] = *component;
     components_count++;
     for (uint32_t i = 0; i < component->included_nodes_count; ++i) {
@@ -218,4 +221,55 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
                 break;
         }
     }
+}
+
+void SCC::createHyperGraph(){
+  list_node* current;
+  uint32_t* neighArray;
+  uint32_t len;
+  uint32_t temp;
+
+  HyperIndex = new NodeIndex();
+  HyperBuf = new Buffer();
+
+  uint32_t* edgeExists = (uint32_t*) calloc(components_count, sizeof(uint32_t));
+  uint32_t turn = 0;
+
+  for(uint32_t i=0; i<components_count; i++){
+      turn++;
+      for(uint32_t j=0; j<components[i].included_nodes_count; j++){
+        if(Out->isIndexed(components[i].included_nodes_ids[j])){
+
+          current = Out_Buf->getListNode(Out->getListHead(components[i].included_nodes_ids[j]));
+
+          while(1) { //loop for all neighbors
+              len = current->get_length();
+              neighArray = current->get_neighborArray();
+              for (uint32_t k = 0; k < len; k++) { //for every node in a list_node
+                if(components[i].component_id != id_belongs_to_component[neighArray[k]] && edgeExists[id_belongs_to_component[neighArray[k]]] != turn){
+                  edgeExists[id_belongs_to_component[neighArray[k]]] = turn;
+
+                  if (HyperIndex->isIndexed(components[i].component_id)) {
+                      HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, *HyperIndex);
+                  } else {
+                      temp = HyperBuf->allocNewNode();
+                      HyperIndex->insertNode(components[i].component_id, temp);
+                      HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, *HyperIndex);
+                   }
+
+                }
+              }
+
+              if(current->get_hasNext()) { //get the next list_node
+                  current = Out_Buf->getListNode(current->get_nextNode());
+              }
+              else { //break loop if there are no more listnodes
+                  break;
+              }
+          }
+        }
+      }
+  }
+
+  free(edgeExists);
 }
