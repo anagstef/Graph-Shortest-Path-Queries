@@ -34,6 +34,28 @@ SCC::~SCC() {
     delete HyperBuf;
 }
 
+uint32_t SCC::findNodeStronglyConnectedComponentID(uint32_t nodeId) {
+    if (In->isIndexed(nodeId) || Out->isIndexed(nodeId)) {
+        uint32_t* id_belongs_to_component =  getIDbtc();
+        return id_belongs_to_component[nodeId];
+    }
+    else {
+        return 0;
+    }
+}
+
+bool SCC::nodesBelongToSCC(uint32_t node1, uint32_t node2) {
+    if (findNodeStronglyConnectedComponentID(node1) == findNodeStronglyConnectedComponentID(node2))
+        return true;
+    return false;
+}
+
+bool SCC::nodeBelongsToSCC(uint32_t node, uint32_t component_id) {
+    if (findNodeStronglyConnectedComponentID(node) != component_id)
+        return false;
+    return true;
+}
+
 ComponentCursor* SCC::cursorInit() {
     ComponentCursor* cursor = (ComponentCursor*) malloc(sizeof(ComponentCursor));
     cursor->offset = 0;

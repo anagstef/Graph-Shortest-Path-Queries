@@ -52,7 +52,6 @@ public:
     void createSCComponents();
     void rebuildCC();
     void destroyStronglyConnectedComponents();
-    int findNodeStronglyConnectedComponentID(uint32_t nodeId);
     int estimateShortestPathStronglyConnectedComponents(uint32_t source_node, uint32_t target_node);
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
