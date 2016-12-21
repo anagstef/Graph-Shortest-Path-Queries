@@ -257,6 +257,13 @@ void SCC::createHyperGraph(){
   uint32_t* edgeExists = (uint32_t*) calloc(components_count, sizeof(uint32_t));
   uint32_t turn = 0;
 
+  //get all the hypergraph nodes indexed
+  for(uint32_t i=0; i<components_count; i++){
+    temp = HyperBuf->allocNewNode();
+    HyperIndex->insertNode(components[i].component_id, temp);
+  }
+
+  
   for(uint32_t i=0; i<components_count; i++){
       turn++;
       for(uint32_t j=0; j<components[i].included_nodes_count; j++){
@@ -270,15 +277,7 @@ void SCC::createHyperGraph(){
               for (uint32_t k = 0; k < len; k++) { //for every node in a list_node
                 if(components[i].component_id != id_belongs_to_component[neighArray[k]] && edgeExists[id_belongs_to_component[neighArray[k]]] != turn){
                   edgeExists[id_belongs_to_component[neighArray[k]]] = turn;
-
-                  if (HyperIndex->isIndexed(components[i].component_id)) {
-                      HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, *HyperIndex);
-                  } else {
-                      temp = HyperBuf->allocNewNode();
-                      HyperIndex->insertNode(components[i].component_id, temp);
-                      HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, *HyperIndex);
-                   }
-
+                  HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, *HyperIndex);
                 }
               }
 
