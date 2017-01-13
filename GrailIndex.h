@@ -29,6 +29,7 @@ public:
     GrailIndex(NodeIndex& HyperIndex, Buffer& HyperBuf);
     ~GrailIndex();
 
+    bool askGrail(uint32_t X, uint32_t Y);
     void GrailDFS(uint32_t current);
     uint32_t* createHyperNeighborsArray(uint32_t nodeId);
 };

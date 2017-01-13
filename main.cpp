@@ -39,8 +39,8 @@ void operations(istream &input, Graph &graph) {
         string c;
         uint32_t source, dest;
 
-        if (line == "F"){
-          graph.rebuildCC();
+        if (line == "F" || line == "STATIC"){
+          // graph.rebuildCC();
           continue;
         }
         //create prob a list to execute blocks of commands
@@ -82,22 +82,22 @@ int main(int argc, char const *argv[]) {
     input.close();
     // return 0;
     //graph.createComponents();
-    cout << "finished insertion" << endl;
+    // cout << "finished insertion" << endl;
     graph.createSCComponents();
-    cout << graph.estimateShortestPathStronglyConnectedComponents(0,1) << endl;
-    cout << graph.estimateShortestPathStronglyConnectedComponents(3,10) << endl;
+    // cout << graph.estimateShortestPathStronglyConnectedComponents(0,1) << endl;
+    // cout << graph.estimateShortestPathStronglyConnectedComponents(3,10) << endl;
     //cout << graph.findNodeStronglyConnectedComponentID(1) << endl;
-    graph.destroyStronglyConnectedComponents();
+    // graph.destroyStronglyConnectedComponents();
     // return 0;
     // graph.printGraph();
     //cout << "end of insertion" << endl;
-    //input.open(&argv[2][0]);
-    //if (!input.is_open()) {
-    //    cout << "Couldn't open file. End of execution." << endl;
-    //    exit(-1);
-    //}
-    //operations(input, graph);
-    //input.close();
+    input.open(&argv[2][0]);
+    if (!input.is_open()) {
+       cout << "Couldn't open file. End of execution." << endl;
+       exit(-1);
+    }
+    operations(input, graph);
+    input.close();
     // }
     return 0;
 }

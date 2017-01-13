@@ -7,7 +7,7 @@ GrailIndex::GrailIndex(NodeIndex& HyperIndex, Buffer& HyperBuf){
   this->HyperBuf = &HyperBuf;
   uint32_t last_indexed;
 
-  grail_size = HyperIndex->getSize();
+  grail_size = HyperIndex.getSize();
   rank = 1;
 
   grail = (grailNode*) malloc(sizeof(grailNode) * grail_size);
@@ -16,13 +16,13 @@ GrailIndex::GrailIndex(NodeIndex& HyperIndex, Buffer& HyperBuf){
 
   //creating the Grail Index nodes
   for(uint32_t i = 0; i < grail_size; i++){
-    if(HyperIndex->isIndexed(i)){
+    if(HyperIndex.isIndexed(i)){
       last_indexed = i;
       grail[i].nodeID = i;
       grail[i].rank = 0;
       grail[i].minrank = 0;
       grail[i].iterator = 0;
-      grail[i].numOfNeighbors = HyperIndex->getNumOfNeighbors(i);
+      grail[i].numOfNeighbors = HyperIndex.getNumOfNeighbors(i);
 
       if(grail[i].numOfNeighbors > 0)
         grail[i].neighbors = createHyperNeighborsArray(i);
@@ -66,12 +66,12 @@ void GrailIndex::GrailDFS(uint32_t current){
     //if there are more neighbors on this node to explore
     if (grail[invertedIndex[current]].iterator < grail[invertedIndex[current]].numOfNeighbors) {
         grail[invertedIndex[current]].iterator++;
-        stack.push(current);
+        stack->push(current);
         current = grail[invertedIndex[current]].neighbors[grail[invertedIndex[current]].iterator - 1];
         //if neighbor already explored by other DFS call, just update its rank
         if (grail[invertedIndex[current]].rank != 0) {
           tempMinRank = grail[invertedIndex[current]].minrank;
-          current = stack.pop();
+          current = stack->pop();
           if(grail[invertedIndex[current]].minrank == 0 || tempMinRank < grail[invertedIndex[current]].minrank)
             grail[invertedIndex[current]].minrank = tempMinRank;
         }
@@ -86,11 +86,11 @@ void GrailIndex::GrailDFS(uint32_t current){
 
       rank++;
 
-      if(stack.isEmpty()) //DFS reached root
+      if(stack->isEmpty()) //DFS reached root
         return;
 
       tempMinRank = grail[invertedIndex[current]].minrank;
-      current = stack.pop();
+      current = stack->pop();
       if(grail[invertedIndex[current]].minrank == 0 || tempMinRank < grail[invertedIndex[current]].minrank)
         grail[invertedIndex[current]].minrank = tempMinRank;
 
@@ -106,6 +106,14 @@ GrailIndex::~GrailIndex(){
   }
   free(grail);
   free(invertedIndex);
+}
+
+//Return True for "Maybe", False for "No"
+bool GrailIndex::askGrail(uint32_t X, uint32_t Y){
+  return (grail[invertedIndex[X]].minrank <= grail[invertedIndex[Y]].minrank
+          && grail[invertedIndex[Y]].minrank <= grail[invertedIndex[X]].rank
+          && grail[invertedIndex[X]].minrank <= grail[invertedIndex[Y]].rank
+          && grail[invertedIndex[Y]].rank <= grail[invertedIndex[X]].rank);
 }
 
 

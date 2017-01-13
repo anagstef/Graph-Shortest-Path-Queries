@@ -5,10 +5,13 @@
 #include <cstdlib>
 #include "Graph.h"
 #include "Stack.h"
+#include "GrailIndex.h"
 
 #define COMPONENTS 100    //Component* components (how many components the graph has)
                           //Same size with id_belongs_to_component, parallel matrix
 #define NODES 100         //Included_nodes_ids (for every component, the nodes it has)
+
+class GrailIndex;
 
 struct Node {
     uint32_t index;
@@ -44,6 +47,7 @@ private:
     uint32_t  components_count;
     uint32_t* id_belongs_to_component;
     uint32_t  comps_size;
+    GrailIndex* grailindex;
 public:
     SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf);
     ~SCC();
@@ -63,6 +67,7 @@ public:
     bool nodesBelongToSCC(uint32_t node1, uint32_t node2);
     bool nodeBelongsToSCC(uint32_t node, uint32_t component_id);
     uint32_t findNodeStronglyConnectedComponentID(uint32_t nodeId);
+    int querySCC(uint32_t node1, uint32_t node2);
 };
 
 #endif

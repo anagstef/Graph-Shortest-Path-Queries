@@ -18,9 +18,10 @@ SCC::SCC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf) {
     id_belongs_to_component = (uint32_t*) malloc (graphNodes * sizeof(uint32_t));
     estimateStronglyConnectedComponents();
     createHyperGraph();
-    cout << "Components Count: " << components_count << endl;
+    // cout << "Components Count: " << components_count << endl;
     cursor = cursorInit();
-    printComponents();
+    // printComponents();
+    grailindex = new GrailIndex(*HyperIndex, *HyperBuf);
 }
 
 SCC::~SCC() {
@@ -32,15 +33,22 @@ SCC::~SCC() {
     free(cursor);
     delete HyperIndex;
     delete HyperBuf;
+    delete grailindex;
 }
 
 uint32_t SCC::findNodeStronglyConnectedComponentID(uint32_t nodeId) {
-    if (In->isIndexed(nodeId) || Out->isIndexed(nodeId)) {
-        uint32_t* id_belongs_to_component =  getIDbtc();
-        return id_belongs_to_component[nodeId];
-    }
-    else {
+    return id_belongs_to_component[nodeId];
+}
+
+//returns 1 if "Yes", 0 if "Maybe", -1 if "No"
+int SCC::querySCC(uint32_t node1, uint32_t node2){
+    if(id_belongs_to_component[node1] == id_belongs_to_component[node2])
+      return 1;
+    else{
+      if(grailindex->askGrail(id_belongs_to_component[node1], id_belongs_to_component[node2]))
         return 0;
+      else
+        return -1;
     }
 }
 
@@ -263,7 +271,7 @@ void SCC::createHyperGraph(){
     HyperIndex->insertNode(components[i].component_id, temp);
   }
 
-  
+
   for(uint32_t i=0; i<components_count; i++){
       turn++;
       for(uint32_t j=0; j<components[i].included_nodes_count; j++){

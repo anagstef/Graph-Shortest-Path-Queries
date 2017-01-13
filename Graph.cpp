@@ -269,7 +269,7 @@ int Graph::query(uint32_t from, uint32_t to) {
     uint32_t* neighArray;
 
     //increase the query counter for the metric
-    cc->increaseQueryNum();
+    // cc->increaseQueryNum();
 
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
@@ -286,7 +286,10 @@ int Graph::query(uint32_t from, uint32_t to) {
     }
 
     //search on CC if nodes are connected
-    if(!cc->areNodesConnected(from, to))
+    // if(!cc->areNodesConnected(from, to))
+    //   return -1;
+
+    if(scc->querySCC(from, to) == -1)
       return -1;
 
     //add the nodes to each Fringe
