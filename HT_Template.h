@@ -15,7 +15,7 @@ private:
     int entries;
     Bucket<T>* bucketData;
 public:
-    HashTable();
+    HashTable(int hash_entries, int bucket_entries);
     ~HashTable();
     int hashFunction(T key);
     void add(T value);

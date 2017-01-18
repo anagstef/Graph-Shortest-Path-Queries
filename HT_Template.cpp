@@ -5,14 +5,14 @@
 using namespace std;
 
 template <class T>
-HashTable<T>::HashTable() {
-    entries = HASH_ENTRIES;
+HashTable<T>::HashTable(int hash_entries, int bucket_entries) {
+    entries = hash_entries;
     bucketData = (Bucket<T>*) malloc(sizeof(Bucket<T>) * entries);
     for (int i = 0; i < entries; ++i) {
-        new (&bucketData[i]) Bucket<T>();
+        new (&bucketData[i]) Bucket<T>(bucket_entries);
     }
 
-    // bucketData = new Bucket<T>*[entries]();
+    // bucketData = new Bucket<T>[hash_entries](bucket_entries);
     // for (int i = 0; i < entries; ++i) {
     //     bucketData[i] = new Bucket<T>();
     // }

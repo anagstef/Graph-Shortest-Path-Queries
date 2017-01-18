@@ -41,7 +41,7 @@ private:
     Queue<uint32_t> BackwardsFringe;
     Explored ForwardExplored;
     Explored BackwardsExplored;
-    HashTable<InsEdge> duplicates;
+    HashTable<InsEdge> duplicates{113063, 20};
     CC* cc;
     SCC* scc;
     bool opAdds = false;

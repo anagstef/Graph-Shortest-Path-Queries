@@ -3,8 +3,8 @@
 using namespace std;
 
 template <class T>
-Bucket<T>::Bucket() {
-    bucket_entries = BUCKET_ENTRIES;
+Bucket<T>::Bucket(int init_size) {
+    bucket_entries = init_size;
     nodes = (T*)malloc(bucket_entries * sizeof(T));
     offset = 0;
 }
@@ -26,7 +26,7 @@ void Bucket<T>::add(T value) {
 
 template <class T>
 void Bucket<T>::clear() {
-    bucket_entries = BUCKET_ENTRIES;
-    nodes = (T*)realloc(nodes, bucket_entries * sizeof(T));
+    // bucket_entries = BUCKET_ENTRIES;
+    // nodes = (T*)realloc(nodes, bucket_entries * sizeof(T));
     offset = 0;
 }

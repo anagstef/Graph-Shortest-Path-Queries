@@ -19,7 +19,7 @@ struct InsEdge;
 
 class UpdateIndex{
 private:
-  HashTable<InsEdge> quickFind;
+  HashTable<InsEdge> quickFind{113063, 20};
   UIndexCell* uindex;
   uint32_t size;
 public:

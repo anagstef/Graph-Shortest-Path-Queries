@@ -1,6 +1,6 @@
-OBJS = main.o list_node.o Buffer.o NodeIndex.o SCC.o CC.o UpdateIndex.o Graph.o HashTable.o Explored.o GrailIndex.o  #Queue_.o #list.o
-SOURCE = main.cpp list_node.cpp Buffer.cpp NodeIndex.cpp SCC.cpp CC.cpp UpdateIndex.cpp Graph.cpp HashTable.cpp Explored.cpp GrailIndex.cpp  #Queue_.cpp #list.cpp
-HEADER = list_node.h Buffer.h NodeIndex.h SCC.h CC.h UpdateIndex.h Graph.h HashTable.h Explored.h GrailIndex.h #Queue_.h #list.h
+OBJS = main.o list_node.o Buffer.o NodeIndex.o SCC.o CC.o UpdateIndex.o Graph.o Explored.o GrailIndex.o
+SOURCE = main.cpp list_node.cpp Buffer.cpp NodeIndex.cpp SCC.cpp CC.cpp UpdateIndex.cpp Graph.cpp Explored.cpp GrailIndex.cpp
+HEADER = list_node.h Buffer.h NodeIndex.h SCC.h CC.h UpdateIndex.h Graph.h Explored.h GrailIndex.h
 OUT = project
 CC = g++ -std=c++11
 #FLAGS  = -c -g -O2 -Wextra -Wall
@@ -32,9 +32,6 @@ UpdateIndex.o: UpdateIndex.cpp
 
 Graph.o: Graph.cpp
 	$(CC) $(FLAGS) Graph.cpp
-
-HashTable.o: HashTable.cpp
-	$(CC) $(FLAGS) HashTable.cpp
 
 Explored.o: Explored.cpp
 	$(CC) $(FLAGS) Explored.cpp

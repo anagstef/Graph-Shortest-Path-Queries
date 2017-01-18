@@ -13,7 +13,7 @@ private:
     int offset;
     T* nodes;
 public:
-    Bucket();
+    Bucket(int init_size);
     ~Bucket();
     void add(T value);
     void clear();
