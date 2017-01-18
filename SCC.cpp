@@ -162,7 +162,7 @@ Node* SCC::tarjanInit(uint32_t numOfNodes) {
 }
 
 void SCC::estimateStronglyConnectedComponents() {
-    Stack <uint32_t> stack;
+    Stack <uint32_t> stack{SCC_STACK_INIT_SIZE};
     uint32_t graphNodes = Out->getSize();
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
     Node* nodes = tarjanInit(graphNodes);

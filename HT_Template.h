@@ -6,9 +6,6 @@
 #include <cstdint>
 #include "Buck_Template.h"
 
-#define HASH_ENTRIES 113063  //need a prime number
-#define BUCKET_ENTRIES 20   //chosen after tests
-
 template <class T>
 class HashTable {
 private:

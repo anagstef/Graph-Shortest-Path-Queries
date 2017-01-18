@@ -48,7 +48,7 @@ GrailIndex::GrailIndex(NodeIndex& HyperIndex, Buffer& HyperBuf){
     invertedIndex[grail[i].nodeID] = i;
   }
 
-  stack = new Stack<uint32_t>();
+  stack = new Stack<uint32_t>(GRAIL_STACK_INIT_SIZE);
 
   for (uint32_t i = 0; i < grail_size; i++) {
       if (grail[i].rank == 0) {

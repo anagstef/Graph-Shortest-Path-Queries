@@ -8,6 +8,7 @@
 #include "UpdateIndex.h"
 
 #define METRIC 0.32
+#define CC_QUEUE_INIT_SIZE 10000
 
 class UpdateIndex;
 
@@ -19,7 +20,7 @@ private:
   uint32_t componentCount;
   uint32_t QueryNum;
   uint32_t UpdateUsed;
-  Queue<uint32_t> queue;
+  Queue<uint32_t> queue{CC_QUEUE_INIT_SIZE};
   uint32_t offset;
   NodeIndex* In;
   NodeIndex* Out;

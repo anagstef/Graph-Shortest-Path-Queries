@@ -4,8 +4,6 @@
 #include <cstdint>
 #include <cstdlib>
 
-#define STACK_INIT_SIZE 100
-
 template <class T>
 class Stack {
 private:
@@ -14,7 +12,7 @@ private:
     int size;
     T* stack;
 public:
-    Stack();
+    Stack(int init_size);
     ~Stack();
     T pop();
     void push(T value);

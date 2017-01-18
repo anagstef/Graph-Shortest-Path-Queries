@@ -8,6 +8,8 @@
 #include "Graph.h"
 
 #define CELL_SIZE 10
+#define HT_UI_HASH_SIZE 113063
+#define HT_UI_BUCKET_SIZE 20
 
 struct UIndexCell{
   uint32_t* components;
@@ -19,7 +21,7 @@ struct InsEdge;
 
 class UpdateIndex{
 private:
-  HashTable<InsEdge> quickFind{113063, 20};
+  HashTable<InsEdge> quickFind{HT_UI_HASH_SIZE, HT_UI_BUCKET_SIZE};
   UIndexCell* uindex;
   uint32_t size;
 public:

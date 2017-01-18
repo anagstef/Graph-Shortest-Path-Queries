@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
-#define QUEUE_INIT_SIZE 100
+
 
 template <class T>
 class Queue {
@@ -16,7 +16,7 @@ private:
 
 public:
     T* queue;
-    Queue();
+    Queue(int init_size);
     ~Queue();
     T pop();
     void push(T value);

@@ -6,9 +6,9 @@
 using namespace std;
 
 template <class T>
-Queue<T>::Queue() {
+Queue<T>::Queue(int init_size) {
 //Queue::Queue() {
-    capacity = QUEUE_INIT_SIZE; //init capacity
+    capacity = init_size; //init capacity
     size = 0;
     front = 0;
     end = 0;

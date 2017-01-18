@@ -7,6 +7,8 @@
 #include "Stack.h"
 #include "GrailIndex.h"
 
+
+#define SCC_STACK_INIT_SIZE 1000
 #define COMPONENTS 100    //Component* components (how many components the graph has)
                           //Same size with id_belongs_to_component, parallel matrix
 #define NODES 100         //Included_nodes_ids (for every component, the nodes it has)

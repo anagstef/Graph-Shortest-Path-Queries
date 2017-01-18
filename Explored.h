@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <new>
-#define EXPLORED_INIT_SIZE 1000
+
 
 class Explored{
 private:
@@ -13,7 +13,7 @@ private:
   uint32_t size;
   uint32_t turn;
 public:
-  Explored();
+  Explored(uint32_t init_size);
   ~Explored();
 
   void add(uint32_t value);

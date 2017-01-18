@@ -4,8 +4,8 @@
 using namespace std;
 
 template <class T>
-Stack<T>::Stack() {
-    capacity = STACK_INIT_SIZE; //init capacity
+Stack<T>::Stack(int init_size) {
+    capacity = init_size; //init capacity
     size = 0;
     end = 0;
     stack = (T*) malloc(capacity * sizeof(T));

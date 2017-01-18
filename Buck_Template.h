@@ -4,8 +4,6 @@
 #include <iostream>
 #include <cstdlib>
 
-#define BUCKET_ENTRIES 20   //chosen after tests
-
 template <class T>
 class Bucket {
 private:
