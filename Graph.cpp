@@ -219,7 +219,7 @@ int Graph::query(uint32_t from, uint32_t to) {
     uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
 
     //if one of the nodes does not have any neighbors, then one of them is not indexed
-    if(forward_neighbors == 0 || backwards_neighbors == 0) {
+    if((forward_neighbors == 0 && In.getNumOfNeighbors(from) == 0) || (backwards_neighbors == 0 && Out.getNumOfNeighbors(to) == 0)) {
         return -1;
     }
 
@@ -258,19 +258,19 @@ int Graph::query(uint32_t from, uint32_t to) {
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
           cost++;
-          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, GrailAnswer, SCCnum))
+          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, GrailAnswer, to))
             return cost;
 
         } else{
           cost++;
-          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, GrailAnswer, SCCnum))
+          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, GrailAnswer, from))
             return cost;
 
         }
     }
 }
 
-bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal, int &GrailAnswer, uint32_t &SCCnum){
+bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal, int &GrailAnswer, uint32_t &node){
   uint32_t temp, popedNode;
   int len;
   list_node* current;
@@ -295,7 +295,10 @@ bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neigh
           neighArray = current->get_neighborArray();
           for(int j=0; j<len; j++){ //for every node in a list_node
             //if node is not in the same SCC and grail returned YES, then ignore the node
-            if(GrailAnswer == 1 && scc->nodeBelongsToSCC(neighArray[j], SCCnum) == false)
+            if(GrailAnswer == 1 && scc->nodesBelongToSameSCC(neighArray[j], node) == false)
+              continue;
+
+            if(GrailAnswer == 0 && scc->querySCC(neighArray[j], node) == -1)
               continue;
 
             //if node is on the other BFS's explored set then there is path
