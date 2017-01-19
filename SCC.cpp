@@ -52,14 +52,14 @@ int SCC::querySCC(uint32_t node1, uint32_t node2){
     }
 }
 
-bool SCC::nodesBelongToSCC(uint32_t node1, uint32_t node2) {
+bool SCC::nodesBelongToSameSCC(uint32_t node1, uint32_t node2) {
     if (findNodeStronglyConnectedComponentID(node1) == findNodeStronglyConnectedComponentID(node2))
         return true;
     return false;
 }
 
 bool SCC::nodeBelongsToSCC(uint32_t node, uint32_t component_id) {
-    if (findNodeStronglyConnectedComponentID(node) != component_id)
+    if (id_belongs_to_component[node] != component_id)
         return false;
     return true;
 }

@@ -66,7 +66,7 @@ public:
     bool next_StronglyConnectedComponentID(ComponentCursor* cursor);
     uint32_t getComponentsCount() { return components_count; }
     void createHyperGraph();
-    bool nodesBelongToSCC(uint32_t node1, uint32_t node2);
+    bool nodesBelongToSameSCC(uint32_t node1, uint32_t node2);
     bool nodeBelongsToSCC(uint32_t node, uint32_t component_id);
     uint32_t findNodeStronglyConnectedComponentID(uint32_t nodeId);
     int querySCC(uint32_t node1, uint32_t node2);
