@@ -35,6 +35,11 @@ struct InsEdge{
   }
 };
 
+struct BFSnode{
+  uint32_t nodeID;
+  bool sameSCC;
+};
+
 
 class Graph {
 private:
@@ -42,8 +47,8 @@ private:
     NodeIndex Out;//index for outcoming edges
     Buffer In_Buf;//buffer for incoming edges
     Buffer Out_Buf;//buffer for outcoming edges
-    Queue<uint32_t> ForwardFringe{GRAPH_QUEUE_INIT_SIZE};
-    Queue<uint32_t> BackwardsFringe{GRAPH_QUEUE_INIT_SIZE};
+    Queue<BFSnode> ForwardFringe{GRAPH_QUEUE_INIT_SIZE};
+    Queue<BFSnode> BackwardsFringe{GRAPH_QUEUE_INIT_SIZE};
     Explored ForwardExplored{GRAPH_EXPLORED_INIT_SIZE};
     Explored BackwardsExplored{GRAPH_EXPLORED_INIT_SIZE};
     HashTable<InsEdge> duplicates{HT_GRAPH_HASH_SIZE, HT_GRAPH_BUCKET_SIZE};
