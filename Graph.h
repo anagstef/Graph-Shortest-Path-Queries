@@ -57,9 +57,10 @@ public:
     void createSCComponents();
     void rebuildCC();
     void destroyStronglyConnectedComponents();
-    int estimateShortestPathStronglyConnectedComponents(uint32_t source_node, uint32_t target_node);
+    // int estimateShortestPathStronglyConnectedComponents(uint32_t source_node, uint32_t target_node);
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
+    bool SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal);
     void printGraph(); //unit testing
     void clean();
     NodeIndex getIn()  { return In; }
