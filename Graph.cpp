@@ -236,9 +236,6 @@ int Graph::query(uint32_t from, uint32_t to) {
     if(GrailAnswer == -1)
       return -1;
 
-    if(GrailAnswer == 1)
-      SCCnum = scc->findNodeStronglyConnectedComponentID(from);
-
 
     //BBFS STARTS HERE
 
@@ -258,19 +255,19 @@ int Graph::query(uint32_t from, uint32_t to) {
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
           cost++;
-          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, GrailAnswer, to))
+          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, GrailAnswer, to, true))
             return cost;
 
         } else{
           cost++;
-          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, GrailAnswer, from))
+          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, GrailAnswer, from, false))
             return cost;
 
         }
     }
 }
 
-bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal, int &GrailAnswer, uint32_t &node){
+bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal, int &GrailAnswer, uint32_t &node, bool isForward){
   uint32_t temp, popedNode;
   int len;
   list_node* current;
@@ -298,7 +295,9 @@ bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neigh
             if(GrailAnswer == 1 && scc->nodesBelongToSameSCC(neighArray[j], node) == false)
               continue;
 
-            if(GrailAnswer == 0 && scc->querySCC(neighArray[j], node) == -1)
+            if(GrailAnswer == 0 && isForward == true && scc->querySCC(neighArray[j], node) == -1)
+              continue;
+            else if(GrailAnswer == 0 && isForward == false && scc->querySCC(node, neighArray[j]) == -1)
               continue;
 
             //if node is on the other BFS's explored set then there is path
