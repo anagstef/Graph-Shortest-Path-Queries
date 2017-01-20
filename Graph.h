@@ -65,7 +65,7 @@ public:
     // int estimateShortestPathStronglyConnectedComponents(uint32_t source_node, uint32_t target_node);
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
-    bool SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal, int &GrailAnswer, uint32_t &node, bool isForward);
+    bool SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored, Explored &Goal, uint32_t &node, bool isForward);
     void printGraph(); //unit testing
     void clean();
     NodeIndex getIn()  { return In; }

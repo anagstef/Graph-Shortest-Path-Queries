@@ -209,7 +209,7 @@ void Graph::add(uint32_t from, uint32_t to) {
 
 int Graph::query(uint32_t from, uint32_t to) {
     int cost = 0;
-    uint32_t SCCnum = 0;
+    BFSnode fringeNode;
 
     //increase the query counter for the metric
     // cc->increaseQueryNum();
@@ -240,8 +240,14 @@ int Graph::query(uint32_t from, uint32_t to) {
     //BBFS STARTS HERE
 
     //add the nodes to each Fringe
-    ForwardFringe.push(from);
-    BackwardsFringe.push(to);
+    if(GrailAnswer == 1)
+      fringeNode.sameSCC = true;
+    else
+      fringeNode.sameSCC = false;
+    fringeNode.nodeID = from;
+    ForwardFringe.push(fringeNode);
+    fringeNode.nodeID = to;
+    BackwardsFringe.push(fringeNode);
     BackwardsExplored.add(to);
     ForwardExplored.add(from);
 
@@ -255,23 +261,25 @@ int Graph::query(uint32_t from, uint32_t to) {
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
           cost++;
-          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, GrailAnswer, to, true))
+          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, to, true))
             return cost;
 
         } else{
           cost++;
-          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, GrailAnswer, from, false))
+          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, from, false))
             return cost;
 
         }
     }
 }
 
-bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<uint32_t> &Fringe, Explored &explored, Explored &Goal, int &GrailAnswer, uint32_t &node, bool isForward){
-  uint32_t temp, popedNode;
+bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored, Explored &Goal, uint32_t &node, bool isForward){
+  BFSnode popedNode, newNode;
+  uint32_t temp;
   int len;
   list_node* current;
   uint32_t* neighArray;
+  bool enteredSCC = false;
 
   neighbors = 0; //init the sum
   temp = Fringe.getSize();
@@ -281,24 +289,34 @@ bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neigh
      popedNode = Fringe.pop();
 
       //node should be indexed in current Index
-      if(!Index.isIndexed(popedNode))
+      if(!Index.isIndexed(popedNode.nodeID))
         continue;
 
       //get current list node
-      current = Buff.getListNode(Index.getListHead(popedNode));
+      current = Buff.getListNode(Index.getListHead(popedNode.nodeID));
 
       while(1){ //loop for all neighbors
           len = current->get_length();
           neighArray = current->get_neighborArray();
           for(int j=0; j<len; j++){ //for every node in a list_node
+
             //if node is not in the same SCC and grail returned YES, then ignore the node
-            if(GrailAnswer == 1 && scc->nodesBelongToSameSCC(neighArray[j], node) == false)
+            bool belongsSameSCC = scc->nodesBelongToSameSCC(neighArray[j], node);
+            if(popedNode.sameSCC && !belongsSameSCC)
               continue;
 
-            if(GrailAnswer == 0 && isForward == true && scc->querySCC(neighArray[j], node) == -1)
+            if(!popedNode.sameSCC && isForward && scc->querySCC(neighArray[j], node) == -1)
               continue;
-            else if(GrailAnswer == 0 && isForward == false && scc->querySCC(node, neighArray[j]) == -1)
+            else if(!popedNode.sameSCC && !isForward && scc->querySCC(node, neighArray[j]) == -1)
               continue;
+
+            if(belongsSameSCC)
+              enteredSCC = true;
+            else
+              enteredSCC = false;
+
+            // if(popedNode.sameSCC == true && !belongsSameSCC == false)
+            //   continue;
 
             //if node is on the other BFS's explored set then there is path
             if(Goal.find(neighArray[j])) {
@@ -306,8 +324,14 @@ bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neigh
             }
             if(!explored.find(neighArray[j])){
                 explored.add(neighArray[j]);
-                neighbors += Index.getNumOfNeighbors(neighArray[j]);
-                Fringe.push(neighArray[j]);
+
+                if(Index.getNumOfNeighbors(neighArray[j]) > 0){
+                  neighbors += Index.getNumOfNeighbors(neighArray[j]);
+                  newNode.nodeID = neighArray[j];
+                  newNode.sameSCC = enteredSCC;
+                  Fringe.push(newNode);
+                }
+
             }
           }
 
