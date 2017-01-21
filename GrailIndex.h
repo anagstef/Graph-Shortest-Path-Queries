@@ -8,6 +8,7 @@
 #include "Stack.h"
 
 #define GRAIL_STACK_INIT_SIZE 1000
+#define GRAIL_INDEXES 1
 
 struct grailNode {
     uint32_t nodeID;
@@ -22,17 +23,17 @@ class GrailIndex {
 private:
     NodeIndex* HyperIndex;
     Buffer* HyperBuf;
-    grailNode* grail;
+    grailNode* grail[GRAIL_INDEXES];
     Stack<uint32_t>* stack;
     uint32_t rank;
     uint32_t grail_size;
-    uint32_t* invertedIndex;
+    uint32_t* invertedIndex[GRAIL_INDEXES];
 public:
     GrailIndex(NodeIndex& HyperIndex, Buffer& HyperBuf);
     ~GrailIndex();
 
     bool askGrail(uint32_t X, uint32_t Y);
-    void GrailDFS(uint32_t current);
+    void GrailDFS(uint32_t current, grailNode* grail, uint32_t* invertedIndex);
     uint32_t* createHyperNeighborsArray(uint32_t nodeId);
 };
 

@@ -57,7 +57,7 @@ bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
 
         new_size = size * 2; //double the size
         if (nodeId >= new_size) {
-            new_size = nodeId + 1; //or make it even bigger
+            new_size = nodeId * 2; //or make it even bigger
         }
 
         //realloc the index

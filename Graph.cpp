@@ -300,30 +300,31 @@ bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neigh
           neighArray = current->get_neighborArray();
           for(int j=0; j<len; j++){ //for every node in a list_node
 
-            //if node is not in the same SCC and grail returned YES, then ignore the node
-            bool belongsSameSCC = scc->nodesBelongToSameSCC(neighArray[j], node);
-            if(popedNode.sameSCC && !belongsSameSCC)
-              continue;
-
-            if(!popedNode.sameSCC && isForward && scc->querySCC(neighArray[j], node) == -1)
-              continue;
-            else if(!popedNode.sameSCC && !isForward && scc->querySCC(node, neighArray[j]) == -1)
-              continue;
-
-            if(belongsSameSCC)
-              enteredSCC = true;
-            else
-              enteredSCC = false;
-
             // if(popedNode.sameSCC == true && !belongsSameSCC == false)
             //   continue;
 
-            //if node is on the other BFS's explored set then there is path
-            if(Goal.find(neighArray[j])) {
-                return true;
-            }
             if(!explored.find(neighArray[j])){
+                //if node is on the other BFS's explored set then there is path
+                if(Goal.find(neighArray[j])) {
+                    return true;
+                }
+
                 explored.add(neighArray[j]);
+
+                //if node is not in the same SCC and grail returned YES, then ignore the node
+                bool belongsSameSCC = scc->nodesBelongToSameSCC(neighArray[j], node);
+                if(popedNode.sameSCC && !belongsSameSCC)
+                  continue;
+
+                if(!popedNode.sameSCC && isForward && scc->querySCC(neighArray[j], node) == -1)
+                  continue;
+                else if(!popedNode.sameSCC && !isForward && scc->querySCC(node, neighArray[j]) == -1)
+                  continue;
+
+                if(belongsSameSCC)
+                  enteredSCC = true;
+                else
+                  enteredSCC = false;
 
                 if(Index.getNumOfNeighbors(neighArray[j]) > 0){
                   neighbors += Index.getNumOfNeighbors(neighArray[j]);
