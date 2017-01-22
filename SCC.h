@@ -18,7 +18,7 @@ class GrailIndex;
 struct Node {
     uint32_t index;
     uint32_t lowlink;
-    uint32_t vindex;
+    uint32_t iterator;
     uint32_t prevNode;
     uint32_t numOfNeighbors;
     uint32_t* neighbors;

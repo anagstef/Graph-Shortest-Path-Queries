@@ -14,10 +14,10 @@
 #include "SCC.h"
 
 // #define HT_GRAPH_HASH_SIZE 113063
-#define HT_GRAPH_HASH_SIZE 15000017
+#define HT_GRAPH_HASH_SIZE 1000003
 #define HT_GRAPH_BUCKET_SIZE 10
 #define GRAPH_QUEUE_INIT_SIZE 10000
-#define GRAPH_EXPLORED_INIT_SIZE 1000000
+#define GRAPH_EXPLORED_INIT_SIZE 100000
 
 class CC;
 class SCC;
@@ -56,19 +56,19 @@ private:
     CC* cc;
     SCC* scc;
     bool opAdds = false;
-    bool isDynamic;
+    bool isDynamic = true;
 public:
+    Graph(){}
+    ~Graph();
 
     void createComponents();
-    void createSCComponents();
     void rebuildCC();
-    void destroyStronglyConnectedComponents();
-    // int estimateShortestPathStronglyConnectedComponents(uint32_t source_node, uint32_t target_node);
     void add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to); //search for the shortest path and return it
     bool SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored, Explored &Goal, uint32_t &node, bool isForward);
     void printGraph(); //unit testing
     void clean();
+    void graphStatic(){isDynamic = false;}
     NodeIndex getIn()  { return In; }
     NodeIndex getOut() { return Out;}
     Buffer getBIn()    { return In_Buf; }

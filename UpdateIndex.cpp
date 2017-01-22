@@ -3,7 +3,7 @@
 using namespace std;
 
 UpdateIndex::UpdateIndex(uint32_t starting_size){
-  size = starting_size + 5;
+  size = starting_size * 2;
 
   uindex = (UIndexCell*) malloc(sizeof(UIndexCell) * size);
 
@@ -40,51 +40,102 @@ void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2){
   if(comp1 >= size || comp2 >= size){
     uint32_t new_size = size * 2;
     if(comp1 >= new_size || comp2 >= new_size){
-      new_size = comp1 + 5;
+      new_size = comp1 * 2;
       if(comp2 >= new_size)
-        new_size = comp2 + 5;
+        new_size = comp2 * 2;
     }
     increaseCapacity(new_size);
   }
 
   //get the set of components of the comp1
-  uint32_t size1 = uindex[comp1].size + 1;
-  uint32_t* comp1_neighbors = (uint32_t*) malloc(sizeof(uint32_t) * size1);
-
-  comp1_neighbors[0] = comp1;
-  for(uint32_t i=0; i<uindex[comp1].size; i++)
-    comp1_neighbors[i+1] = uindex[comp1].components[i];
+  uint32_t size1 = uindex[comp1].size;
+  // uint32_t* comp1_neighbors = (uint32_t*) malloc(sizeof(uint32_t) * size1);
+  //
+  // comp1_neighbors[0] = comp1;
+  // for(uint32_t i=0; i<uindex[comp1].size; i++)
+  //   comp1_neighbors[i+1] = uindex[comp1].components[i];
 
   //get the set of components of the comp2
-  uint32_t size2 = uindex[comp2].size + 1;
-  uint32_t* comp2_neighbors = (uint32_t*) malloc(sizeof(uint32_t) * size2);
-
-  comp2_neighbors[0] = comp2;
-  for(uint32_t i=0; i<uindex[comp2].size; i++)
-    comp2_neighbors[i+1] = uindex[comp2].components[i];
+  uint32_t size2 = uindex[comp2].size;
+  // uint32_t* comp2_neighbors = (uint32_t*) malloc(sizeof(uint32_t) * size2);
+  //
+  // comp2_neighbors[0] = comp2;
+  // for(uint32_t i=0; i<uindex[comp2].size; i++)
+  //   comp2_neighbors[i+1] = uindex[comp2].components[i];
 
   //add comp1 set to every node in the comp2 set
+  add(comp2, comp1);
+  edge.from = comp2;
+  edge.to = comp1;
+  quickFind.add(edge);
+
+  for(uint32_t j=0; j<size1; j++){
+    add(comp2, uindex[comp1].components[j]);
+    edge.from = comp2;
+    edge.to = uindex[comp1].components[j];
+    quickFind.add(edge);
+  }
+
   for(uint32_t i=0; i<size2; i++){
+
+    add(uindex[comp2].components[i], comp1);
+    edge.from = uindex[comp2].components[i];
+    edge.to = comp1;
+    quickFind.add(edge);
+
     for(uint32_t j=0; j<size1; j++){
-      add(comp2_neighbors[i], comp1_neighbors[j]);
-      edge.from = comp2_neighbors[i];
-      edge.to = comp1_neighbors[j];
+      add(uindex[comp2].components[i], uindex[comp1].components[j]);
+      edge.from = uindex[comp2].components[i];
+      edge.to = uindex[comp1].components[j];
       quickFind.add(edge);
     }
+
   }
 
   //add comp2 set to every node in the comp1 set
-  for(uint32_t i=0; i<size1; i++){
-    for(uint32_t j=0; j<size2; j++){
-      add(comp1_neighbors[i], comp2_neighbors[j]);
-      edge.from = comp1_neighbors[i];
-      edge.to = comp2_neighbors[j];
-      quickFind.add(edge);
-    }
+  add(comp1, comp2);
+  edge.from = comp1;
+  edge.to = comp2;
+  quickFind.add(edge);
+
+  for(uint32_t j=0; j<size2; j++){
+    add(comp1, uindex[comp2].components[j]);
+    edge.from = comp1;
+    edge.to = uindex[comp2].components[j];
+    quickFind.add(edge);
   }
 
-  free(comp1_neighbors);
-  free(comp2_neighbors);
+  for(uint32_t i=0; i<size1; i++){
+
+    add(uindex[comp1].components[i], comp2);
+    edge.from = uindex[comp1].components[i];
+    edge.to = comp2;
+    quickFind.add(edge);
+
+    for(uint32_t j=0; j<size2; j++){
+      add(uindex[comp1].components[i], uindex[comp2].components[j]);
+      edge.from = uindex[comp1].components[i];
+      edge.to = uindex[comp2].components[j];
+      quickFind.add(edge);
+    }
+
+  }
+
+
+
+
+
+  // for(uint32_t i=0; i<size1; i++){
+  //   for(uint32_t j=0; j<size2; j++){
+  //     add(comp1_neighbors[i], comp2_neighbors[j]);
+  //     edge.from = comp1_neighbors[i];
+  //     edge.to = comp2_neighbors[j];
+  //     quickFind.add(edge);
+  //   }
+  // }
+
+  // free(comp1_neighbors);
+  // free(comp2_neighbors);
 }
 
 void UpdateIndex::add(uint32_t cell, uint32_t comp){

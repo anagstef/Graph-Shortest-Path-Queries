@@ -147,14 +147,14 @@ Node* SCC::tarjanInit(uint32_t numOfNodes) {
         if (Out->isIndexed(i)) {
             nodes[i].index  = UINT32_MAX;
             nodes[i].lowlink = 0;
-            nodes[i].vindex = UINT32_MAX;
+            nodes[i].iterator = UINT32_MAX;
             nodes[i].numOfNeighbors = Out->getNumOfNeighbors(i);
             nodes[i].neighbors = createNeighborsArrayFromOut(i);
         }
         else if (In->isIndexed(i)){
             nodes[i].index  = UINT32_MAX;
             nodes[i].lowlink = 0;
-            nodes[i].vindex = UINT32_MAX;
+            nodes[i].iterator = UINT32_MAX;
             nodes[i].numOfNeighbors = 0;
         }
     }
@@ -188,19 +188,19 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
     uint32_t last, w, newLast;
     nodes[nodeID].index = index;
     nodes[nodeID].lowlink = index;
-    nodes[nodeID].vindex = 0;
+    nodes[nodeID].iterator = 0;
     nodes[nodeID].prevNode = UINT32_MAX;
     index++;
     stack.push(nodeID);
     onStack[nodeID] = 1;
     last = nodeID;
     while (1) {
-        if (nodes[last].vindex < nodes[last].numOfNeighbors) {
-            w = nodes[last].neighbors[nodes[last].vindex];
-            nodes[last].vindex++;
+        if (nodes[last].iterator < nodes[last].numOfNeighbors) {
+            w = nodes[last].neighbors[nodes[last].iterator];
+            nodes[last].iterator++;
             if ((Out->isIndexed(w) || In->isIndexed(w)) && nodes[w].index == UINT32_MAX) {
                 nodes[w].prevNode = last;
-                nodes[w].vindex = 0;
+                nodes[w].iterator = 0;
                 nodes[w].index = index;
                 nodes[w].lowlink = index;
                 index++;

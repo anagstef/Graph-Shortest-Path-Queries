@@ -3,7 +3,7 @@ SOURCE = main.cpp list_node.cpp Buffer.cpp NodeIndex.cpp SCC.cpp CC.cpp UpdateIn
 HEADER = list_node.h Buffer.h NodeIndex.h SCC.h CC.h UpdateIndex.h Graph.h Explored.h GrailIndex.h
 OUT = project
 CC = g++ -std=c++11
-#FLAGS  = -c -g -O2 -Wextra -Wall
+# FLAGS  = -c -g -O2 -Wextra -Wall
 FLAGS  = -c -g -Wextra -Wall
 
 $(OUT): $(OBJS)

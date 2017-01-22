@@ -6,10 +6,12 @@ Buffer::Buffer() {
     length = 0;
     real_size = BUFFER_INIT_SIZE;
     nodes = (list_node*) malloc(sizeof(list_node) * real_size);
+    // nodes = new list_node[real_size];
 }
 
 Buffer::~Buffer() {
     free(nodes);
+    // delete[] nodes;
 }
 
 list_node* Buffer::getListNode(uint32_t ptr) {
@@ -23,6 +25,12 @@ uint32_t Buffer::allocNewNode() {
     if(length == real_size) { //if the maximum length is reached
         real_size *= 2;
         nodes = (list_node*) realloc(nodes, sizeof(list_node) * real_size);
+        // list_node* tempArray = new list_node[real_size];
+        // for(uint32_t i=0; i<real_size/2; i++){
+        //   tempArray[i] = nodes[i];
+        // }
+        // delete[] nodes;
+        // nodes = tempArray;
     }
 
     new (&nodes[length]) list_node(); //use placement new to call only the constructor

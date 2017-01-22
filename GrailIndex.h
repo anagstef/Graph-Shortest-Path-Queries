@@ -8,7 +8,7 @@
 #include "Stack.h"
 
 #define GRAIL_STACK_INIT_SIZE 1000
-#define GRAIL_INDEXES 1
+#define GRAIL_INDEXES 5
 
 struct grailNode {
     uint32_t nodeID;

@@ -1,6 +1,6 @@
 #include "CC.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 using namespace std;
 
@@ -72,7 +72,7 @@ void CC::estimateConnectedComponents(){
   }
 
   if(DEBUG)
-   cout << "Number of CC is " << componentCount - 1 << endl;
+   cerr << "Number of CC is " << componentCount - 1 << endl;
 
 }
 
@@ -157,7 +157,7 @@ void CC::CC_BFS(){
 bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
   //if both nodes exist
   if((nodeIdS < indexsize) && (ccindex[nodeIdS] > 0) && (nodeIdE < indexsize) && (ccindex[nodeIdE] > 0)){
-    //if they are on the same CC
+    //if they are on the same CC, do nothing
     if (ccindex[nodeIdS] == ccindex[nodeIdE]) {
       return false;
     }
@@ -178,9 +178,9 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
       //get the new size
       uint32_t new_size = indexsize * 2;
       if ((nodeIdS >= new_size) || (nodeIdE >= new_size)) {
-        new_size = nodeIdS + 5;
+        new_size = nodeIdS * 2;
         if(new_size <= nodeIdE)
-          new_size = nodeIdE + 5;
+          new_size = nodeIdE * 2;
       }
 
       ccindex = (uint32_t*) realloc(ccindex, sizeof(uint32_t) * new_size);
@@ -201,9 +201,9 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
       //get the new size
       uint32_t new_size = indexsize * 2;
       if ((nodeIdS >= new_size) || (nodeIdE >= new_size)) {
-        new_size = nodeIdS + 5;
+        new_size = nodeIdS * 2;
         if(new_size <= nodeIdE)
-          new_size = nodeIdE + 5;
+          new_size = nodeIdE * 2;
       }
 
       ccindex = (uint32_t*) realloc(ccindex, sizeof(uint32_t) * new_size);
@@ -230,20 +230,24 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
     return true;
   }
   else{
-    UpdateUsed++;
-    return updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE]);
+    if(updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
+      UpdateUsed++;
+      return true;
+    }
+    else
+      return false;
   }
 }
 
 bool CC::rebuildIndexes(){
   float value = (float)UpdateUsed / (float)QueryNum;
   if(DEBUG){
-    cout << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
-    cout << "Metric value is: " << value;
+    cerr << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
+    cerr << "Metric value is: " << value;
   }
   if(value >= METRIC){
     if(DEBUG)
-      cout << "   -Rebuilding..." << endl;
+      cerr << "   -Rebuilding..." << endl;
     // componentCount = updateIndex->update(ccindex, indexsize, componentCount);
     estimateConnectedComponents();
     updateIndex->clear();
@@ -253,7 +257,7 @@ bool CC::rebuildIndexes(){
   }
   else{
     if(DEBUG)
-      cout << "   -Will not rebuild..." << endl;
+      cerr << "   -Will not rebuild..." << endl;
     QueryNum = 0;
     UpdateUsed = 0;
     return false;
