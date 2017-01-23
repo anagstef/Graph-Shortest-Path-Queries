@@ -7,7 +7,7 @@
 #include "NodeIndex.h"
 #include "UpdateIndex.h"
 
-#define METRIC 0.045
+#define METRIC 0.52
 #define CC_QUEUE_INIT_SIZE 10000
 
 class UpdateIndex;

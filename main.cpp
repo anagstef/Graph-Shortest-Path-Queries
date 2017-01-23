@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <string>
+#include <cstring>
 #include "list_node.h"
 #include "Graph.h"
 
@@ -16,100 +17,72 @@ struct op {
     uint32_t node2;
 };
 
-void create_graph(istream &input, Graph &graph) {
-    string line;
-    do {
-        getline(input, line);
-        if (line != "S" && line != "") {
-            uint32_t node, neighbour;
-            istringstream command(line);
-            command >> node;
-            command >> neighbour;
-            graph.add(node, neighbour);
-            // cout << "Added" << node << " " << neighbour << endl;
-        }
-    } while (line != "S");
+void create_graph(FILE *fp, Graph &graph) {
+    uint32_t node, neighbour;
+    while(fscanf(fp, "%u  %u", &node, &neighbour) == 2){
+      graph.add(node, neighbour);
+    }
 }
 
-void operations(istream &input, Graph &graph) {
-    string line;
+void operations(FILE *fp, Graph &graph) {
+    char buff[64];
+    char op;
+    uint32_t source, dest;
 
-    getline(input, line);
+    fgets(buff, 64, fp);
 
-    if (line == "STATIC"){
+    if (strcmp(buff, "STATIC\n") == 0){
       graph.graphStatic();
       graph.createComponents();
     }
-    else if (line == "DYNAMIC"){
+    else if (strcmp(buff, "DYNAMIC\n") == 0){
       graph.createComponents();
     }
     else{
       graph.createComponents();
-      input.clear();
-      input.seekg(0);
-      // std::cerr << "KLSPR1" << std::endl;
+      rewind(fp);
     }
-    // graph.graphStatic();
-    // graph.createComponents();
-    // uint32_t gotl = 0;
-    // uint32_t f = 0;
-    // uint32_t q = 0;
-    while (!input.eof()) {
+    bool read = false;
+    // while(fgets(buff, 64, fp) != NULL){
+      while(1){
 
-        getline(input, line);
-        string c;
-        uint32_t source, dest;
-        // gotl++;
+        if(!read){
+          if(fgets(buff, 64, fp) == NULL)
+            break;
+        }
+        read = false;
+        sscanf(buff, "%c %u  %u", &op, &source, &dest);
 
-        if (line == "F" || line == "STATIC"){
+        if (op == 'F'){
+          if(fgets(buff, 64, fp) == NULL)
+            break;
+          else
+            read = true;
           graph.rebuildCC();
-          // f++;
           continue;
         }
 
-        //create prob a list to execute blocks of commands
-        istringstream command(line);
-        command >> c;
-        command >> source;
-        command >> dest;
-        if (c == "A") {
-            // cout << "Add" << source << "--" << dest << endl;
+        if (op == 'A') {
             graph.add(source, dest);
         }
-        else if (c == "Q") {
-            // cout << "Query" << source << "--" << dest << endl;
-            // graph.query(source, dest);
-            cout << graph.query(source, dest) << endl;
-            graph.clean();
-            // q++;
-            // if(q>=59348)
-            //   std::cerr << "Q " << source << "  " <<  dest << std::endl;
+        else if (op == 'Q') {
+          printf("%d\n", graph.query(source, dest));
+          graph.clean();
         }
-        else if (c != "") {
-            cout << "Unknown command" << endl;
-        }
-
     }
-    // std::cerr << gotl << std::endl;
-    // std::cerr << f << std::endl;
-    // std::cerr << q << std::endl;
 }
 
 int main(int argc, char const *argv[]) {
-    //create_graph(cin);
-    ifstream input;
-    string filename;
-
+    FILE *fp;
     Graph graph;
 
-    // if (argc == 3) {
-    input.open(&argv[1][0]);
-    if (!input.is_open()) {
-        cout << "Couldn't open file. End of execution." << endl;
-        exit(-1);
+    fp = fopen(argv[1] , "r");
+    if (fp == NULL){
+      perror ("Error opening file");
+      exit(-1);
     }
-    create_graph(input, graph);
-    input.close();
+    create_graph(fp, graph);
+    fclose(fp);
     // return 0;
     //graph.createComponents();
     // cout << "finished insertion" << endl;
@@ -120,14 +93,14 @@ int main(int argc, char const *argv[]) {
     // graph.destroyStronglyConnectedComponents();
     // return 0;
     // graph.printGraph();
-    //cout << "end of insertion" << endl;
-    input.open(&argv[2][0]);
-    if (!input.is_open()) {
-       cout << "Couldn't open file. End of execution." << endl;
-       exit(-1);
+    // cout << "end of insertion" << endl;
+    fp = fopen(argv[2] , "r");
+    if (fp == NULL){
+      perror ("Error opening file");
+      exit(-1);
     }
-    operations(input, graph);
-    input.close();
-    // }
+    operations(fp, graph);
+    fclose(fp);
+
     return 0;
 }

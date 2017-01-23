@@ -7,8 +7,8 @@
 #include "HT_Template.h"
 #include "Graph.h"
 
-#define CELL_SIZE 10
-#define HT_UI_HASH_SIZE 113063
+#define CELL_SIZE 100
+#define HT_UI_HASH_SIZE 500009
 #define HT_UI_BUCKET_SIZE 20
 
 struct UIndexCell{

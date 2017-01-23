@@ -3,9 +3,9 @@
 using namespace std;
 
 Graph::~Graph(){
-  if(isDynamic)
+  if (isDynamic && cc != NULL)
     delete cc;
-  else
+  else if (!isDynamic && scc != NULL)
     delete scc;
 }
 
@@ -32,7 +32,6 @@ void Graph::rebuildCC(){
 
 void Graph::add(uint32_t from, uint32_t to) {
     uint32_t temp;
-    //bool NewEdgeAdded;
 
     InsEdge check;
     check.from = from;
@@ -70,9 +69,7 @@ int Graph::query(uint32_t from, uint32_t to) {
     int cost = 0;
     BFSnode fringeNode;
 
-    // increase the query counter for the metric
-    if(isDynamic)
-      cc->increaseQueryNum();
+
 
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
@@ -88,9 +85,12 @@ int Graph::query(uint32_t from, uint32_t to) {
         return 0;
     }
 
+    // increase the query counter for the metric
+    if(isDynamic)
+      cc->increaseQueryNum();
+
     //search on CC if nodes are connected
     if(isDynamic && !cc->areNodesConnected(from, to)){
-      // std::cerr << "KLSPR22222" << std::endl;
       return -1;
     }
 

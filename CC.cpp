@@ -1,6 +1,6 @@
 #include "CC.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 using namespace std;
 
@@ -230,8 +230,8 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
     return true;
   }
   else{
+    UpdateUsed++;
     if(updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
-      UpdateUsed++;
       return true;
     }
     else

@@ -53,8 +53,8 @@ private:
     Explored ForwardExplored{GRAPH_EXPLORED_INIT_SIZE};
     Explored BackwardsExplored{GRAPH_EXPLORED_INIT_SIZE};
     HashTable<InsEdge> duplicates{HT_GRAPH_HASH_SIZE, HT_GRAPH_BUCKET_SIZE};
-    CC* cc;
-    SCC* scc;
+    CC* cc = NULL;
+    SCC* scc = NULL;
     bool opAdds = false;
     bool isDynamic = true;
 public:
