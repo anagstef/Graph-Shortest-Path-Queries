@@ -8,6 +8,8 @@
 #include <cstring>
 #include "list_node.h"
 #include "Graph.h"
+#include "JobScheduler.h"
+#include "QueryJob.h"
 
 using namespace std;
 
@@ -24,7 +26,8 @@ void create_graph(FILE *fp, Graph &graph) {
     }
 }
 
-void operations(FILE *fp, Graph &graph) {
+void operations(FILE *fp, Graph &graph, JobScheduler& JS) {
+    QueryJob* qj;
     char buff[64];
     char op;
     uint32_t source, dest;
@@ -54,10 +57,16 @@ void operations(FILE *fp, Graph &graph) {
         sscanf(buff, "%c %u  %u", &op, &source, &dest);
 
         if (op == 'F'){
+
+          JS.execute_all_jobs();
+          JS.wait_all_tasks_finish();
+          JS.printResults();
+
           if(fgets(buff, 64, fp) == NULL)
             break;
           else
             read = true;
+
           graph.rebuildCC();
           continue;
         }
@@ -66,15 +75,19 @@ void operations(FILE *fp, Graph &graph) {
             graph.add(source, dest);
         }
         else if (op == 'Q') {
-          printf("%d\n", graph.query(source, dest));
-          graph.clean();
+          qj = new QueryJob(source, dest, &graph);
+          JS.submit_job(qj);
+          // printf("%d\n", graph.query(source, dest));
+          // graph.clean();
         }
     }
 }
 
 int main(int argc, char const *argv[]) {
     FILE *fp;
-    Graph graph;
+    int threads = 8;
+    Graph graph(threads);
+    JobScheduler JS(threads);
 
     fp = fopen(argv[1] , "r");
     if (fp == NULL){
@@ -99,7 +112,7 @@ int main(int argc, char const *argv[]) {
       perror ("Error opening file");
       exit(-1);
     }
-    operations(fp, graph);
+    operations(fp, graph, JS);
     fclose(fp);
 
     return 0;

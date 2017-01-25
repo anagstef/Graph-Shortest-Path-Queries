@@ -2,18 +2,54 @@
 
 using namespace std;
 
+Graph::Graph(int t){
+  threadsNum = t;
+
+  ForwardFringe = (Queue<BFSnode>*) malloc(sizeof(Queue<BFSnode>) * t);
+  for (int i = 0; i < t; ++i) {
+      new (&ForwardFringe[i]) Queue<BFSnode>(GRAPH_QUEUE_INIT_SIZE);
+  }
+
+  BackwardsFringe = (Queue<BFSnode>*) malloc(sizeof(Queue<BFSnode>) * t);
+  for (int i = 0; i < t; ++i) {
+      new (&BackwardsFringe[i]) Queue<BFSnode>(GRAPH_QUEUE_INIT_SIZE);
+  }
+
+  ForwardExplored = (Explored*) malloc(sizeof(Explored) * t);
+  for (int i = 0; i < t; ++i) {
+      new (&ForwardExplored[i]) Explored(GRAPH_EXPLORED_INIT_SIZE);
+  }
+
+  BackwardsExplored = (Explored*) malloc(sizeof(Explored) * t);
+  for (int i = 0; i < t; ++i) {
+      new (&BackwardsExplored[i]) Explored(GRAPH_EXPLORED_INIT_SIZE);
+  }
+
+}
+
 Graph::~Graph(){
   if (isDynamic && cc != NULL)
     delete cc;
   else if (!isDynamic && scc != NULL)
     delete scc;
+
+  for (int i = 0; i < threadsNum; ++i) {
+      ForwardFringe[i].~Queue();
+      BackwardsFringe[i].~Queue();
+      ForwardExplored[i].~Explored();
+      BackwardsExplored[i].~Explored();
+  }
+  free(ForwardFringe);
+  free(BackwardsFringe);
+  free(ForwardExplored);
+  free(BackwardsExplored);
 }
 
-void Graph::clean() {
-    ForwardFringe.clear();
-    BackwardsFringe.clear();
-    ForwardExplored.clear();
-    BackwardsExplored.clear();
+void Graph::clear(int i) {
+    ForwardFringe[i].clear();
+    BackwardsFringe[i].clear();
+    ForwardExplored[i].clear();
+    BackwardsExplored[i].clear();
 }
 
 void Graph::createComponents(){
@@ -65,11 +101,9 @@ void Graph::add(uint32_t from, uint32_t to) {
     return;
 }
 
-int Graph::query(uint32_t from, uint32_t to) {
+int Graph::query(uint32_t from, uint32_t to, int threadID) {
     int cost = 0;
     BFSnode fringeNode;
-
-
 
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
@@ -106,28 +140,28 @@ int Graph::query(uint32_t from, uint32_t to) {
     }
 
     fringeNode.nodeID = from;
-    ForwardFringe.push(fringeNode);
+    ForwardFringe[threadID].push(fringeNode);
     fringeNode.nodeID = to;
-    BackwardsFringe.push(fringeNode);
-    BackwardsExplored.add(to);
-    ForwardExplored.add(from);
+    BackwardsFringe[threadID].push(fringeNode);
+    BackwardsExplored[threadID].add(to);
+    ForwardExplored[threadID].add(from);
 
     //loop until solution is found or not found
     while(1){
 
         //If one of the two fringes is empty, then there is no path
-         if(ForwardFringe.isEmpty() || BackwardsFringe.isEmpty())
+         if(ForwardFringe[threadID].isEmpty() || BackwardsFringe[threadID].isEmpty())
              return -1;
 
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
           cost++;
-          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe, ForwardExplored, BackwardsExplored, to, true))
+          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe[threadID], ForwardExplored[threadID], BackwardsExplored[threadID], to, true))
             return cost;
 
         } else{
           cost++;
-          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe, BackwardsExplored, ForwardExplored, from, false))
+          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe[threadID], BackwardsExplored[threadID], ForwardExplored[threadID], from, false))
             return cost;
 
         }

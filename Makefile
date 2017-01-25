@@ -1,13 +1,13 @@
-OBJS = main.o list_node.o Buffer.o NodeIndex.o SCC.o CC.o UpdateIndex.o Graph.o Explored.o GrailIndex.o
-SOURCE = main.cpp list_node.cpp Buffer.cpp NodeIndex.cpp SCC.cpp CC.cpp UpdateIndex.cpp Graph.cpp Explored.cpp GrailIndex.cpp
-HEADER = list_node.h Buffer.h NodeIndex.h SCC.h CC.h UpdateIndex.h Graph.h Explored.h GrailIndex.h
+OBJS = main.o list_node.o Buffer.o NodeIndex.o SCC.o CC.o UpdateIndex.o Graph.o Explored.o GrailIndex.o JobScheduler.o worker_routine.o
+SOURCE = main.cpp list_node.cpp Buffer.cpp NodeIndex.cpp SCC.cpp CC.cpp UpdateIndex.cpp Graph.cpp Explored.cpp GrailIndex.cpp JobScheduler.cpp worker_routine.cpp
+HEADER = list_node.h Buffer.h NodeIndex.h SCC.h CC.h UpdateIndex.h Graph.h Explored.h GrailIndex.h Job.h JobScheduler.h QueryJob.h worker_routine.h
 OUT = project
 CC = g++ -std=c++11
 # FLAGS  = -c -g -O2 -Wextra -Wall
 FLAGS  = -c -g -Wextra -Wall
 
 $(OUT): $(OBJS)
-	$(CC) -g $(OBJS) -o project
+	$(CC) -g $(OBJS) -o project -lpthread
 
 prof: $(OBJS)
 	$(CC) -pg $(OBJS) -o prof
@@ -41,6 +41,12 @@ SCC.o: SCC.cpp
 
 GrailIndex.o: GrailIndex.cpp
 	$(CC) $(FLAGS) GrailIndex.cpp
+
+JobScheduler.o: JobScheduler.cpp
+	$(CC) $(FLAGS) JobScheduler.cpp
+
+worker_routine.o: worker_routine.cpp
+	$(CC) $(FLAGS) worker_routine.cpp
 
 clean:
 	rm -f $(OBJS) $(OUT)

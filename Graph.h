@@ -44,30 +44,31 @@ struct BFSnode{
 
 class Graph {
 private:
+    int threadsNum;
     NodeIndex In; //index for incoming edges
     NodeIndex Out;//index for outcoming edges
     Buffer In_Buf;//buffer for incoming edges
     Buffer Out_Buf;//buffer for outcoming edges
-    Queue<BFSnode> ForwardFringe{GRAPH_QUEUE_INIT_SIZE};
-    Queue<BFSnode> BackwardsFringe{GRAPH_QUEUE_INIT_SIZE};
-    Explored ForwardExplored{GRAPH_EXPLORED_INIT_SIZE};
-    Explored BackwardsExplored{GRAPH_EXPLORED_INIT_SIZE};
+    Queue<BFSnode>* ForwardFringe;
+    Queue<BFSnode>* BackwardsFringe;
+    Explored* ForwardExplored;
+    Explored* BackwardsExplored;
     HashTable<InsEdge> duplicates{HT_GRAPH_HASH_SIZE, HT_GRAPH_BUCKET_SIZE};
     CC* cc = NULL;
     SCC* scc = NULL;
     bool opAdds = false;
     bool isDynamic = true;
 public:
-    Graph(){}
+    Graph(int t);
     ~Graph();
 
     void createComponents();
     void rebuildCC();
     void add(uint32_t from, uint32_t to); //add a new edge
-    int query(uint32_t from, uint32_t to); //search for the shortest path and return it
+    int query(uint32_t from, uint32_t to, int threadID); //search for the shortest path and return it
     bool SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored, Explored &Goal, uint32_t &node, bool isForward);
     void printGraph(); //unit testing
-    void clean();
+    void clear(int i);
     void graphStatic(){isDynamic = false;}
     NodeIndex getIn()  { return In; }
     NodeIndex getOut() { return Out;}
