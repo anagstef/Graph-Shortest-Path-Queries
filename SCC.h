@@ -14,7 +14,7 @@
 
 class GrailIndex;
 
-struct Node {
+struct Node {           //needed for tarjan
     uint32_t index;
     uint32_t lowlink;
     uint32_t iterator;
