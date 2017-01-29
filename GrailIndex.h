@@ -5,7 +5,8 @@
 #include <cstdlib>
 #include <time.h>
 #include "Graph.h"
-#include "Stack.h"
+//#include "Stack.h"
+#include "Templates.h"
 
 #define GRAIL_STACK_INIT_SIZE 1000
 #define GRAIL_INDEXES 5

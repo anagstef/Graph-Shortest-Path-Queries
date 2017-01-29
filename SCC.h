@@ -4,9 +4,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include "Graph.h"
-#include "Stack.h"
 #include "GrailIndex.h"
-
+#include "Templates.h"
 
 #define SCC_STACK_INIT_SIZE 1000
 #define COMPONENTS 100    //Component* components (how many components the graph has)

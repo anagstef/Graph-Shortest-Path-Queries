@@ -6,7 +6,8 @@
 #include <cstdint>
 #include "NodeIndex.h"
 #include "Buffer.h"
-#include "Queue_.h"
+//#include "Queue_.h"
+#include "Templates.h"
 #include "Explored.h"
 
 using namespace std;

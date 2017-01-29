@@ -37,7 +37,7 @@ SCC::~SCC() {
 }
 
 uint32_t SCC::findNodeStronglyConnectedComponentID(uint32_t nodeId) {
-    return id_belongs_to_component[nodeId];
+    return id_belongs_to_component[nodeId];         //direct access to the array
 }
 
 //returns 1 if "Yes", 0 if "Maybe", -1 if "No"
@@ -101,14 +101,14 @@ void SCC::printComponents() {
 }
 
 void SCC::addComponent(Component *component) {
-    if (components_count == comps_size) {
+    if (components_count == comps_size) {   //need more components
         comps_size = comps_size*2;
         components = (Component*) realloc (components, comps_size * sizeof(Component));
     }
     component->component_id = components_count;
-    components[components_count] = *component;
+    components[components_count] = *component; //set the new component
     components_count++;
-    for (uint32_t i = 0; i < component->included_nodes_count; ++i) {
+    for (uint32_t i = 0; i < component->included_nodes_count; ++i) { //update the array (where each node belongs)
         id_belongs_to_component[component->included_nodes_ids[i]] = component->component_id;
     }
 }
@@ -141,7 +141,7 @@ uint32_t* SCC::createNeighborsArrayFromOut(uint32_t nodeId) {
     }
 }
 
-Node* SCC::tarjanInit(uint32_t numOfNodes) {
+Node* SCC::tarjanInit(uint32_t numOfNodes) {                    //initialize the nodes with the right values
     Node* nodes = (Node*) malloc(sizeof(Node) * numOfNodes);
     for (uint32_t i = 0; i < numOfNodes; i++) {
         if (Out->isIndexed(i)) {
@@ -149,7 +149,7 @@ Node* SCC::tarjanInit(uint32_t numOfNodes) {
             nodes[i].lowlink = 0;
             nodes[i].iterator = UINT32_MAX;
             nodes[i].numOfNeighbors = Out->getNumOfNeighbors(i);
-            nodes[i].neighbors = createNeighborsArrayFromOut(i);
+            nodes[i].neighbors = createNeighborsArrayFromOut(i);    //gets all the neighbors of the node
         }
         else if (In->isIndexed(i)){
             nodes[i].index  = UINT32_MAX;
@@ -167,10 +167,10 @@ void SCC::estimateStronglyConnectedComponents() {
     int* onStack = (int*) calloc(graphNodes, sizeof(int));
     Node* nodes = tarjanInit(graphNodes);
     uint32_t index = 0;
-    for (uint32_t i = 0; i < graphNodes; i++) {
-        if (Out->isIndexed(i) || In->isIndexed(i)) {
-            if (nodes[i].index == UINT32_MAX) {
-                tarjan(i, index, stack, nodes, onStack);
+    for (uint32_t i = 0; i < graphNodes; i++) {         //for every node
+        if (Out->isIndexed(i) || In->isIndexed(i)) {    //if is indexed
+            if (nodes[i].index == UINT32_MAX) {         //if the index hasn't changed0
+                tarjan(i, index, stack, nodes, onStack);//run tarjan
                 stack.clear();
             }
         }
@@ -186,7 +186,7 @@ void SCC::estimateStronglyConnectedComponents() {
 
 void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node* nodes, int* onStack) {
     uint32_t last, w, newLast;
-    nodes[nodeID].index = index;
+    nodes[nodeID].index = index;            //edit the node
     nodes[nodeID].lowlink = index;
     nodes[nodeID].iterator = 0;
     nodes[nodeID].prevNode = UINT32_MAX;
@@ -195,11 +195,11 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
     onStack[nodeID] = 1;
     last = nodeID;
     while (1) {
-        if (nodes[last].iterator < nodes[last].numOfNeighbors) {
-            w = nodes[last].neighbors[nodes[last].iterator];
-            nodes[last].iterator++;
+        if (nodes[last].iterator < nodes[last].numOfNeighbors) { //check the neighbors
+            w = nodes[last].neighbors[nodes[last].iterator];     //get the first or the nth, depending on the depth
+            nodes[last].iterator++;                                //increase the depth of the last node
             if ((Out->isIndexed(w) || In->isIndexed(w)) && nodes[w].index == UINT32_MAX) {
-                nodes[w].prevNode = last;
+                nodes[w].prevNode = last;   //update the node
                 nodes[w].iterator = 0;
                 nodes[w].index = index;
                 nodes[w].lowlink = index;
@@ -208,8 +208,8 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
                 onStack[w] = 1;
                 last = w;
             }
-            else if (onStack[w] == 1) {
-                if (nodes[last].lowlink < nodes[w].index)
+            else if (onStack[w] == 1) { //if the node is already visited
+                if (nodes[last].lowlink < nodes[w].index) //swap the lowlink with the index, we need as lowlink the smallest
                     nodes[last].lowlink = nodes[last].lowlink;
                 else
                     nodes[last].lowlink = nodes[w].index;
@@ -225,19 +225,19 @@ void SCC::tarjan(uint32_t nodeID, uint32_t &index, Stack<uint32_t> &stack, Node*
                 onStack[id] = 0;
                 tempArray[offset] = id;
                 offset++;
-                while (id != last) {
+                while (id != last) {    //empty the stack until the last node checked
                     id = stack.pop();
                     onStack[id] = 0;
                     tempArray[offset] = id;
                     offset++;
                 }
-                Component cmp;
+                Component cmp;         //create the Component
                 cmp.included_nodes_count = offset;
                 cmp.included_nodes_ids = (uint32_t*) malloc((offset)*sizeof(uint32_t));
                 for (uint32_t i = 0; i < offset; i++)
                     cmp.included_nodes_ids[i] = tempArray[i];
                 free(tempArray);
-                addComponent(&cmp);
+                addComponent(&cmp); //add it to the list
             }
             newLast = nodes[last].prevNode;
             if (newLast != UINT32_MAX) {

@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include "NodeIndex.h"
 #include "UpdateIndex.h"
+#include "Templates.h"
 
 #define METRIC 0.52
 #define CC_QUEUE_INIT_SIZE 10000
