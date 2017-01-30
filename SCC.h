@@ -4,9 +4,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include "Graph.h"
-#include "Stack.h"
 #include "GrailIndex.h"
-
+#include "Templates.h"
 
 #define SCC_STACK_INIT_SIZE 1000
 #define COMPONENTS 100    //Component* components (how many components the graph has)
@@ -15,7 +14,7 @@
 
 class GrailIndex;
 
-struct Node {
+struct Node {           //needed for tarjan
     uint32_t index;
     uint32_t lowlink;
     uint32_t iterator;

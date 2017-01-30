@@ -3,7 +3,8 @@
 
 #include <pthread.h>
 #include "worker_routine.h"
-#include "Queue_.h"
+//#include "Queue_.h"
+#include "Templates.h"
 #include "Job.h"
 
 #define JS_QUEUE_INIT_SIZE 900000

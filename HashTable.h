@@ -1,31 +1,96 @@
-#ifndef HASHTABLE_H
-#define HASHTABLE_H
+#ifndef HT_H
+#define HT_H
 
 #include <iostream>
+#include <cstdlib>
 #include <cstdint>
 
-//10067
-#define HASH_ENTRIES 10067  //need a prime number
-#define BUCKET_ENTRIES 20   //chosen after tests
+#include "Bucket.h"
 
-struct Bucket {
-    uint32_t bucket_entries; //entries of each bucket
-    uint32_t offset;         //until where is the bucket full
-    uint32_t* nodes;         //array of the contents of the bucket
-};
+using namespace std;
 
+//---------------HASH TABLE---------------//
+
+template <class T>
 class HashTable {
 private:
-    uint32_t entries;   //number of entries
-    Bucket* bucketData; //buckets
+    int entries;
+    Bucket<T>* bucketData;
 public:
-    HashTable();  //constructor
-    ~HashTable(); //destructor
-    uint32_t hashFunction(uint32_t value); //simple modulo
-    void add(uint32_t value); //insert a value into hash table
-    bool find(uint32_t value); //search if the value already exists
-    void printHT(); //unit testing
+    HashTable(int hash_entries, int bucket_entries);
+    ~HashTable();
+    int hashFunction(T key);
+    void add(T value);
+    bool find(T value);
+    void printHT();
     void clear();
 };
+
+//---------------END OF HASH TABLE---------------//
+
+//---------------HASH TABLE---------------//
+
+template <class T>
+HashTable<T>::HashTable(int hash_entries, int bucket_entries) {
+    entries = hash_entries;
+    bucketData = (Bucket<T>*) malloc(sizeof(Bucket<T>) * entries);
+    for (int i = 0; i < entries; ++i) {
+        new (&bucketData[i]) Bucket<T>(bucket_entries);
+    }
+}
+
+template <class T>
+HashTable<T>::~HashTable() {
+    for (int i = 0; i < entries; ++i) {
+        bucketData[i].~Bucket();
+    }
+    free(bucketData);
+}
+
+template <class T>
+int HashTable<T>::hashFunction(T key) {
+    return key%entries;
+}
+
+template <class T>
+bool HashTable<T>::find(T value) {
+    int hash = hashFunction(value);
+    T* nodes = bucketData[hash].getNodes();
+    int offset = bucketData[hash].getOffset();
+    for (int i = 0; i < offset; ++i) {
+        if (nodes[i] == value) return true;
+    }
+    return false;
+}
+
+template <class T>
+void HashTable<T>::add(T value) {
+    int hash = hashFunction(value);
+    bucketData[hash].add(value);
+}
+
+template <class T>
+void HashTable<T>::clear() {
+    for (int i = 0; i < entries; ++i) {
+        bucketData[i].setOffset(0);
+    }
+}
+
+template <class T>
+void HashTable<T>::printHT() {
+    for (int i = 0; i < entries; ++i) {
+        T* nodes = bucketData[i].getNodes();
+        int offset = bucketData[i].getOffset();
+        if (offset > 0) {
+            cout << "bucket -: " << i << " offset -:" << offset << endl;
+            for (int j = 0; j < offset; ++j) {
+                printf("%u, ", nodes[j]);
+            }
+            cout << endl;
+        }
+    }
+}
+
+//---------------END OF HASH TABLE---------------//
 
 #endif

@@ -7,11 +7,12 @@
 #include <new>
 #include "Buffer.h"
 #include "NodeIndex.h"
-#include "Queue_.h"
-#include "HT_Template.h"
+//#include "Queue_.h"
+//#include "HT_Template.h"
 #include "Explored.h"
 #include "CC.h"
 #include "SCC.h"
+#include "Templates.h"
 
 // #define HT_GRAPH_HASH_SIZE 113063
 #define HT_GRAPH_HASH_SIZE 1000003

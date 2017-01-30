@@ -4,8 +4,9 @@
 #include <iostream>
 #include <cstdint>
 #include <cstdlib>
-#include "HT_Template.h"
+//#include "HT_Template.h"
 #include "Graph.h"
+#include "Templates.h"
 
 #define CELL_SIZE 100
 #define HT_UI_HASH_SIZE 500009
