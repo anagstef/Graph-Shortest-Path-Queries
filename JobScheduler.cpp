@@ -81,7 +81,7 @@ int JobScheduler::getJobs(Job** jobsArray, uint32_t n){
 void JobScheduler::setResults(Job** jobsArray, uint32_t n){
   for(uint32_t i=0; i<n; i++){
     results[jobsArray[i]->getPriority()] = jobsArray[i]->getResult();
-    delete jobsArray[i];
+    // delete jobsArray[i];
   }
   pthread_mutex_lock(&mtx);
 
@@ -97,3 +97,37 @@ void JobScheduler::printResults(){
     printf("%d\n", results[i]);
   }
 }
+
+// void* JobScheduler::worker_routine(void* arg){
+//   Job* jobs[JOBS_PER_THREAD];
+//   thread_info* info = (thread_info*) arg;
+//   // JobScheduler* js = info->js;
+//   int threadID = info->threadID;
+//
+//   while(1){
+//
+//     //lock mutex
+//     pthread_mutex_lock(&mtx);
+//
+//     //if queue is empty then block on cond var
+//     while(getResultsLeft() == 0){
+//       pthread_cond_wait(&worker, &mtx);
+//     }
+//
+//     uint32_t n = getJobs(jobs, JOBS_PER_THREAD);
+//
+//     pthread_mutex_unlock(&mtx);
+//
+//     //execute all jobs
+//     for(uint32_t i=0; i<n; i++){
+//       jobs[i]->execute(threadID);
+//     }
+//
+//
+//     //give results to JobScheduler
+//     setResults(jobs, n);
+//
+//
+//   }
+//
+// }

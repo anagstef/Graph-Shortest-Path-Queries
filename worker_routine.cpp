@@ -4,8 +4,6 @@
 
 using namespace std;
 
-#define JOBS_PER_THREAD 700
-
 void* worker_routine(void* arg){
   Job* jobs[JOBS_PER_THREAD];
   thread_info* info = (thread_info*) arg;
@@ -22,8 +20,10 @@ void* worker_routine(void* arg){
       pthread_cond_wait(&(js->worker), &(js->mtx));
     }
 
+    //get JOBS_PER_THREAD or less (n) jobs from the queue
     uint32_t n = js->getJobs(jobs, JOBS_PER_THREAD);
 
+    //unlock mutex
     pthread_mutex_unlock(&(js->mtx));
 
     //execute all jobs
@@ -31,10 +31,8 @@ void* worker_routine(void* arg){
       jobs[i]->execute(threadID);
     }
 
-
     //give results to JobScheduler
     js->setResults(jobs, n);
-
 
   }
 
