@@ -50,7 +50,14 @@ bool NodeIndex::isIndexed(uint32_t nodeId) {
         return false; //return false if the nodeId exceeds the size of the array
 }
 
-bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
+bool NodeIndex::existsInThisVersion(uint32_t nodeId, uint32_t version){
+  if(isIndexed(nodeId))
+    return (Index[nodeId].minVersion <= version);
+  else
+    return false;
+}
+
+bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset, uint32_t minVersion){
     uint32_t new_size;
 
     if (nodeId >= size) { //if the node has bigger value than the index
@@ -79,6 +86,7 @@ bool NodeIndex::insertNode(uint32_t nodeId, uint32_t buffer_offset){
     Index[nodeId].listHead = buffer_offset;
     Index[nodeId].listTail = buffer_offset;
     Index[nodeId].indexed = true;
+    Index[nodeId].minVersion = minVersion;
     numOfNodes++;
 
     return true;

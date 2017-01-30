@@ -10,14 +10,12 @@
 #include "Graph.h"
 #include "JobScheduler.h"
 #include "StaticQueryJob.h"
+#include "DynamicQueryJob.h"
 
 using namespace std;
 
-// struct op {
-//     string type;
-//     uint32_t node1;
-//     uint32_t node2;
-// };
+#define QUERYJOB_QUEUE 1000000
+
 
 void create_graph(FILE *fp, Graph &graph) {
     uint32_t node, neighbour;
@@ -26,62 +24,86 @@ void create_graph(FILE *fp, Graph &graph) {
     }
 }
 
-// void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
-//     DynamicQueryJob* qj = new DynamicQueryJob[1000000];
-//     int jCounter = 0;
-//     char buff[64];
-//     char op;
-//     uint32_t source, dest;
-//     bool read = false;
-//
-//     while(1){
-//
-//         if(!read){
-//           if(fgets(buff, 64, fp) == NULL)
-//             break;
-//         }
-//         read = false;
-//         sscanf(buff, "%c %u  %u", &op, &source, &dest);
-//
-//         if (op == 'F'){
-//
-//           for(int i=0;i<jCounter; i++)
-//             JS.submit_job(&(qj[i]));
-//
-//           JS.execute_all_jobs();
-//           JS.wait_all_tasks_finish();
-//           JS.printResults();
-//
-//           jCounter = 0;
-//
-//           if(fgets(buff, 64, fp) == NULL)
-//             break;
-//           else
-//             read = true;
-//
-//           graph.rebuildCC();
-//           continue;
-//         }
-//
-//         if (op == 'A') {
-//             graph.add(source, dest);
-//         }
-//         else if (op == 'Q') {
-//           // qj = new QueryJob(source, dest, &graph);
-//           // JS.submit_job(qj);
-//           qj[jCounter].setFrom(source);
-//           qj[jCounter].setTo(dest);
-//           qj[jCounter].setGraph(&graph);
-//           jCounter++;
-//           // printf("%d\n", graph.query(source, dest));
-//           // graph.clean();
-//         }
-//     }
-//     delete[] qj;
-// }
+void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
+  int real_size = QUERYJOB_QUEUE;
+  DynamicQueryJob* qj = (DynamicQueryJob*) malloc(sizeof(DynamicQueryJob) * real_size);
+  int jCounter = 0;
+  char buff[64];
+  char op;
+  uint32_t source, dest;
+  bool read = false;
+  bool lastCommandQ = false;
+  int test = 0;
+  while(1){
+        // cerr << test++ << endl;
+        if(!read){
+          if(fgets(buff, 64, fp) == NULL)
+            break;
+        }
+        read = false;
+        sscanf(buff, "%c %u  %u", &op, &source, &dest);
+
+        if (op == 'F'){
+          cerr << "submiting" << endl;
+          for(int i=0;i<jCounter; i++)
+            JS.submit_job(&(qj[i]));
+
+          cerr << "executing" << endl;
+          JS.execute_all_jobs();
+          cerr << "waiting" << endl;
+          JS.wait_all_tasks_finish();
+          cerr << "printing" << endl;
+          JS.printResults();
+          cerr << "end" << endl;
+
+          jCounter = 0;
+
+          //if this is the end of file, there is no need for rebuild
+          if(fgets(buff, 64, fp) == NULL)
+            break;
+          else
+            read = true;
+
+          cerr << "before rebuildCC" << endl;
+          graph.rebuildCC();
+          cerr << "after rebuildCC" << endl;
+          lastCommandQ = false;
+        }
+        else if (op == 'A') {
+          if(lastCommandQ){
+            cerr << "increasing version" << endl;
+            graph.increaseVersion();
+          }
+
+          cerr << "adding BEGIN" << endl;
+          graph.add(source, dest);
+          cerr << "adding END" << endl;
+          // cerr << graph.getCurrentVersion() << endl;
+          lastCommandQ = false;
+        }
+        else if (op == 'Q') {
+          if(jCounter == real_size){
+            real_size *= 2;
+            qj = (DynamicQueryJob*) realloc(qj, sizeof(DynamicQueryJob) * real_size);
+          }
+          cerr << "placement new BEGIN" << endl;
+          new (&qj[jCounter]) DynamicQueryJob(source, dest, &graph, graph.getCurrentVersion());
+          cerr << "placement new END" << endl;
+          jCounter++;
+          lastCommandQ = true;
+        }
+        else{
+          printf("Something went wrong while reading operations file!\n");
+          free(qj);
+          return;
+        }
+    }
+    free(qj);
+}
 
 void StaticOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
-    StaticQueryJob* qj = new StaticQueryJob[1000000];
+    int real_size = QUERYJOB_QUEUE;
+    StaticQueryJob* qj = (StaticQueryJob*) malloc(sizeof(StaticQueryJob) * real_size);
     int jCounter = 0;
     char buff[64];
     char op;
@@ -102,25 +124,27 @@ void StaticOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
           jCounter = 0;
         }
         else if (op == 'Q') {
-          qj[jCounter].setFrom(source);
-          qj[jCounter].setTo(dest);
-          qj[jCounter].setGraph(&graph);
+          if(jCounter == real_size){
+            real_size *= 2;
+            qj = (StaticQueryJob*) realloc(qj, sizeof(StaticQueryJob) * real_size);
+          }
+          new (&qj[jCounter]) StaticQueryJob(source, dest, &graph);
           jCounter++;
         }
         else{
           printf("Something went wrong while reading operations file!\n");
-          delete[] qj;
+          free(qj);
           return;
         }
     }
-    delete[] qj;
+    free(qj);
 }
 
 int main(int argc, char const *argv[]) {
     char buff[64];
     bool GraphDynamic;
     FILE *fp;
-    int threads = 15;
+    int threads = 1;
     Graph graph(threads);
     JobScheduler JS(threads);
 
@@ -165,8 +189,10 @@ int main(int argc, char const *argv[]) {
       GraphDynamic = true;
     }
 
-
-    StaticOperations(fp, graph, JS);
+    if(GraphDynamic)
+      DynamicOperations(fp, graph, JS);
+    else
+      StaticOperations(fp, graph, JS);
 
     fclose(fp);
     return 0;

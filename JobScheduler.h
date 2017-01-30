@@ -10,7 +10,6 @@
 #define JS_QUEUE_INIT_SIZE 900000
 #define JS_RESULTS_INIT_SIZE 900000
 
-// #define JOBS_PER_THREAD 500
 
 class JobScheduler;
 
@@ -32,8 +31,6 @@ private:
   uint32_t resultsDone;
   uint32_t resultsToPrint;
   uint32_t priorityNum;
-  // pthread_mutex_t mtx;
-  // pthread_cond_t master, worker;
 
 public:
   pthread_mutex_t mtx;

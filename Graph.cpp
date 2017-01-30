@@ -78,32 +78,38 @@ void Graph::add(uint32_t from, uint32_t to) {
     else
       duplicates.add(check);
 
-
+    // fprintf(stderr, "%u --> %u : %u\n",from, to, current_version );
     if (Out.isIndexed(from)) { //if the node exists
-        Out_Buf.addNewEdgeDirectly(to, from, Out); //add directly to the end
+        Out_Buf.addNewEdgeDirectly(to, from, current_version, Out); //add directly to the end
     } else { //else add the node first to the index and then direct add
         temp = Out_Buf.allocNewNode();
-        Out.insertNode(from, temp);
-        Out_Buf.addNewEdgeDirectly(to, from, Out);
+        Out.insertNode(from, temp, current_version);
+        Out_Buf.addNewEdgeDirectly(to, from, current_version, Out);
     }
 
 
     if (In.isIndexed(to)) {
-        In_Buf.addNewEdgeDirectly(from, to, In);
+        In_Buf.addNewEdgeDirectly(from, to, current_version, In);
     } else {
         temp = In_Buf.allocNewNode();
-        In.insertNode(to, temp);
-        In_Buf.addNewEdgeDirectly(from, to, In);
+        In.insertNode(to, temp, current_version);
+        In_Buf.addNewEdgeDirectly(from, to, current_version, In);
      }
 
-    if(opAdds)
-      cc->insertNewEdge(from, to);
-    return;
+    if(opAdds){
+      cerr << "insert to CC BEGIN" << endl;
+      cc->insertNewEdge(from, to, current_version);
+      cerr << "insert to CC done!" << endl;
+    }
 }
 
-int Graph::query(uint32_t from, uint32_t to, int threadID) {
+int Graph::query(uint32_t from, uint32_t to, uint32_t version, int threadID) {
     int cost = 0;
     BFSnode fringeNode;
+
+    // increase the query counter for the metric
+    if(isDynamic)
+      cc->increaseQueryNum();
 
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
@@ -119,12 +125,13 @@ int Graph::query(uint32_t from, uint32_t to, int threadID) {
         return 0;
     }
 
-    // increase the query counter for the metric
-    if(isDynamic)
-      cc->increaseQueryNum();
+    //check if there are any edges from these nodes that exist in this version
+    if(isDynamic && (!Out.existsInThisVersion(from, version) || !In.existsInThisVersion(to, version))){
+      return -1;
+    }
 
     //search on CC if nodes are connected
-    if(isDynamic && !cc->areNodesConnected(from, to)){
+    if(isDynamic && !cc->areNodesConnected(from, to, version)){
       return -1;
     }
 
@@ -156,24 +163,29 @@ int Graph::query(uint32_t from, uint32_t to, int threadID) {
         //select to expand the Fringe that has the least next neighbors
         if((forward_neighbors <= backwards_neighbors)){
           cost++;
-          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe[threadID], ForwardExplored[threadID], BackwardsExplored[threadID], to, true))
+          if(SingleLevelBFSExpand(Out, Out_Buf, forward_neighbors, ForwardFringe[threadID], ForwardExplored[threadID], BackwardsExplored[threadID], to, true, version))
             return cost;
 
         } else{
           cost++;
-          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe[threadID], BackwardsExplored[threadID], ForwardExplored[threadID], from, false))
+          if(SingleLevelBFSExpand(In, In_Buf, backwards_neighbors, BackwardsFringe[threadID], BackwardsExplored[threadID], ForwardExplored[threadID], from, false, version))
             return cost;
 
         }
     }
 }
 
-bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored, Explored &Goal, uint32_t &node, bool isForward){
+bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff,
+  uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored,
+  Explored &Goal, uint32_t &node, bool isForward, uint32_t version){
+
+
   BFSnode popedNode, newNode;
   uint32_t temp;
   int len;
   list_node* current;
   uint32_t* neighArray;
+  uint32_t* versionArray;
   bool enteredSCC = false;
 
   neighbors = 0; //init the sum
@@ -193,10 +205,14 @@ bool Graph::SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neigh
       while(1){ //loop for all neighbors
           len = current->get_length();
           neighArray = current->get_neighborArray();
+
+          if(isDynamic)
+            versionArray = current->get_propertyArray();
+
           for(int j=0; j<len; j++){ //for every node in a list_node
 
-            // if(popedNode.sameSCC == true && !belongsSameSCC == false)
-            //   continue;
+            if(isDynamic && versionArray[j] > version)
+              continue;
 
             if(!explored.find(neighArray[j])){
                 //if node is on the other BFS's explored set then there is path

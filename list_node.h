@@ -11,7 +11,7 @@ class list_node {
 private:
     int length; //size of the array
     uint32_t neighbor[N];
-    // uint32_t edgeProperty[N];
+    uint32_t edgeProperty[N];
     bool hasNext; //true if the listnode has a next node
     uint32_t nextNode; //pointer to the next node
 
@@ -28,8 +28,8 @@ public:
     void set_length(int l) {length = l;}
     uint32_t get_neighbor(int i) { return  neighbor[i]; }
     uint32_t* get_neighborArray() { return  neighbor; }
-    void set_neighbor(int i, uint32_t value) {neighbor[i] = value;}
-    // uint32_t* get_edgeProperty() { return edgeProperty; }
+    uint32_t* get_propertyArray() { return  edgeProperty; }
+    void set_neighbor(int i, uint32_t value, uint32_t version);
     void print_node(); //unit testing
 };
 

@@ -12,7 +12,6 @@ UpdateIndex::UpdateIndex(uint32_t starting_size){
     uindex[i].actual_size = CELL_SIZE;
     uindex[i].components = (uint32_t*) malloc(sizeof(uint32_t) * CELL_SIZE);
   }
-
 }
 
 UpdateIndex::~UpdateIndex(){
@@ -35,8 +34,11 @@ void UpdateIndex::increaseCapacity(uint32_t new_size){
 
 }
 
-void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2){
-  InsEdge edge;
+void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2, uint32_t version){
+  UpdateIndexEdge edge;
+  // InsEdge edge;
+  edge.version = version;
+  // cerr << "before increaseCapacity" << endl;
   if(comp1 >= size || comp2 >= size){
     uint32_t new_size = size * 2;
     if(comp1 >= new_size || comp2 >= new_size){
@@ -46,44 +48,37 @@ void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2){
     }
     increaseCapacity(new_size);
   }
-
+  // cerr << "after increaseCapacity" << endl;
   //get the set of components of the comp1
   uint32_t size1 = uindex[comp1].size;
-  // uint32_t* comp1_neighbors = (uint32_t*) malloc(sizeof(uint32_t) * size1);
-  //
-  // comp1_neighbors[0] = comp1;
-  // for(uint32_t i=0; i<uindex[comp1].size; i++)
-  //   comp1_neighbors[i+1] = uindex[comp1].components[i];
 
   //get the set of components of the comp2
   uint32_t size2 = uindex[comp2].size;
-  // uint32_t* comp2_neighbors = (uint32_t*) malloc(sizeof(uint32_t) * size2);
-  //
-  // comp2_neighbors[0] = comp2;
-  // for(uint32_t i=0; i<uindex[comp2].size; i++)
-  //   comp2_neighbors[i+1] = uindex[comp2].components[i];
-
+  // cerr << "comp1" << endl;
   //add comp1 set to every node in the comp2 set
   add(comp2, comp1);
   edge.from = comp2;
   edge.to = comp1;
   quickFind.add(edge);
 
+  // cerr << "comp1 - stage1" << endl;
   for(uint32_t j=0; j<size1; j++){
+    // cerr << "comp1 - stage2" << endl;
     add(comp2, uindex[comp1].components[j]);
     edge.from = comp2;
     edge.to = uindex[comp1].components[j];
     quickFind.add(edge);
   }
-
+  // cerr << "comp1 - stage2,5" << endl;
   for(uint32_t i=0; i<size2; i++){
-
+    // cerr << "comp1 - stage3" << endl;
     add(uindex[comp2].components[i], comp1);
     edge.from = uindex[comp2].components[i];
     edge.to = comp1;
     quickFind.add(edge);
-
+    // cerr << "comp1 - stage3,5" << endl;
     for(uint32_t j=0; j<size1; j++){
+      // cerr << "comp1 - stage4" << endl;
       add(uindex[comp2].components[i], uindex[comp1].components[j]);
       edge.from = uindex[comp2].components[i];
       edge.to = uindex[comp1].components[j];
@@ -91,7 +86,7 @@ void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2){
     }
 
   }
-
+  // cerr << "comp2" << endl;
   //add comp2 set to every node in the comp1 set
   add(comp1, comp2);
   edge.from = comp1;
@@ -120,26 +115,11 @@ void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2){
     }
 
   }
-
-
-
-
-
-  // for(uint32_t i=0; i<size1; i++){
-  //   for(uint32_t j=0; j<size2; j++){
-  //     add(comp1_neighbors[i], comp2_neighbors[j]);
-  //     edge.from = comp1_neighbors[i];
-  //     edge.to = comp2_neighbors[j];
-  //     quickFind.add(edge);
-  //   }
-  // }
-
-  // free(comp1_neighbors);
-  // free(comp2_neighbors);
 }
 
 void UpdateIndex::add(uint32_t cell, uint32_t comp){
   if(uindex[cell].size == uindex[cell].actual_size){
+    // cerr << "size increased" << endl;
     uindex[cell].actual_size *= 2;
     uindex[cell].components = (uint32_t*) realloc(uindex[cell].components, sizeof(uint32_t) * uindex[cell].actual_size);
   }
@@ -148,13 +128,16 @@ void UpdateIndex::add(uint32_t cell, uint32_t comp){
   uindex[cell].size++;
 }
 
-bool UpdateIndex::isConnected(uint32_t comp1, uint32_t comp2){
-  InsEdge edge;
+bool UpdateIndex::isConnected(uint32_t comp1, uint32_t comp2, uint32_t version){
+  UpdateIndexEdge edge;
+  // InsEdge edge;
   edge.from = comp1;
   edge.to = comp2;
+  edge.version = version;
   return quickFind.find(edge);
 }
 
+//DEPRECATED
 uint32_t UpdateIndex::update(uint32_t* ccindex, uint32_t indexsize, uint32_t componentCount){
   uint32_t currCC = 1;
 

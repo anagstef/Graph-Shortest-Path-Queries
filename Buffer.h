@@ -7,8 +7,8 @@
 #include <new>
 #include "NodeIndex.h"
 #include "list_node.h"
+
 #define BUFFER_INIT_SIZE 20000
-//#define BUFFER_INIT_SIZE 2000
 
 class Buffer {
 private:
@@ -22,9 +22,10 @@ public:
     uint32_t allocNewNode(); //initializes a new listnode and returns the pointer
     list_node* getListNode(uint32_t ptr); //returns a pointer to a listnode, or NULL if it does not exist
     //adds a new edge checking for duplicate. returns false if the node already exists
-    bool addNewEdge(uint32_t edge_id, uint32_t listHead, NodeIndex &index);
+    //DEPRECATED
+    // bool addNewEdge(uint32_t edge_id, uint32_t listHead, NodeIndex &index);
     //adds a new edge without checking for duplicate
-    void addNewEdgeDirectly(uint32_t edge_id, uint32_t nodeId, NodeIndex &index);
+    void addNewEdgeDirectly(uint32_t to, uint32_t from, uint32_t version, NodeIndex &index);
 };
 
 

@@ -7,6 +7,11 @@ list_node::list_node() {
     hasNext = false;
 }
 
+void list_node::set_neighbor(int i, uint32_t value, uint32_t version) {
+  edgeProperty[i] = version;
+  neighbor[i] = value;
+}
+
 void list_node::print_node() {
     int i;
     cout << "Neighbors: " << endl;

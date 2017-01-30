@@ -11,35 +11,17 @@ CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
   this->Out = &Out;
   this->In_Buf = &In_Buf;
   this->Out_Buf = &Out_Buf;
-  // componentCount = 1;
-  // offset = 0;
-  // queue = new Queue<uint32_t>();
+  pthread_mutex_init(&UpdateUsed_mtx, NULL);
+  pthread_mutex_init(&QueryNum_mtx, NULL);
 
   indexsize = In.getSize();
   if (Out.getSize() > indexsize)
     indexsize = Out.getSize();
 
   ccindex = (uint32_t*) malloc(sizeof(uint32_t) * indexsize);
-  // ccindex = (uint32_t*) calloc(indexsize, sizeof(uint32_t));
 
   estimateConnectedComponents();
 
-  // for(uint32_t i=0; i<indexsize; i++){
-  //   ccindex[i] = 0;
-  // }
-  //
-  // while(offset < indexsize){
-  //   if((In.isIndexed(offset) || Out.isIndexed(offset)) && ccindex[offset] == 0){
-  //     CC_BFS(In, Out, In_Buf, Out_Buf);
-  //     componentCount++;
-  //     queue.clear();
-  //   }
-  //   offset++;
-  // }
-
-
-
-  // delete queue;
   updateIndex = new UpdateIndex(componentCount);
 }
 
@@ -77,6 +59,8 @@ void CC::estimateConnectedComponents(){
 }
 
 CC::~CC(){
+  pthread_mutex_destroy(&UpdateUsed_mtx);
+  pthread_mutex_destroy(&QueryNum_mtx);
   delete updateIndex;
   free(ccindex);
 }
@@ -154,7 +138,7 @@ void CC::CC_BFS(){
 }
 
 //returns true if something cahnged, else false
-bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
+bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version){
   //if both nodes exist
   if((nodeIdS < indexsize) && (ccindex[nodeIdS] > 0) && (nodeIdE < indexsize) && (ccindex[nodeIdE] > 0)){
     //if they are on the same CC, do nothing
@@ -163,8 +147,11 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
     }
     else{
       //if it is not already indexed
-      if(!updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
-        updateIndex->addEdge(ccindex[nodeIdS], ccindex[nodeIdE]);
+      cerr << "asking isConnected" << endl;
+      if(!updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE], version)){
+        cerr << "it is not" << endl;
+        updateIndex->addEdge(ccindex[nodeIdS], ccindex[nodeIdE], version);
+        cerr << "edge added" << endl;
         return true;
       }
       return false;
@@ -222,7 +209,7 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE){
   }
 }
 
-bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
+bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version){
   if(nodeIdS >= indexsize || nodeIdE >= indexsize)
     return false;
 
@@ -230,8 +217,10 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE){
     return true;
   }
   else{
+    pthread_mutex_lock(&UpdateUsed_mtx);
     UpdateUsed++;
-    if(updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE])){
+    pthread_mutex_unlock(&UpdateUsed_mtx);
+    if(updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE], version)){
       return true;
     }
     else
@@ -265,5 +254,7 @@ bool CC::rebuildIndexes(){
 }
 
 void CC::increaseQueryNum(){
+  pthread_mutex_lock(&QueryNum_mtx);
   QueryNum++;
+  pthread_mutex_unlock(&QueryNum_mtx);
 }

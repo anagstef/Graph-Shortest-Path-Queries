@@ -268,7 +268,7 @@ void SCC::createHyperGraph(){
   //get all the hypergraph nodes indexed
   for(uint32_t i=0; i<components_count; i++){
     temp = HyperBuf->allocNewNode();
-    HyperIndex->insertNode(components[i].component_id, temp);
+    HyperIndex->insertNode(components[i].component_id, temp, 0);
   }
 
 
@@ -285,7 +285,7 @@ void SCC::createHyperGraph(){
               for (uint32_t k = 0; k < len; k++) { //for every node in a list_node
                 if(components[i].component_id != id_belongs_to_component[neighArray[k]] && edgeExists[id_belongs_to_component[neighArray[k]]] != turn){
                   edgeExists[id_belongs_to_component[neighArray[k]]] = turn;
-                  HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, *HyperIndex);
+                  HyperBuf->addNewEdgeDirectly(id_belongs_to_component[neighArray[k]], components[i].component_id, 0, *HyperIndex);
                 }
               }
 

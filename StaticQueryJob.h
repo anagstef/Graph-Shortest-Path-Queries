@@ -15,7 +15,7 @@ public:
   StaticQueryJob(uint32_t f, uint32_t t, Graph* g){from=f; to=t; graph=g;}
   ~StaticQueryJob(){}
   void execute(int threadID){
-    result = graph->query(from, to, threadID);
+    result = graph->query(from, to, 0, threadID);
     graph->clear(threadID);
   }
   void setFrom(uint32_t f){from=f;}
