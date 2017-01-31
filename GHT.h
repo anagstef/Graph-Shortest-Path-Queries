@@ -28,8 +28,8 @@ public:
     GHT();  //constructor
     ~GHT(); //destructor
     int hashFunction(uint32_t from, uint32_t to);
-    void add(uint32_t from, uint32_t to, uint32_t version);
-    bool find(uint32_t from, uint32_t to, uint32_t version);
+    void add(node n);
+    bool find(node n);
     void printHT(); //unit testing
     void clear();
 };

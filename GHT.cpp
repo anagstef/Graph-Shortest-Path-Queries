@@ -29,23 +29,24 @@ int GHT::hashFunction(uint32_t from, uint32_t to) {
     return (from+to)%entries; //where each value hashes
 }
 
-void GHT::add(uint32_t from, uint32_t to, uint32_t version) {
-    int hash = hashFunction(from, to); //find the bucket
-    if (find(from,to,version)) return; //if the value exists don't add
+void GHT::add(node n) {
+    int hash = hashFunction(n.from, n.to); //find the bucket
+    if (find(n)) return; //if the value exists don't add
     if (bucketData[hash].offset == bucketData[hash].bucket_entries) { //if the bucket is full
         bucketData[hash].bucket_entries = bucketData[hash].bucket_entries*2; //double the bucket size
         bucketData[hash].nodes = (node*) realloc(bucketData[hash].nodes, bucketData[hash].bucket_entries * sizeof(node)); //realloc the bucket
     }
-    bucketData[hash].nodes[bucketData[hash].offset].from = from; //insert the value
-    bucketData[hash].nodes[bucketData[hash].offset].to = to;
-    bucketData[hash].nodes[bucketData[hash].offset].version = version;
+    //bucketData[hash].nodes[bucketData[hash].offset].from = from; //insert the value
+    //bucketData[hash].nodes[bucketData[hash].offset].to = to;
+    //bucketData[hash].nodes[bucketData[hash].offset].version = version;
+    bucketData[hash].nodes[bucketData[hash].offset] = n;
     bucketData[hash].offset++; //increase the offset to know where to insert
 }
 
-bool GHT::find(uint32_t from, uint32_t to, uint32_t version) {
-    int hash = hashFunction(from, to); //go to the correct bucket
+bool GHT::find(node n) {
+    int hash = hashFunction(n.from, n.to); //go to the correct bucket
     for (uint32_t i = 0; i < bucketData[hash].offset; ++i) { //go through the bucket until offset
-        if (bucketData[hash].nodes[i].from == from && bucketData[hash].nodes[i].to == to && bucketData[hash].nodes[i].version < version) return true; //return true if node value == value
+        if (bucketData[hash].nodes[i].from == n.from && bucketData[hash].nodes[i].to == n.to && bucketData[hash].nodes[i].version < n.version) return true; //return true if node value == value
     }
     return false;
 }
