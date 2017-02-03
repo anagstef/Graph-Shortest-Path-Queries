@@ -1,5 +1,7 @@
 #include "UpdateIndex.h"
 
+#define DEBUG 0
+
 using namespace std;
 
 UpdateIndex::UpdateIndex(uint32_t starting_size){
@@ -15,6 +17,12 @@ UpdateIndex::UpdateIndex(uint32_t starting_size){
 }
 
 UpdateIndex::~UpdateIndex(){
+
+  //////////////////DEBUG////////////////////
+  // if(DEBUG)
+  //   quickFind.printSize();
+  //////////////////DEBUG////////////////////
+
   for(uint32_t i=1; i<size; i++){
     free(uindex[i].components);
   }
@@ -35,8 +43,8 @@ void UpdateIndex::increaseCapacity(uint32_t new_size){
 }
 
 void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2, uint32_t version){
-  UpdateIndexEdge edge;
   // InsEdge edge;
+  UpdateIndexEdge edge;
   edge.version = version;
   // cerr << "before increaseCapacity" << endl;
   if(comp1 >= size || comp2 >= size){

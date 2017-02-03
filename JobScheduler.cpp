@@ -96,3 +96,13 @@ void JobScheduler::printResults(){
     printf("%d\n", results[i]);
   }
 }
+
+void JobScheduler::exitThreads(){
+  exitflag = true;
+  pthread_mutex_unlock(&mtx);
+  pthread_cond_broadcast(&worker);
+  // std::cerr << "exiting..." << std::endl;
+  for(int i=0;i<execution_threads; i++)
+    pthread_join(threads[i], NULL);
+  pthread_mutex_lock(&mtx);
+}

@@ -3,12 +3,11 @@
 
 #include <pthread.h>
 #include "worker_routine.h"
-//#include "Queue_.h"
 #include "Templates.h"
 #include "Job.h"
 
-#define JS_QUEUE_INIT_SIZE 900000
-#define JS_RESULTS_INIT_SIZE 900000
+#define JS_QUEUE_INIT_SIZE 10000
+#define JS_RESULTS_INIT_SIZE 10000
 
 
 class JobScheduler;
@@ -31,6 +30,7 @@ private:
   uint32_t resultsDone;
   uint32_t resultsToPrint;
   uint32_t priorityNum;
+  bool exitflag = false;
 
 public:
   pthread_mutex_t mtx;
@@ -42,6 +42,8 @@ public:
   void submit_job(Job* j);
   void execute_all_jobs();
   void wait_all_tasks_finish();
+  bool getExitFlag(){return exitflag;}
+  void exitThreads();
   // void* worker_routine(void* arg);
   uint32_t getResultsLeft(){return resultsLeft;}
   int getJobs(Job** jobsArray, uint32_t n);

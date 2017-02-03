@@ -147,11 +147,11 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version){
     }
     else{
       //if it is not already indexed
-      cerr << "asking isConnected" << endl;
+      // cerr << "asking isConnected" << endl;
       if(!updateIndex->isConnected(ccindex[nodeIdS], ccindex[nodeIdE], version)){
-        cerr << "it is not" << endl;
+        // cerr << "it is not" << endl;
         updateIndex->addEdge(ccindex[nodeIdS], ccindex[nodeIdE], version);
-        cerr << "edge added" << endl;
+        // cerr << "edge added" << endl;
         return true;
       }
       return false;
@@ -231,6 +231,7 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version)
 bool CC::rebuildIndexes(){
   float value = (float)UpdateUsed / (float)QueryNum;
   if(DEBUG){
+    // updateIndex->printHTsize();
     cerr << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
     cerr << "Metric value is: " << value;
   }

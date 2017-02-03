@@ -17,6 +17,11 @@ void* worker_routine(void* arg){
 
     //if queue is empty then block on cond var
     while(js->getResultsLeft() == 0){
+      if(js->getExitFlag()){
+        // std::cerr << "Thread" << threadID << " is out!" << std::endl;
+        pthread_mutex_unlock(&(js->mtx));
+        pthread_exit(NULL);
+      }
       pthread_cond_wait(&(js->worker), &(js->mtx));
     }
 

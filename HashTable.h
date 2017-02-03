@@ -16,6 +16,8 @@ class HashTable {
 private:
     int entries;
     Bucket<T>* bucketData;
+    // size_t sizzz;
+    // uint32_t num = 0;
 public:
     HashTable(int hash_entries, int bucket_entries);
     ~HashTable();
@@ -24,6 +26,7 @@ public:
     bool find(T value);
     void printHT();
     void clear();
+    // void printSize(){cerr << "Sizeof(T): " << sizeof(T) << ", Number: " << num << ", Total size alloc'd in Bytes: " << sizzz << endl;}
 };
 
 //---------------END OF HASH TABLE---------------//
@@ -33,6 +36,10 @@ public:
 template <class T>
 HashTable<T>::HashTable(int hash_entries, int bucket_entries) {
     entries = hash_entries;
+    // sizzz = entries * bucket_entries * sizeof(T);
+    // cerr << sizeof(Bucket<T>) << endl;
+    // cerr << sizzz << endl;
+
     bucketData = (Bucket<T>*) malloc(sizeof(Bucket<T>) * entries);
     for (int i = 0; i < entries; ++i) {
         new (&bucketData[i]) Bucket<T>(bucket_entries);
@@ -65,8 +72,10 @@ bool HashTable<T>::find(T value) {
 
 template <class T>
 void HashTable<T>::add(T value) {
+    // num++;
     int hash = hashFunction(value);
     bucketData[hash].add(value);
+    // sizzz += bucketData[hash].add(value);
 }
 
 template <class T>

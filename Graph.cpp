@@ -97,9 +97,9 @@ void Graph::add(uint32_t from, uint32_t to) {
      }
 
     if(opAdds){
-      cerr << "insert to CC BEGIN" << endl;
+      // cerr << "insert to CC BEGIN" << endl;
       cc->insertNewEdge(from, to, current_version);
-      cerr << "insert to CC done!" << endl;
+      // cerr << "insert to CC done!" << endl;
     }
 }
 
@@ -126,9 +126,9 @@ int Graph::query(uint32_t from, uint32_t to, uint32_t version, int threadID) {
     }
 
     //check if there are any edges from these nodes that exist in this version
-    if(isDynamic && (!Out.existsInThisVersion(from, version) || !In.existsInThisVersion(to, version))){
-      return -1;
-    }
+    // if(isDynamic && (!Out.existsInThisVersion(from, version) || !In.existsInThisVersion(to, version))){
+    //   return -1;
+    // }
 
     //search on CC if nodes are connected
     if(isDynamic && !cc->areNodesConnected(from, to, version)){

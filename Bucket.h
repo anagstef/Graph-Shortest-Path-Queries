@@ -46,9 +46,15 @@ void Bucket<T>::add(T value) {
     if (offset == bucket_entries) {
         bucket_entries = 2*bucket_entries;
         nodes = (T*)realloc(nodes, bucket_entries * sizeof(T));
+        ///////////////////
+        // nodes[offset] = value;
+        // offset++;
+        // return (bucket_entries/2) * sizeof(T);
+        //////////////////
     }
     nodes[offset] = value;
     offset++;
+    // return 0;
 }
 
 template <class T>

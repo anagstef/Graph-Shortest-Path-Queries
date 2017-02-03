@@ -44,17 +44,17 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
         sscanf(buff, "%c %u  %u", &op, &source, &dest);
 
         if (op == 'F'){
-          cerr << "submiting" << endl;
+          // cerr << "submiting" << endl;
           for(int i=0;i<jCounter; i++)
-            JS.submit_job(&(qj[i]));
+            JS.submit_job(qj + i);
 
-          cerr << "executing" << endl;
+          // cerr << "executing" << endl;
           JS.execute_all_jobs();
-          cerr << "waiting" << endl;
+          // cerr << "waiting" << endl;
           JS.wait_all_tasks_finish();
-          cerr << "printing" << endl;
+          // cerr << "printing" << endl;
           JS.printResults();
-          cerr << "end" << endl;
+          // cerr << "end" << endl;
 
           jCounter = 0;
 
@@ -64,20 +64,20 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
           else
             read = true;
 
-          cerr << "before rebuildCC" << endl;
+          // cerr << "before rebuildCC" << endl;
           graph.rebuildCC();
-          cerr << "after rebuildCC" << endl;
+          // cerr << "after rebuildCC" << endl;
           lastCommandQ = false;
         }
         else if (op == 'A') {
           if(lastCommandQ){
-            cerr << "increasing version" << endl;
+            // cerr << "increasing version" << endl;
             graph.increaseVersion();
           }
 
-          cerr << "adding BEGIN" << endl;
+          // cerr << "adding BEGIN" << endl;
           graph.add(source, dest);
-          cerr << "adding END" << endl;
+          // cerr << "adding END" << endl;
           // cerr << graph.getCurrentVersion() << endl;
           lastCommandQ = false;
         }
@@ -86,9 +86,10 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
             real_size *= 2;
             qj = (DynamicQueryJob*) realloc(qj, sizeof(DynamicQueryJob) * real_size);
           }
-          cerr << "placement new BEGIN" << endl;
+          // cerr << "placement new BEGIN" << endl;
           new (&qj[jCounter]) DynamicQueryJob(source, dest, &graph, graph.getCurrentVersion());
-          cerr << "placement new END" << endl;
+          // JS.submit_job(&(qj[jCounter]));
+          // cerr << "placement new END" << endl;
           jCounter++;
           lastCommandQ = true;
         }
@@ -116,7 +117,7 @@ void StaticOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
         if (op == 'F'){
 
           for(int i=0;i<jCounter; i++)
-            JS.submit_job(&(qj[i]));
+            JS.submit_job(qj + i);
 
           JS.execute_all_jobs();
           JS.wait_all_tasks_finish();
@@ -129,6 +130,7 @@ void StaticOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
             qj = (StaticQueryJob*) realloc(qj, sizeof(StaticQueryJob) * real_size);
           }
           new (&qj[jCounter]) StaticQueryJob(source, dest, &graph);
+          // JS.submit_job(&(qj[jCounter]));
           jCounter++;
         }
         else{
@@ -144,7 +146,7 @@ int main(int argc, char const *argv[]) {
     char buff[64];
     bool GraphDynamic;
     FILE *fp;
-    int threads = 1;
+    int threads = 5;
     Graph graph(threads);
     JobScheduler JS(threads);
 
@@ -195,5 +197,6 @@ int main(int argc, char const *argv[]) {
       StaticOperations(fp, graph, JS);
 
     fclose(fp);
+    JS.exitThreads();
     return 0;
 }
