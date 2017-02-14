@@ -52,13 +52,16 @@ void Graph::clear(int i) {
     BackwardsExplored[i].clear();
 }
 
-void Graph::createComponents(){
-  if(isDynamic){
-    cc = new CC(In, Out, In_Buf, Out_Buf);
-    opAdds = true;
-  }
-  else
-    scc = new SCC(In, Out, In_Buf, Out_Buf);
+int Graph::createComponents(){
+    if(isDynamic){
+        cc = new CC(In, Out, In_Buf, Out_Buf);
+        opAdds = true;
+        return 1;
+    }
+    else {
+        scc = new SCC(In, Out, In_Buf, Out_Buf);
+        return 1;
+    }
 }
 
 void Graph::rebuildCC(){
@@ -66,7 +69,7 @@ void Graph::rebuildCC(){
     cc->rebuildIndexes();
 }
 
-void Graph::add(uint32_t from, uint32_t to) {
+int Graph::add(uint32_t from, uint32_t to) {
     uint32_t temp;
 
     InsEdge check;
@@ -74,7 +77,7 @@ void Graph::add(uint32_t from, uint32_t to) {
     check.to = to;
 
     if(duplicates.find(check))
-      return;
+      return -1;
     else
       duplicates.add(check);
 
@@ -101,6 +104,7 @@ void Graph::add(uint32_t from, uint32_t to) {
       cc->insertNewEdge(from, to, current_version);
       // cerr << "insert to CC done!" << endl;
     }
+    return 1;
 }
 
 int Graph::query(uint32_t from, uint32_t to, uint32_t version, int threadID) {

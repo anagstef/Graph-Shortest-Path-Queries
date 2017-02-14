@@ -21,20 +21,6 @@
 class CC;
 class SCC;
 
-struct InsEdge{
-  uint32_t from;
-  uint32_t to;
-  int operator%(const int& a) const{
-    return (from + to)%a;
-  }
-  bool operator==(const InsEdge& a) const{
-    if (a.from == from && a.to == to)
-      return true;
-    else
-      return false;
-  }
-};
-
 struct BFSnode{
   uint32_t nodeID;
   bool sameSCC;
@@ -62,9 +48,9 @@ public:
     Graph(int t);
     ~Graph();
 
-    void createComponents();
+    int createComponents();
     void rebuildCC();
-    void add(uint32_t from, uint32_t to); //add a new edge
+    int add(uint32_t from, uint32_t to); //add a new edge
     int query(uint32_t from, uint32_t to, uint32_t version, int threadID); //search for the shortest path and return it
     bool SingleLevelBFSExpand(NodeIndex &Index, Buffer &Buff, uint32_t &neighbors, Queue<BFSnode> &Fringe, Explored &explored, Explored &Goal, uint32_t &node, bool isForward, uint32_t version);
     void printGraph(); //unit testing

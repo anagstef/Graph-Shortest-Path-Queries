@@ -33,6 +33,7 @@ public:
     void setEnd(int e)  { end = e; }
     void setSize(int s) { size = s; }
     T top() { return stack[end]; }
+    void printStack();
 };
 
 //---------------END OF STACK---------------//
@@ -92,6 +93,25 @@ T Stack<T>::pop() {
     T ret_value = stack[end];
     size--;
     return ret_value;
+}
+
+template <class T>
+void Stack<T>::printStack() {
+    if (!isEmpty()) {
+        if (std::is_same<T, uint32_t>::value) {
+            printf("Printing stack:\n");
+            int i;
+            printf("----------------\n");
+            for (i = end; i > 0; --i) {
+                printf("|%14u|\n", stack[i]);
+                printf("----------------\n");
+            }
+            printf("End of stack\n");
+        }
+    }
+    else {
+        printf("The stack is empty\n");
+    }
 }
 
 //---------------END OF STACK---------------//

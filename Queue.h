@@ -37,10 +37,6 @@ public:
 
 //---------------END OF QUEUE---------------//
 
-
-
-
-
 //---------------QUEUE---------------//
 
 template <class T>
@@ -99,6 +95,25 @@ T Queue<T>::pop() {
     size--;
     return ret_value;
 }
+
+template <class T>
+void Queue<T>::printQueue() {
+    if (!isEmpty()) {
+        if (std::is_same<T, uint32_t>::value) {
+            printf("Printing queue:\n");
+            int i;
+            printf("|");
+            for (i = front; i < end; ++i) {
+                printf(" %u |", queue[i]);
+            }
+            printf("\n");
+        }
+    }
+    else {
+        printf("The queue is empty\n");
+    }
+}
+
 //---------------END OF QUEUE---------------//
 
 #endif

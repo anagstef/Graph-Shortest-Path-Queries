@@ -9,6 +9,24 @@
 
 using namespace std;
 
+//---------------INS EDGE---------------//
+
+struct InsEdge{
+  uint32_t from;
+  uint32_t to;
+  int operator%(const int& a) const{
+    return (from + to)%a;
+  }
+  bool operator==(const InsEdge& a) const{
+    if (a.from == from && a.to == to)
+      return true;
+    else
+      return false;
+  }
+};
+
+//------------END OF INS EDGE-------------//
+
 //---------------HASH TABLE---------------//
 
 template <class T>
@@ -87,16 +105,33 @@ void HashTable<T>::clear() {
 
 template <class T>
 void HashTable<T>::printHT() {
-    for (int i = 0; i < entries; ++i) {
-        T* nodes = bucketData[i].getNodes();
-        int offset = bucketData[i].getOffset();
-        if (offset > 0) {
-            cout << "bucket -: " << i << " offset -:" << offset << endl;
-            for (int j = 0; j < offset; ++j) {
-                printf("%u, ", nodes[j]);
+    if (std::is_same<T, uint32_t>::value) {
+        for (int i = 0; i < entries; ++i) {
+            T* nodes = bucketData[i].getNodes();
+            int offset = bucketData[i].getOffset();
+            if (offset > 0) {
+                printf("bucket -: %u offset -: %u\n", i, offset);
+                for (int j = 0; j < offset; ++j) {
+                    printf("%u, ", nodes[j]);
+                }
+                printf("\n");
             }
-            cout << endl;
         }
+        return;
+    }
+    if (std::is_same<T, InsEdge>::value) {
+        for (int i = 0; i < entries; ++i) {
+            T* nodes = bucketData[i].getNodes();
+            int offset = bucketData[i].getOffset();
+            if (offset > 0) {
+                printf("bucket -: %u offset -: %u\n", i, offset);
+                for (int j = 0; j < offset; ++j) {
+                    printf("from: %u to: %u, ", nodes[j].from, nodes[j].to);
+                }
+                printf("\n");
+            }
+        }
+        return;
     }
 }
 
