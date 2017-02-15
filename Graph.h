@@ -13,8 +13,8 @@
 #include "Templates.h"
 
 // #define HT_GRAPH_HASH_SIZE 10007
-#define HT_GRAPH_HASH_SIZE 1000003
-#define HT_GRAPH_BUCKET_SIZE 30
+#define HT_GRAPH_HASH_SIZE 10000019
+#define HT_GRAPH_BUCKET_SIZE 10
 #define GRAPH_QUEUE_INIT_SIZE 10000
 #define GRAPH_EXPLORED_INIT_SIZE 10000
 
@@ -62,6 +62,9 @@ public:
     Buffer getBOut()   { return Out_Buf;}
     void increaseVersion(){current_version++;}
     uint32_t getCurrentVersion(){return current_version;}
+
+    SCC* get_SCC(){return scc;} //unit testing
+
 };
 
 #endif

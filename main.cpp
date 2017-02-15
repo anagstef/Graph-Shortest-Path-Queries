@@ -33,9 +33,8 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
   uint32_t source, dest;
   bool read = false;
   bool lastCommandQ = false;
-  int test = 0;
   while(1){
-        // cerr << test++ << endl;
+
         if(!read){
           if(fgets(buff, 64, fp) == NULL)
             break;
@@ -44,17 +43,13 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
         sscanf(buff, "%c %u  %u", &op, &source, &dest);
 
         if (op == 'F'){
-          // cerr << "submiting" << endl;
+
           for(int i=0;i<jCounter; i++)
             JS.submit_job(qj + i);
 
-          // cerr << "executing" << endl;
           JS.execute_all_jobs();
-          // cerr << "waiting" << endl;
           JS.wait_all_tasks_finish();
-          // cerr << "printing" << endl;
           JS.printResults();
-          // cerr << "end" << endl;
 
           jCounter = 0;
 
@@ -71,14 +66,11 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
         }
         else if (op == 'A') {
           if(lastCommandQ){
-            // cerr << "increasing version" << endl;
             graph.increaseVersion();
           }
 
-          // cerr << "adding BEGIN" << endl;
+
           graph.add(source, dest);
-          // cerr << "adding END" << endl;
-          // cerr << graph.getCurrentVersion() << endl;
           lastCommandQ = false;
         }
         else if (op == 'Q') {
@@ -86,10 +78,7 @@ void DynamicOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
             real_size *= 2;
             qj = (DynamicQueryJob*) realloc(qj, sizeof(DynamicQueryJob) * real_size);
           }
-          // cerr << "placement new BEGIN" << endl;
           new (&qj[jCounter]) DynamicQueryJob(source, dest, &graph, graph.getCurrentVersion());
-          // JS.submit_job(&(qj[jCounter]));
-          // cerr << "placement new END" << endl;
           jCounter++;
           lastCommandQ = true;
         }
@@ -130,7 +119,6 @@ void StaticOperations(FILE *fp, Graph &graph, JobScheduler& JS) {
             qj = (StaticQueryJob*) realloc(qj, sizeof(StaticQueryJob) * real_size);
           }
           new (&qj[jCounter]) StaticQueryJob(source, dest, &graph);
-          // JS.submit_job(&(qj[jCounter]));
           jCounter++;
         }
         else{
@@ -146,29 +134,30 @@ int main(int argc, char const *argv[]) {
     char buff[64];
     bool GraphDynamic;
     FILE *fp;
-    int threads = 5;
+    int threads;
+
+    if(argc != 4){
+      perror ("Invalid number of arguments!");
+      exit(-1);
+    }
+    threads = atoi(argv[1]);
+    if(threads < 1){
+      perror ("Invalid number of threads!");
+      exit(-1);
+    }
+
     Graph graph(threads);
     JobScheduler JS(threads);
 
-    fp = fopen(argv[1] , "r");
+    fp = fopen(argv[2] , "r");
     if (fp == NULL){
       perror ("Error opening file");
       exit(-1);
     }
     create_graph(fp, graph);
     fclose(fp);
-    // return 0;
-    //graph.createComponents();
-    // cout << "finished insertion" << endl;
-    // graph.createSCComponents();
-    // cout << graph.estimateShortestPathStronglyConnectedComponents(0,1) << endl;
-    // cout << graph.estimateShortestPathStronglyConnectedComponents(3,10) << endl;
-    //cout << graph.findNodeStronglyConnectedComponentID(1) << endl;
-    // graph.destroyStronglyConnectedComponents();
-    // return 0;
-    // graph.printGraph();
-    // cout << "end of insertion" << endl;
-    fp = fopen(argv[2] , "r");
+
+    fp = fopen(argv[3] , "r");
     if (fp == NULL){
       perror ("Error opening file");
       exit(-1);

@@ -2,6 +2,7 @@
 
 using namespace std;
 
+//initialize jobscheduler
 JobScheduler::JobScheduler(int threadsNum){
   if(threadsNum < 1)
     execution_threads = 1;
@@ -40,12 +41,14 @@ JobScheduler::~JobScheduler(){
   pthread_cond_destroy(&worker);
 }
 
+//master thread submits a job
 void JobScheduler::submit_job(Job* j){
   j->setPriority(priorityNum);
   priorityNum++;
   JobQueue.push(j);
 }
 
+//master thread signals all worker threads to begin executing
 void JobScheduler::execute_all_jobs(){
   resultsLeft = JobQueue.getSize();
   resultsToPrint = resultsLeft;
@@ -57,6 +60,7 @@ void JobScheduler::execute_all_jobs(){
   pthread_cond_broadcast(&worker);
 }
 
+//waiting for worker threads to finish
 void JobScheduler::wait_all_tasks_finish(){
 
   while(resultsLeft > 0){
@@ -66,6 +70,7 @@ void JobScheduler::wait_all_tasks_finish(){
   JobQueue.clear();
 }
 
+//worker thread is getting a number of jobs to execute
 int JobScheduler::getJobs(Job** jobsArray, uint32_t n){
   if(resultsLeft < n)
     n = resultsLeft;
@@ -78,6 +83,7 @@ int JobScheduler::getJobs(Job** jobsArray, uint32_t n){
   return n;
 }
 
+//setting results to results array
 void JobScheduler::setResults(Job** jobsArray, uint32_t n){
   for(uint32_t i=0; i<n; i++){
     results[jobsArray[i]->getPriority()] = jobsArray[i]->getResult();
@@ -91,12 +97,14 @@ void JobScheduler::setResults(Job** jobsArray, uint32_t n){
   pthread_mutex_unlock(&mtx);
 }
 
+//printing the whole array with the results
 void JobScheduler::printResults(){
   for(uint32_t i=0; i<resultsToPrint; i++){
     printf("%d\n", results[i]);
   }
 }
 
+//exiting threads
 void JobScheduler::exitThreads(){
   exitflag = true;
   pthread_mutex_unlock(&mtx);

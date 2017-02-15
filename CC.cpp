@@ -25,6 +25,7 @@ CC::CC(NodeIndex& In, NodeIndex& Out, Buffer& In_Buf, Buffer& Out_Buf){
   updateIndex = new UpdateIndex(componentCount);
 }
 
+
 void CC::estimateConnectedComponents(){
   componentCount = 1;
   offset = 0;
@@ -33,9 +34,6 @@ void CC::estimateConnectedComponents(){
   if (Out->getSize() > maxsize)
     maxsize = Out->getSize();
 
-  // free(ccindex);
-  // ccindex = (uint32_t*) calloc(maxsize, sizeof(uint32_t));
-  // indexsize = maxsize;
 
   if(maxsize > indexsize)
     maxsize = indexsize;
@@ -65,6 +63,7 @@ CC::~CC(){
   free(ccindex);
 }
 
+//use bfs to create CC
 void CC::CC_BFS(){
   uint32_t tempQueueSize, tempListNodeLength, popedNode;
   list_node* current;
@@ -209,6 +208,7 @@ bool CC::insertNewEdge(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version){
   }
 }
 
+//ask CC index if two nodes are connected
 bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version){
   if(nodeIdS >= indexsize || nodeIdE >= indexsize)
     return false;
@@ -228,6 +228,7 @@ bool CC::areNodesConnected(uint32_t nodeIdS, uint32_t nodeIdE, uint32_t version)
   }
 }
 
+//rebuild CC
 bool CC::rebuildIndexes(){
   float value = (float)UpdateUsed / (float)QueryNum;
   if(DEBUG){
@@ -235,7 +236,7 @@ bool CC::rebuildIndexes(){
     cerr << "UpdateUsed=" << UpdateUsed << ", QueryNum=" << QueryNum << ". ";
     cerr << "Metric value is: " << value;
   }
-  if(value >= METRIC){
+  if(value >= METRIC){ //if greater than metric then rebuild
     if(DEBUG)
       cerr << "   -Rebuilding..." << endl;
     // componentCount = updateIndex->update(ccindex, indexsize, componentCount);
@@ -245,7 +246,7 @@ bool CC::rebuildIndexes(){
     UpdateUsed = 0;
     return true;
   }
-  else{
+  else{ //do nothing, just initialize vars
     if(DEBUG)
       cerr << "   -Will not rebuild..." << endl;
     QueryNum = 0;

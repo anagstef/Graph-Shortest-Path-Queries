@@ -69,57 +69,51 @@ void UpdateIndex::addEdge(uint32_t comp1, uint32_t comp2, uint32_t version){
   edge.to = comp1;
   quickFind.add(edge);
 
-  // cerr << "comp1 - stage1" << endl;
   for(uint32_t j=0; j<size1; j++){
-    // cerr << "comp1 - stage2" << endl;
     add(comp2, uindex[comp1].components[j]);
     edge.from = comp2;
     edge.to = uindex[comp1].components[j];
     quickFind.add(edge);
   }
-  // cerr << "comp1 - stage2,5" << endl;
+
   for(uint32_t i=0; i<size2; i++){
-    // cerr << "comp1 - stage3" << endl;
     add(uindex[comp2].components[i], comp1);
     edge.from = uindex[comp2].components[i];
     edge.to = comp1;
     quickFind.add(edge);
-    // cerr << "comp1 - stage3,5" << endl;
     for(uint32_t j=0; j<size1; j++){
-      // cerr << "comp1 - stage4" << endl;
       add(uindex[comp2].components[i], uindex[comp1].components[j]);
       edge.from = uindex[comp2].components[i];
       edge.to = uindex[comp1].components[j];
       quickFind.add(edge);
     }
-
   }
-  // cerr << "comp2" << endl;
+
   //add comp2 set to every node in the comp1 set
   add(comp1, comp2);
-  edge.from = comp1;
-  edge.to = comp2;
-  quickFind.add(edge);
+  // edge.from = comp1;
+  // edge.to = comp2;
+  // quickFind.add(edge);
 
   for(uint32_t j=0; j<size2; j++){
     add(comp1, uindex[comp2].components[j]);
-    edge.from = comp1;
-    edge.to = uindex[comp2].components[j];
-    quickFind.add(edge);
+    // edge.from = comp1;
+    // edge.to = uindex[comp2].components[j];
+    // quickFind.add(edge);
   }
 
   for(uint32_t i=0; i<size1; i++){
 
     add(uindex[comp1].components[i], comp2);
-    edge.from = uindex[comp1].components[i];
-    edge.to = comp2;
-    quickFind.add(edge);
+    // edge.from = uindex[comp1].components[i];
+    // edge.to = comp2;
+    // quickFind.add(edge);
 
     for(uint32_t j=0; j<size2; j++){
       add(uindex[comp1].components[i], uindex[comp2].components[j]);
-      edge.from = uindex[comp1].components[i];
-      edge.to = uindex[comp2].components[j];
-      quickFind.add(edge);
+      // edge.from = uindex[comp1].components[i];
+      // edge.to = uindex[comp2].components[j];
+      // quickFind.add(edge);
     }
 
   }

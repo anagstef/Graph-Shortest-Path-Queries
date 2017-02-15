@@ -68,6 +68,7 @@ GrailIndex::GrailIndex(NodeIndex& HyperIndex, Buffer& HyperBuf){
 
   stack = new Stack<uint32_t>(GRAIL_STACK_INIT_SIZE);
 
+  //create grails
   for(int k=0; k<GRAIL_INDEXES; k++){
     rank = 1;
 
@@ -163,7 +164,7 @@ bool GrailIndex::askGrail(uint32_t X, uint32_t Y){
   //         && grail[invertedIndex[Y]].rank <= grail[invertedIndex[X]].rank);
 }
 
-
+//create an array of neighbors of each CC in HyperGraph
 uint32_t* GrailIndex::createHyperNeighborsArray(uint32_t nodeId) {
     list_node* current;
     uint32_t* neighArray;

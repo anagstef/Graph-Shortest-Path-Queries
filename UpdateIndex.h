@@ -8,9 +8,9 @@
 #include "Templates.h"
 
 #define CELL_SIZE 100
-#define HT_UI_HASH_SIZE 500009
+#define HT_UI_HASH_SIZE 1000003
 // #define HT_UI_HASH_SIZE 10007
-#define HT_UI_BUCKET_SIZE 20
+#define HT_UI_BUCKET_SIZE 10
 
 struct UIndexCell{
   uint32_t* components;
@@ -22,17 +22,12 @@ struct UpdateIndexEdge{
   uint32_t from;
   uint32_t to;
   uint32_t version;
-  // UpdateIndexEdge& operator=(const UpdateIndexEdge& other){
-  //   from = other.from;
-  //   to = other.to;
-  //   version = other.version;
-  //   return *this;
-  // }
   int operator%(const int& a){
     return (from + to)%a;
   }
+  //WARNING: EQUALITY LHS AND RHS MATTERS
   bool operator==(const UpdateIndexEdge& a){
-    return (a.from == from && a.to == to && a.version >= version);
+    return (((a.from == from && a.to == to) || (a.from == to && a.to == from)) && a.version >= version);
   }
 };
 

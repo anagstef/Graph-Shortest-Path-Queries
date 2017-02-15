@@ -117,10 +117,12 @@ int Graph::query(uint32_t from, uint32_t to, uint32_t version, int threadID) {
 
     //get the neighbors of the two nodes
     uint32_t forward_neighbors = Out.getNumOfNeighbors(from);
+    uint32_t ToOutNeighbors = Out.getNumOfNeighbors(to);
     uint32_t backwards_neighbors = In.getNumOfNeighbors(to);
+    uint32_t FromInNeighbors = In.getNumOfNeighbors(from);
 
     //if one of the nodes does not have any neighbors, then one of them is not indexed
-    if((forward_neighbors == 0 && In.getNumOfNeighbors(from) == 0) || (backwards_neighbors == 0 && Out.getNumOfNeighbors(to) == 0)) {
+    if((forward_neighbors == 0 && FromInNeighbors == 0) || (backwards_neighbors == 0 && ToOutNeighbors == 0)) {
         return -1;
     }
 
