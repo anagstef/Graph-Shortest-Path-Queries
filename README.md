@@ -3,7 +3,7 @@ After compiling, using __Makefile__, execute the following command:
 
 >./tsp \[num_of_threads] \[initialization_graph.txt] [graph_workload.txt]
 
-# Input Files
+# Input Files:
 The __Initialization Graph__ input file should only contain edges in the following syntax form:
 
 >0 1
